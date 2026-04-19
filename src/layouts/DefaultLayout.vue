@@ -2,7 +2,7 @@
 const links = [
   { path: '/', slug: 'Dashboard' },
   { path: '/create-token', slug: 'Create' },
-  { path: '/my-holdings', slug: 'My Holdings' },
+  { path: '/holdings', slug: 'My Holdings' },
   { path: '/my-bonds', slug: 'My Bonds' },
 ] as const
 
@@ -95,7 +95,9 @@ const sidebarActiveClass =
         :active-class="sidebarActiveClass"
         :exact-active-class="sidebarActiveClass"
         class="flex items-center gap-3 px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200"
-        to="/create-token"
+        :to="{
+          name: 'create token',
+        }"
       >
         <span class="material-symbols-outlined text-[20px]">add_box</span>
         Create
@@ -104,7 +106,9 @@ const sidebarActiveClass =
         :active-class="sidebarActiveClass"
         :exact-active-class="sidebarActiveClass"
         class="flex items-center gap-3 px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200"
-        to="/my-holdings"
+        :to="{
+          name: 'my holdings',
+        }"
       >
         <span class="material-symbols-outlined text-[20px]">inventory_2</span>
         My Holdings
