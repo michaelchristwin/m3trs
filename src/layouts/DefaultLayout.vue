@@ -6,7 +6,8 @@ const links = [
   { path: '/my-bonds', slug: 'My Bonds' },
 ] as const
 
-const sidebarActiveClass = 'opacity-80 text-primary-container border-primary-container'
+const sidebarActiveClass =
+  'opacity-80 text-primary-container border-primary-container border-r-4 bg-[#00FF41]/10'
 </script>
 
 <template>
@@ -84,7 +85,7 @@ const sidebarActiveClass = 'opacity-80 text-primary-container border-primary-con
       <RouterLink
         :active-class="sidebarActiveClass"
         :exact-active-class="sidebarActiveClass"
-        class="flex items-center gap-3 px-4 py-3 bg-[#00FF41]/10 border-r-4 hover:bg-neutral-800 transition-all duration-200"
+        class="flex items-center gap-3 px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1 hover:bg-neutral-800 transition-all duration-200"
         to="/"
       >
         <span class="material-symbols-outlined text-[20px]">dashboard</span>
