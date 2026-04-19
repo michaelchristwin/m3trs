@@ -80,7 +80,7 @@
       <RouterLink
         :to="{
           name: 'token details',
-          params: { walletAddress: '0xb2403f83C23748b26B06173db7527383482E8c5a', tokenId: 101 },
+          params: { tokenId: 101 },
         }"
         class="grid grid-cols-12 gap-4 px-6 py-4 bg-surface-container-low rounded group hover:bg-surface-container transition-colors items-center relative overflow-hidden"
       >

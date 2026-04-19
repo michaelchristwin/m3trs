@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 const links = [
-  { path: '/', slug: 'Dashboard' },
+  { path: '/dashboard', slug: 'Dashboard' },
   { path: '/create-token', slug: 'Create' },
   { path: '/holdings', slug: 'My Holdings' },
-  { path: '/my-bonds', slug: 'My Bonds' },
+  { path: '/bonds', slug: 'My Bonds' },
 ] as const
 
 const sidebarActiveClass =
@@ -16,7 +16,7 @@ const sidebarActiveClass =
   >
     <div class="flex items-center gap-4">
       <RouterLink
-        to="/"
+        to="/dashboard"
         class="text-2xl font-black text-[#00FF41] tracking-tighter font-headline uppercase"
       >
         M3TRS
@@ -26,7 +26,6 @@ const sidebarActiveClass =
       <div class="hidden md:flex items-center gap-6" v-for="link in links" :key="link.slug">
         <RouterLink
           active-class="text-primary-container font-bold"
-          exact-active-class="text-primary-container font-bold"
           :to="link.path"
           class="text-[#e5e2e1]/60 hover:bg-[#00FF41]/10 hover:text-[#00FF41] transition-colors px-3 py-2 rounded scale-95 active:duration-100"
         >
@@ -84,16 +83,14 @@ const sidebarActiveClass =
     <nav class="flex-1 font-['Space_Grotesk'] font-medium text-sm">
       <RouterLink
         :active-class="sidebarActiveClass"
-        :exact-active-class="sidebarActiveClass"
         class="flex items-center gap-3 px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1 hover:bg-neutral-800 transition-all duration-200"
-        to="/"
+        to="/dashboard"
       >
         <span class="material-symbols-outlined text-[20px]">dashboard</span>
         Dashboard
       </RouterLink>
       <RouterLink
         :active-class="sidebarActiveClass"
-        :exact-active-class="sidebarActiveClass"
         class="flex items-center gap-3 px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200"
         :to="{
           name: 'create token',
@@ -104,10 +101,9 @@ const sidebarActiveClass =
       </RouterLink>
       <RouterLink
         :active-class="sidebarActiveClass"
-        :exact-active-class="sidebarActiveClass"
         class="flex items-center gap-3 px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200"
         :to="{
-          name: 'my holdings',
+          name: 'holdings',
         }"
       >
         <span class="material-symbols-outlined text-[20px]">inventory_2</span>
@@ -115,9 +111,10 @@ const sidebarActiveClass =
       </RouterLink>
       <RouterLink
         :active-class="sidebarActiveClass"
-        :exact-active-class="sidebarActiveClass"
         class="flex items-center gap-3 px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200"
-        to="/my-bonds"
+        :to="{
+          name: 'bonds',
+        }"
       >
         <span class="material-symbols-outlined text-[20px]">confirmation_number</span>
         My Bonds
@@ -143,6 +140,6 @@ const sidebarActiveClass =
     </div>
   </aside>
   <main class="pt-24 pb-12 px-6 md:pl-72 flex-1 relative overflow-hidden">
-    <slot />
+    <RouterView />
   </main>
 </template>

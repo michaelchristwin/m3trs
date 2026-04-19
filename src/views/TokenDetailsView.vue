@@ -7,7 +7,7 @@ function handleBack() {
   if (window.history.length > 1) {
     router.back()
   } else {
-    router.push({ name: 'my holdings' })
+    router.push({ name: 'holdings' })
   }
 }
 </script>
