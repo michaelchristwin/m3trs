@@ -11,8 +11,9 @@ const sidebarActiveClass =
 </script>
 
 <template>
+  <!-- Header for larger screens -->
   <header
-    class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-[#131313] backdrop-blur-md"
+    class="fixed hidden top-0 w-full z-50 md:flex justify-between items-center px-6 h-16 bg-[#131313] backdrop-blur-md"
   >
     <div class="flex items-center gap-4">
       <RouterLink
@@ -53,6 +54,27 @@ const sidebarActiveClass =
         </div>
       </div>
     </div>
+  </header>
+  <!-- Header for mobile -->
+  <header
+    class="fixed top-0 left-0 w-full z-50 flex md:hidden items-center justify-between px-4 h-16 bg-[#131313] shadow-[0_0_15px_rgba(0,255,65,0.05)] rounded-none mb-1 transition-all duration-300"
+  >
+    <!-- Leading Avatar -->
+    <div
+      class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/30"
+    >
+      <span class="material-symbols-outlined text-outline" style="font-variation-settings: 'FILL' 1"
+        >account_circle</span
+      >
+    </div>
+    <!-- Headline -->
+    <h1 class="font-['Space_Grotesk'] font-bold tracking-tighter text-[#00FF41] text-xl">M3TRS</h1>
+    <!-- Trailing Icon -->
+    <button
+      class="text-neutral-500 hover:bg-[#00FF41]/10 transition-all duration-300 active:scale-95 w-10 h-10 flex items-center justify-center rounded-full"
+    >
+      <span class="material-symbols-outlined">notifications</span>
+    </button>
   </header>
   <aside
     class="hidden md:flex fixed left-0 top-16 h-[calc(100vh-64px)] w-64 border-r border-[#00FF41]/10 bg-[#131313] flex-col justify-between py-4 z-40"
@@ -120,6 +142,7 @@ const sidebarActiveClass =
         My Bonds
       </RouterLink>
     </nav>
+
     <div
       class="px-4 font-['Space_Grotesk'] font-medium text-sm border-t border-surface-variant pt-4 space-y-1"
     >
@@ -139,6 +162,56 @@ const sidebarActiveClass =
       </a>
     </div>
   </aside>
+  <nav
+    class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-2 bg-[#131313] pb-safe border-t border-[#00FF41]/10"
+  >
+    <!-- Dashboard (Inactive) -->
+    <RouterLink
+      active-class="text-primary-container bg-[#00FF41]/15 rounded-[9999px] px-5 py-1.5"
+      :to="{
+        name: 'dashboard',
+      }"
+      class="flex flex-col items-center justify-center text-neutral-500 hover:text-[#00FF41] transition-colors duration-200 min-w-16"
+    >
+      <span class="material-symbols-outlined mb-1">grid_view</span>
+      <span class="font-['Space_Grotesk'] text-[10px] uppercase font-medium">Dashboard</span>
+    </RouterLink>
+    <!-- Create (Inactive) -->
+    <RouterLink
+      active-class="text-primary-container bg-[#00FF41]/15 rounded-[9999px] px-5 py-1.5"
+      :to="{
+        name: 'create token',
+      }"
+      class="flex flex-col items-center justify-center text-neutral-500 hover:text-[#00FF41] transition-colors duration-200 min-w-16"
+    >
+      <span class="material-symbols-outlined mb-1">add_box</span>
+      <span class="font-['Space_Grotesk'] text-[10px] uppercase font-medium">Create</span>
+    </RouterLink>
+    <!-- Holdings (Inactive) -->
+    <RouterLink
+      active-class="text-primary-container bg-[#00FF41]/15 rounded-[9999px] px-5 py-1.5"
+      :to="{
+        name: 'holdings',
+      }"
+      class="flex flex-col items-center justify-center text-neutral-500 hover:text-[#00FF41] transition-colors duration-200 min-w-16"
+    >
+      <span class="material-symbols-outlined mb-1">account_balance_wallet</span>
+      <span class="font-['Space_Grotesk'] text-[10px] uppercase font-medium">Holdings</span>
+    </RouterLink>
+    <!-- Bonds (Active) -->
+    <RouterLink
+      :to="{
+        name: 'bonds',
+      }"
+      active-class="text-primary-container bg-[#00FF41]/15 rounded-[9999px] px-5 py-1.5"
+      class="flex flex-col items-center justify-center text-neutral-500 hover:text-[#00FF41] transition-colors duration-200 min-w-16"
+    >
+      <span class="material-symbols-outlined mb-0.5" style="font-variation-settings: 'FILL' 1"
+        >layers</span
+      >
+      <span class="font-['Space_Grotesk'] text-[10px] uppercase font-bold">Bonds</span>
+    </RouterLink>
+  </nav>
   <main class="pt-24 pb-12 px-6 md:pl-72 flex-1 relative overflow-hidden">
     <RouterView />
   </main>
