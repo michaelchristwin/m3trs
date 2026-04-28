@@ -66,7 +66,7 @@ const statusPillClasses: Record<string, string> = {
   <div class="bg-surface-container-lowest rounded-lg p-1">
     <!-- Table Header -->
     <div
-      class="grid grid-cols-12 gap-4 px-6 py-3 bg-surface-container-highest rounded-t font-headline text-xs uppercase tracking-widest text-on-surface-variant items-center"
+      class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-surface-container-highest rounded-t font-headline text-xs uppercase tracking-widest text-on-surface-variant items-center"
     >
       <div class="col-span-2">Token ID</div>
       <div class="col-span-1 text-right">Balance</div>
@@ -80,46 +80,49 @@ const statusPillClasses: Record<string, string> = {
       <div
         @click="openTokenDetails(holding.tokenId)"
         aria-label="Open token details"
-        class="grid relative grid-cols-12 gap-4 px-6 py-4 cursor-pointer bg-surface-container-low rounded group hover:bg-surface-container transition-colors items-center"
+        class="relative grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 px-4 md:px-6 py-4 cursor-pointer bg-surface-container-low rounded group hover:bg-surface-container transition-colors items-center"
       >
         <!-- Subtle warning indicator line on the left to show severity without borders -->
         <div
           class="absolute left-0 top-0 bottom-0 w-1 bg-secondary-container/50"
           v-if="holding.status === 'Expiring'"
         ></div>
-        <div class="col-span-2 font-mono-data text-sm text-on-surface">
-          <span class="text-on-surface-variant mr-1">#</span>{{ holding.tokenId }}
+        <div class="md:col-span-2 text-sm text-on-surface">
+          <span class="md:hidden text-on-surface-variant">Token ID: </span>
+          <span class="font-mono-data">#{{ holding.tokenId }}</span>
         </div>
         <div class="col-span-1 font-mono-data text-sm text-on-surface text-right">
           {{ holding.balance }}
         </div>
-        <div
-          class="col-span-2 font-mono-data text-sm text-primary text-right flex justify-end items-center gap-1"
-        >
-          ${{ holding.claimableUsd }}
+        <div class="md:col-span-2 text-sm text-primary md:text-right">
+          <span class="md:hidden text-on-surface-variant">Claimable: </span>
+          ${{ holding.claimableUsd.toFixed(2) }}
         </div>
-        <div class="col-span-2 font-mono-data text-sm text-on-surface text-right">
+        <div class="md:col-span-2 text-sm text-on-surface md:text-right">
+          <span class="md:hidden text-on-surface-variant">Stop Time: </span>
           {{ holding.stopTime }}d left
         </div>
-        <div class="col-span-2 flex justify-center">
-          <span :class="statusPillClasses[holding.status]"> {{ holding.status }} </span>
+        <div class="md:col-span-2 md:flex md:justify-center">
+          <span :class="statusPillClasses[holding.status]">
+            {{ holding.status }}
+          </span>
         </div>
-        <div class="col-span-3 flex justify-end gap-2">
+        <div class="md:col-span-3 flex flex-col md:flex-row md:justify-end gap-2">
           <button
             @click.prevent="accrue"
-            class="px-3 py-1.5 rounded border border-outline-variant/20 text-on-surface hover:text-primary hover:border-primary/50 transition-colors text-xs font-headline uppercase tracking-wider"
+            class="md:block hidden px-3 py-1.5 rounded border border-outline-variant/20 text-on-surface hover:text-primary hover:border-primary/50 transition-colors text-xs font-headline uppercase tracking-wider"
           >
             Accrue
           </button>
           <button
             @click.prevent="collect"
-            class="px-3 py-1.5 rounded border border-outline-variant/20 text-on-surface hover:text-primary hover:border-primary/50 transition-colors text-xs font-headline uppercase tracking-wider"
+            class="md:block hidden px-3 py-1.5 rounded border border-outline-variant/20 text-on-surface hover:text-primary hover:border-primary/50 transition-colors text-xs font-headline uppercase tracking-wider"
           >
             Collect
           </button>
           <button
             @click.prevent
-            class="px-3 py-1.5 rounded bg-transparent text-on-surface-variant hover:text-on-surface transition-colors items-center justify-center"
+            class="block md:hidden px-3 py-1.5 rounded bg-transparent text-on-surface-variant hover:text-on-surface transition-colors items-center justify-center"
           >
             <span class="material-symbols-outlined text-[18px]" data-icon="more_horiz"
               >more_horiz</span

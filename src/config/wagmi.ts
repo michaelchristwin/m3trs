@@ -3,6 +3,9 @@ import { createAppKit } from '@reown/appkit/vue'
 import { sepolia, type AppKitNetwork } from '@reown/appkit/networks'
 
 const projectId = import.meta.env.VITE_PROJECT_ID
+if (!projectId) {
+  throw Error('WalletConnect ProjectID is unavailble')
+}
 const metadata = {
   name: 'M3trs',
   description: 'M3trs dev',
