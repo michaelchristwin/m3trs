@@ -7,7 +7,7 @@ const { open } = useAppKit()
 const { isConnected } = useConnection()
 const router = useRouter()
 
-function launchApp() {
+const launchApp = () => {
   if (isConnected.value) {
     return router.push({ name: 'dashboard' })
   }

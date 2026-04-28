@@ -1,5 +1,52 @@
+<script lang="ts" setup>
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+const openTokenDetails = (tokenId: number) => {
+  router.push({
+    name: 'token details',
+    params: {
+      walletAddress: '0xb2403f83C23748b26B06173db7527383482E8c5a',
+      tokenId: tokenId,
+    },
+  })
+}
+
+const accrue = () => {}
+
+const collect = () => {}
+type Holding = {
+  tokenId: number
+  balance: number
+  claimableUsd: number
+  stopTime: number
+  status: 'Active' | 'Expiring'
+}
+const holdings: Holding[] = [
+  {
+    tokenId: 101,
+    balance: 250,
+    claimableUsd: 45.22,
+    stopTime: 45,
+    status: 'Active',
+  },
+  {
+    tokenId: 88,
+    balance: 100,
+    claimableUsd: 12.1,
+    stopTime: 2,
+    status: 'Expiring',
+  },
+]
+const statusPillClasses: Record<string, string> = {
+  Active:
+    'bg-primary-container/15 text-primary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold',
+  Expiring:
+    'bg-secondary-container/15 text-secondary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold',
+}
+</script>
 <template>
-  <div class="flex justify-between items-end mb-8">
+  <div class="md:flex block justify-between items-end mb-8">
     <div>
       <h1 class="font-headline text-3xl font-bold tracking-tight text-on-surface">My Holdings</h1>
       <p class="text-on-surface-variant text-sm mt-1 font-body">
@@ -7,7 +54,7 @@
       </p>
     </div>
     <button
-      class="bg-primary-container text-on-primary-container px-6 py-2.5 rounded hover:bg-primary-fixed-dim transition-all glow-primary font-headline text-sm font-bold tracking-wider uppercase flex items-center gap-2"
+      class="bg-primary-container md:w-auto w-full text-on-primary-container px-6 py-2.5 rounded hover:bg-primary-fixed-dim transition-all glow-primary font-headline text-sm font-bold tracking-wider uppercase flex items-center justify-center gap-2"
     >
       <span class="material-symbols-outlined text-[18px]" data-icon="account_balance_wallet"
         >account_balance_wallet</span
@@ -29,102 +76,57 @@
       <div class="col-span-3 text-right">Actions</div>
     </div>
     <!-- Table Body (Rows via Spacing & Surface Container Shifts) -->
-    <div class="flex flex-col gap-1 mt-1">
-      <!-- Row 1: ACTIVE -->
-
-      <RouterLink
-        :to="{
-          name: 'token details',
-          params: { walletAddress: '0xb2403f83C23748b26B06173db7527383482E8c5a', tokenId: 101 },
-        }"
-        class="grid grid-cols-12 gap-4 px-6 py-4 bg-surface-container-low rounded group hover:bg-surface-container transition-colors items-center"
+    <div class="flex flex-col gap-1 mt-1" v-for="holding in holdings" :key="holding.tokenId">
+      <div
+        @click="openTokenDetails(holding.tokenId)"
+        aria-label="Open token details"
+        class="grid relative grid-cols-12 gap-4 px-6 py-4 cursor-pointer bg-surface-container-low rounded group hover:bg-surface-container transition-colors items-center"
       >
+        <!-- Subtle warning indicator line on the left to show severity without borders -->
+        <div
+          class="absolute left-0 top-0 bottom-0 w-1 bg-secondary-container/50"
+          v-if="holding.status === 'Expiring'"
+        ></div>
         <div class="col-span-2 font-mono-data text-sm text-on-surface">
-          <span class="text-on-surface-variant mr-1">#</span>101
+          <span class="text-on-surface-variant mr-1">#</span>{{ holding.tokenId }}
         </div>
-        <div class="col-span-1 font-mono-data text-sm text-on-surface text-right">250</div>
+        <div class="col-span-1 font-mono-data text-sm text-on-surface text-right">
+          {{ holding.balance }}
+        </div>
         <div
           class="col-span-2 font-mono-data text-sm text-primary text-right flex justify-end items-center gap-1"
         >
-          $45.22
+          ${{ holding.claimableUsd }}
         </div>
-        <div class="col-span-2 font-mono-data text-sm text-on-surface text-right">45d left</div>
+        <div class="col-span-2 font-mono-data text-sm text-on-surface text-right">
+          {{ holding.stopTime }}d left
+        </div>
         <div class="col-span-2 flex justify-center">
-          <span
-            class="bg-primary-container/15 text-primary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold"
-          >
-            Active
-          </span>
+          <span :class="statusPillClasses[holding.status]"> {{ holding.status }} </span>
         </div>
         <div class="col-span-3 flex justify-end gap-2">
           <button
+            @click.prevent="accrue"
             class="px-3 py-1.5 rounded border border-outline-variant/20 text-on-surface hover:text-primary hover:border-primary/50 transition-colors text-xs font-headline uppercase tracking-wider"
           >
             Accrue
           </button>
           <button
+            @click.prevent="collect"
             class="px-3 py-1.5 rounded border border-outline-variant/20 text-on-surface hover:text-primary hover:border-primary/50 transition-colors text-xs font-headline uppercase tracking-wider"
           >
             Collect
           </button>
           <button
-            class="px-3 py-1.5 rounded bg-transparent text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center"
+            @click.prevent
+            class="px-3 py-1.5 rounded bg-transparent text-on-surface-variant hover:text-on-surface transition-colors items-center justify-center"
           >
             <span class="material-symbols-outlined text-[18px]" data-icon="more_horiz"
               >more_horiz</span
             >
           </button>
         </div>
-      </RouterLink>
-      <!-- Row 2: EXPIRING -->
-      <RouterLink
-        :to="{
-          name: 'token details',
-          params: { tokenId: 101 },
-        }"
-        class="grid grid-cols-12 gap-4 px-6 py-4 bg-surface-container-low rounded group hover:bg-surface-container transition-colors items-center relative overflow-hidden"
-      >
-        <!-- Subtle warning indicator line on the left to show severity without borders -->
-        <div class="absolute left-0 top-0 bottom-0 w-1 bg-secondary-container/50"></div>
-        <div class="col-span-2 font-mono-data text-sm text-on-surface pl-2">
-          <span class="text-on-surface-variant mr-1">#</span>88
-        </div>
-        <div class="col-span-1 font-mono-data text-sm text-on-surface text-right">100</div>
-        <div
-          class="col-span-2 font-mono-data text-sm text-secondary-container text-right flex justify-end items-center gap-1"
-        >
-          $12.10
-        </div>
-        <div class="col-span-2 font-mono-data text-sm text-secondary-container text-right">
-          2d left
-        </div>
-        <div class="col-span-2 flex justify-center">
-          <span
-            class="bg-secondary-container/15 text-secondary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold"
-          >
-            Expiring
-          </span>
-        </div>
-        <div class="col-span-3 flex justify-end gap-2">
-          <button
-            class="px-3 py-1.5 rounded border border-outline-variant/20 text-on-surface hover:text-secondary-container hover:border-secondary-container/50 transition-colors text-xs font-headline uppercase tracking-wider"
-          >
-            Accrue
-          </button>
-          <button
-            class="px-3 py-1.5 rounded border border-outline-variant/20 text-on-surface hover:text-secondary-container hover:border-secondary-container/50 transition-colors text-xs font-headline uppercase tracking-wider"
-          >
-            Collect
-          </button>
-          <button
-            class="px-3 py-1.5 rounded bg-transparent text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center"
-          >
-            <span class="material-symbols-outlined text-[18px]" data-icon="more_horiz"
-              >more_horiz</span
-            >
-          </button>
-        </div>
-      </RouterLink>
+      </div>
     </div>
   </div>
   <!-- Terminal Output / Log Area (Decorative industrial element) -->

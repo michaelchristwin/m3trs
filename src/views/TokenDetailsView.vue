@@ -28,7 +28,7 @@ function handleBack() {
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
       <div>
         <h1 class="font-headline font-bold text-3xl md:text-5xl text-on-surface tracking-tight">
-          Token <span class="font-mono text-primary">#101</span>
+          Token <span class="font-mono text-primary">#{{ $route.params.tokenId }}</span>
         </h1>
         <p class="font-mono text-sm text-on-surface/50 mt-2 tracking-widest uppercase">
           Contract Details &amp; Revenue Hub

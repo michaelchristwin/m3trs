@@ -163,7 +163,7 @@ const sidebarActiveClass =
     </div>
   </aside>
   <nav
-    class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-2 bg-[#131313] pb-safe border-t border-[#00FF41]/10"
+    class="fixed bottom-0 left-0 w-full z-50 flex md:hidden justify-around items-center h-20 px-2 bg-[#131313] pb-safe border-t border-[#00FF41]/10"
   >
     <!-- Dashboard (Inactive) -->
     <RouterLink
