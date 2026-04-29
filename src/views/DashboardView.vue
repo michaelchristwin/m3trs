@@ -1,3 +1,8 @@
+<script lang="ts" setup>
+import { useAppKitAccount } from '@reown/appkit/vue'
+
+const eip155Account = useAppKitAccount({ namespace: 'eip155' })
+</script>
 <template>
   <div
     class="absolute inset-0 pointer-events-none opacity-[0.03] z-[-1]"
@@ -16,7 +21,9 @@
       </h1>
       <p class="font-mono-data text-sm text-on-surface-variant">
         Real-time aggregate data for connected node:
-        <span class="text-primary-container">0x71C...4eD1</span>
+        <span class="text-primary-container"
+          >{{ eip155Account.address?.slice(0, 5) }}...{{ eip155Account.address?.slice(-4) }}</span
+        >
       </p>
     </div>
     <div class="flex items-center gap-4 font-mono-data text-xs">
@@ -140,11 +147,12 @@
         </div>
       </div>
       <div class="p-5 mt-auto">
-        <button
+        <RouterLink
+          :to="{ name: 'holdings' }"
           class="w-full bg-transparent border-2 border-outline-variant text-on-surface font-headline font-bold py-2.5 rounded text-sm hover:border-primary-container hover:text-primary-container transition-colors flex items-center justify-center gap-2"
         >
           MANAGE HOLDINGS
-        </button>
+        </RouterLink>
       </div>
     </div>
     <!-- Panel 3: Your Bonds -->
@@ -188,11 +196,14 @@
         </div>
       </div>
       <div class="p-5 mt-auto">
-        <button
+        <RouterLink
+          :to="{
+            name: 'bonds',
+          }"
           class="w-full bg-transparent border-2 border-outline-variant text-on-surface font-headline font-bold py-2.5 rounded text-sm hover:border-primary-container hover:text-primary-container transition-colors flex items-center justify-center gap-2"
         >
           VIEW BONDS
-        </button>
+        </RouterLink>
       </div>
     </div>
   </div>

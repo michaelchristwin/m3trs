@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import { useAppKitAccount } from '@reown/appkit/vue'
+
+const eip155Account = useAppKitAccount({ namespace: 'eip155' })
 const links = [
   { path: '/dashboard', slug: 'Dashboard' },
   { path: '/create-token', slug: 'Create' },
@@ -50,7 +53,9 @@ const sidebarActiveClass =
           <div
             class="w-2 h-2 rounded-[9999px] bg-primary-container shadow-[0_0_8px_rgba(0,255,65,0.8)]"
           ></div>
-          <span class="font-mono-data text-[#00FF41] text-xs">0x71C...4eD1</span>
+          <span class="font-mono-data text-[#00FF41] text-xs"
+            >{{ eip155Account.address?.slice(0, 4) }}...{{ eip155Account.address?.slice(-4) }}</span
+          >
         </div>
       </div>
     </div>

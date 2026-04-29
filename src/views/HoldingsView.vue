@@ -1,12 +1,14 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
+import { useAppKitAccount } from '@reown/appkit/vue'
 const router = useRouter()
 
+const eip155Account = useAppKitAccount({ namespace: 'eip155' })
 const openTokenDetails = (tokenId: number) => {
   router.push({
     name: 'token details',
     params: {
-      walletAddress: '0xb2403f83C23748b26B06173db7527383482E8c5a',
+      walletAddress: eip155Account.value.address,
       tokenId: tokenId,
     },
   })
