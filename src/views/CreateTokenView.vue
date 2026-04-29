@@ -1,3 +1,24 @@
+<script lang="ts" setup>
+import { ref } from 'vue'
+const selectedCardClass: Record<string, string> = {
+  selected:
+    'min-w-full sm:min-w-65 sm:max-w-65 shrink-0 bg-surface-container-high p-4 rounded cursor-pointer border-2 border-primary-container relative overflow-hidden shadow-[0_0_15px_rgba(0,255,65,0.1)] sm:snap-start',
+  unselected:
+    'min-w-full sm:min-w-65 sm:max-w-65 shrink-0 bg-surface-container-low p-4 rounded cursor-pointer border border-transparent hover:border-outline-variant transition-colors ghost-border sm:snap-start',
+}
+type NFTCard = {
+  tokenId: number
+  capacityKwh: number
+}
+const cards: NFTCard[] = [
+  { tokenId: 501, capacityKwh: 500 },
+  { tokenId: 502, capacityKwh: 250 },
+  { tokenId: 505, capacityKwh: 1000 },
+]
+
+const selectedId = ref<number | null>(501) // default selected
+</script>
+
 <template>
   <div class="max-w-4xl mx-auto">
     <!-- Header -->
@@ -21,47 +42,52 @@
             1
           </div>
           <h2 class="font-headline text-xl text-on-surface mb-6 ml-4">Select M3TER NFT</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <!-- Selected Card -->
+          <div
+            class="flex flex-col gap-4 max-h-[70vh] overflow-y-auto sm:flex-row sm:overflow-x-auto sm:overflow-y-hidden sm:max-h-none sm:scroll-smooth sm:snap-x sm:snap-mandatory custom-scrollbar"
+          >
             <div
-              class="bg-surface-container-high p-4 rounded cursor-pointer border-2 border-primary-container relative overflow-hidden shadow-[0_0_15px_rgba(0,255,65,0.1)]"
+              v-for="card in cards"
+              :key="card.tokenId"
+              @click="selectedId = card.tokenId"
+              :class="[
+                selectedId === card.tokenId
+                  ? selectedCardClass.selected
+                  : selectedCardClass.unselected,
+              ]"
             >
-              <div class="absolute top-2 right-2 text-primary-container">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1"
-                  >check_circle</span
-                >
+              <!-- Selected indicator -->
+              <div
+                v-if="selectedId === card.tokenId"
+                class="absolute top-2 right-2 text-primary-container"
+              >
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">
+                  check_circle
+                </span>
               </div>
+
+              <!-- Icon (static as requested) -->
               <div
                 class="w-full h-24 bg-surface-container-lowest mb-3 rounded overflow-hidden ghost-border flex items-center justify-center"
               >
-                <span class="material-symbols-outlined text-4xl text-outline-variant">memory</span>
+                <span class="material-symbols-outlined text-4xl text-outline-variant">
+                  memory
+                </span>
               </div>
-              <div class="font-mono text-lg text-primary-container font-bold">#501</div>
-              <div class="font-mono text-xs text-on-surface-variant mt-1">CAP: 500 kWh</div>
-            </div>
-            <!-- Unselected Card -->
-            <div
-              class="bg-surface-container-low p-4 rounded cursor-pointer border border-transparent hover:border-outline-variant transition-colors ghost-border"
-            >
+
+              <!-- Token -->
               <div
-                class="w-full h-24 bg-surface-container-lowest mb-3 rounded overflow-hidden ghost-border flex items-center justify-center"
+                :class="[
+                  'font-mono text-lg font-bold',
+                  selectedId === card.tokenId ? 'text-primary-container' : 'text-on-surface',
+                ]"
               >
-                <span class="material-symbols-outlined text-4xl text-outline-variant">memory</span>
+                #{{ card.tokenId }}
               </div>
-              <div class="font-mono text-lg text-on-surface font-bold">#502</div>
-              <div class="font-mono text-xs text-on-surface-variant mt-1">CAP: 250 kWh</div>
-            </div>
-            <!-- Unselected Card -->
-            <div
-              class="bg-surface-container-low p-4 rounded cursor-pointer border border-transparent hover:border-outline-variant transition-colors ghost-border"
-            >
-              <div
-                class="w-full h-24 bg-surface-container-lowest mb-3 rounded overflow-hidden ghost-border flex items-center justify-center"
-              >
-                <span class="material-symbols-outlined text-4xl text-outline-variant">memory</span>
+
+              <!-- CAP -->
+              <div class="font-mono text-xs text-on-surface-variant mt-1">
+                CAP: {{ card.capacityKwh }} kWh
               </div>
-              <div class="font-mono text-lg text-on-surface font-bold">#505</div>
-              <div class="font-mono text-xs text-on-surface-variant mt-1">CAP: 1000 kWh</div>
             </div>
           </div>
         </section>
