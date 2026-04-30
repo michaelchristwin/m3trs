@@ -1,5 +1,11 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
+import type { Address } from 'viem'
+import { useAppKitAccount } from '@reown/appkit/vue'
+import { approveAndMint } from '@/actions/approveAndMint'
+
+const eip155Account = useAppKitAccount({ namespace: 'eip155' })
+
 const selectedCardClass: Record<string, string> = {
   selected:
     'min-w-full sm:min-w-65 sm:max-w-65 shrink-0 bg-surface-container-high p-4 rounded cursor-pointer border-2 border-primary-container relative overflow-hidden shadow-[0_0_15px_rgba(0,255,65,0.1)] sm:snap-start',
@@ -16,7 +22,16 @@ const cards: NFTCard[] = [
   { tokenId: 505, capacityKwh: 1000 },
 ]
 
-const selectedId = ref<number | null>(501) // default selected
+const selectedId = ref<number | null>(null) // default selected
+
+const submit = async (e: Event) => {
+  const formData = new FormData(e.target as HTMLFormElement)
+  const metedata_url = formData.get('metedata_url') as string
+  await approveAndMint(
+    [eip155Account.value.address as Address, BigInt(selectedId.value!)],
+    [eip155Account.value.address as Address, BigInt(selectedId.value!), metedata_url],
+  )
+}
 </script>
 
 <template>
@@ -31,7 +46,7 @@ const selectedId = ref<number | null>(501) // default selected
       </p>
     </div>
     <!-- Wizard Layout -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <form class="grid grid-cols-1 lg:grid-cols-12 gap-8" @submit.prevent="submit">
       <!-- Left Column: Form Steps -->
       <div class="lg:col-span-8 space-y-12">
         <!-- Step 1: Select M3TER -->
@@ -101,7 +116,7 @@ const selectedId = ref<number | null>(501) // default selected
             2
           </div>
           <h2 class="font-headline text-xl text-primary-container mb-8 ml-4">Configure Token</h2>
-          <form class="space-y-8">
+          <div class="space-y-8">
             <!-- Supply Input -->
             <div class="relative">
               <label
@@ -143,17 +158,18 @@ const selectedId = ref<number | null>(501) // default selected
             <!-- Metadata URI Input -->
             <div class="relative">
               <label
+                for="metedata_url"
                 class="block font-mono text-[0.6875rem] uppercase tracking-widest text-on-surface-variant mb-2"
                 >Metadata URI</label
               >
               <input
+                name="metedata_url"
                 class="input-underline w-full font-mono text-sm text-on-surface pb-2 px-0 bg-transparent focus:ring-0"
                 placeholder="ipfs://..."
                 type="text"
-                value="ipfs://QmXyZ..."
               />
             </div>
-          </form>
+          </div>
         </section>
       </div>
       <!-- Right Column: Review & Action -->
@@ -195,6 +211,7 @@ const selectedId = ref<number | null>(501) // default selected
               </div>
             </div>
             <button
+              type="submit"
               class="w-full bg-primary-container text-on-primary-container font-headline font-bold uppercase tracking-wider py-4 rounded hover:bg-primary-fixed transition-colors shadow-[0_0_15px_rgba(0,255,65,0.2)] flex justify-center items-center gap-2"
             >
               <span class="material-symbols-outlined">rocket_launch</span>
@@ -203,6 +220,6 @@ const selectedId = ref<number | null>(501) // default selected
           </section>
         </div>
       </div>
-    </div>
+    </form>
   </div>
 </template>
