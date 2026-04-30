@@ -2335,6 +2335,9 @@ packages:
   lit@3.3.0:
     resolution: {integrity: sha512-DGVsqsOIHBww2DqnuZzW7QsuCdahp50ojuDaBPC7jUDRpYoH0z7kHBBYZewRzer75FwtrkmkKk7iOAwSaWdBmw==}
 
+  lit@3.3.2:
+    resolution: {integrity: sha512-NF9zbsP79l4ao2SNrH3NkfmFgN/hBYSQo90saIVI1o5GpjAdCPVstVzO1MrLOakHoEhYkrtRjPK6Ob521aoYWQ==}
+
   local-pkg@1.1.2:
     resolution: {integrity: sha512-arhlxbFRmoQHl33a0Zkle/YWlmNwoyt6QNZEIJcqNbdrsix5Lvc4HyyI3EnwxTYlZYc32EbYrQ8SzEZ7dqgg9A==}
     engines: {node: '>=14'}
@@ -3707,7 +3710,7 @@ snapshots:
 
   '@phosphor-icons/webcomponents@2.1.5':
     dependencies:
-      lit: 3.3.0
+      lit: 3.3.2
 
   '@polka/url@1.0.0-next.29': {}
 
@@ -6004,6 +6007,12 @@ snapshots:
       '@types/trusted-types': 2.0.7
 
   lit@3.3.0:
+    dependencies:
+      '@lit/reactive-element': 2.1.2
+      lit-element: 4.2.2
+      lit-html: 3.3.2
+
+  lit@3.3.2:
     dependencies:
       '@lit/reactive-element': 2.1.2
       lit-element: 4.2.2
