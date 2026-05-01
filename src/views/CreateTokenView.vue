@@ -1,13 +1,11 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import type { Address, BaseError } from 'viem'
-import { useAppKitAccount } from '@reown/appkit/vue'
-import { approveAndMint } from '@/actions/approveAndMint'
-import { M3TRS } from '@/config/smart-contracts/M3TRS'
 import { useReadContract } from '@wagmi/vue'
+import type { Address, BaseError } from 'viem'
+import { account } from '@/config/viem-clients'
+import { M3TRS } from '@/config/smart-contracts/M3TRS'
+import { approveAndMint } from '@/actions/approveAndMint'
 import { MyToken } from '@/config/smart-contracts/MyToken'
-
-const eip155Account = useAppKitAccount({ namespace: 'eip155' })
 
 const selectedCardClass: Record<string, string> = {
   selected:
@@ -23,15 +21,20 @@ const {
 } = useReadContract({
   ...MyToken,
   functionName: 'tokensOfOwner',
+  args: [account as Address],
+  query: {
+    enabled: !!account,
+  },
 })
+
 const selectedId = ref<bigint | null>(null) // default selected
 
 const submit = async (e: Event) => {
   const formData = new FormData(e.target as HTMLFormElement)
   const metedata_url = formData.get('metedata_url') as string
   await approveAndMint(
-    [M3TRS.address, BigInt(selectedId.value!)],
-    [eip155Account.value.address as Address, BigInt(selectedId.value!), metedata_url],
+    [M3TRS.address, selectedId.value!],
+    [account as Address, selectedId.value!, metedata_url],
   )
 }
 </script>
