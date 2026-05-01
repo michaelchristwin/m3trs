@@ -1,8 +1,11 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import type { Address } from 'viem'
+import type { Address, BaseError } from 'viem'
 import { useAppKitAccount } from '@reown/appkit/vue'
 import { approveAndMint } from '@/actions/approveAndMint'
+import { M3TRS } from '@/config/smart-contracts/M3TRS'
+import { useReadContract } from '@wagmi/vue'
+import { MyToken } from '@/config/smart-contracts/MyToken'
 
 const eip155Account = useAppKitAccount({ namespace: 'eip155' })
 
@@ -12,23 +15,22 @@ const selectedCardClass: Record<string, string> = {
   unselected:
     'min-w-full sm:min-w-65 sm:max-w-65 shrink-0 bg-surface-container-low p-4 rounded cursor-pointer border border-transparent hover:border-outline-variant transition-colors ghost-border sm:snap-start',
 }
-type NFTCard = {
-  tokenId: number
-  capacityKwh: number
-}
-const cards: NFTCard[] = [
-  { tokenId: 501, capacityKwh: 500 },
-  { tokenId: 502, capacityKwh: 250 },
-  { tokenId: 505, capacityKwh: 1000 },
-]
 
-const selectedId = ref<number | null>(null) // default selected
+const {
+  data: tokenIds,
+  error,
+  isPending,
+} = useReadContract({
+  ...MyToken,
+  functionName: 'tokensOfOwner',
+})
+const selectedId = ref<bigint | null>(null) // default selected
 
 const submit = async (e: Event) => {
   const formData = new FormData(e.target as HTMLFormElement)
   const metedata_url = formData.get('metedata_url') as string
   await approveAndMint(
-    [eip155Account.value.address as Address, BigInt(selectedId.value!)],
+    [M3TRS.address, BigInt(selectedId.value!)],
     [eip155Account.value.address as Address, BigInt(selectedId.value!), metedata_url],
   )
 }
@@ -60,19 +62,24 @@ const submit = async (e: Event) => {
           <div
             class="flex flex-col gap-4 max-h-[70vh] overflow-y-auto sm:flex-row sm:overflow-x-auto sm:overflow-y-hidden sm:max-h-none sm:scroll-smooth sm:snap-x sm:snap-mandatory custom-scrollbar"
           >
+            <div v-if="isPending">
+              <p>Loading...</p>
+            </div>
+            <div v-else-if="error">
+              Error: {{ (error as BaseError).shortMessage || error.message }}
+            </div>
             <div
-              v-for="card in cards"
-              :key="card.tokenId"
-              @click="selectedId = card.tokenId"
+              v-else
+              v-for="tokenId in tokenIds"
+              :key="tokenId.toString()"
+              @click="selectedId = tokenId"
               :class="[
-                selectedId === card.tokenId
-                  ? selectedCardClass.selected
-                  : selectedCardClass.unselected,
+                selectedId === tokenId ? selectedCardClass.selected : selectedCardClass.unselected,
               ]"
             >
               <!-- Selected indicator -->
               <div
-                v-if="selectedId === card.tokenId"
+                v-if="selectedId === tokenId"
                 class="absolute top-2 right-2 text-primary-container"
               >
                 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">
@@ -93,16 +100,14 @@ const submit = async (e: Event) => {
               <div
                 :class="[
                   'font-mono text-lg font-bold',
-                  selectedId === card.tokenId ? 'text-primary-container' : 'text-on-surface',
+                  selectedId === tokenId ? 'text-primary-container' : 'text-on-surface',
                 ]"
               >
-                #{{ card.tokenId }}
+                #{{ Number(tokenId) }}
               </div>
 
               <!-- CAP -->
-              <div class="font-mono text-xs text-on-surface-variant mt-1">
-                CAP: {{ card.capacityKwh }} kWh
-              </div>
+              <div class="font-mono text-xs text-on-surface-variant mt-1">CAP: 500 kWh</div>
             </div>
           </div>
         </section>

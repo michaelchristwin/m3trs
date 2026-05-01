@@ -1,4 +1,4 @@
-const ABI = [
+const m3trs_ABI = [
   {
     inputs: [{ internalType: 'address', name: 'owner', type: 'address' }],
     stateMutability: 'nonpayable',
@@ -249,4 +249,4 @@ const ABI = [
   },
 ] as const
 
-export { ABI }
+export { m3trs_ABI }

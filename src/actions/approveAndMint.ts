@@ -1,13 +1,14 @@
 import type { Address } from 'viem'
 import { M3TRS } from '@/config/smart-contracts/M3TRS'
 import { account, walletClient, publicClient } from '@/config/viem-clients'
+import { MyToken } from '@/config/smart-contracts/MyToken'
 
 async function approveAndMint(
   approveArgs: [account: Address, id: bigint],
   mintArgs: [to: Address, id: bigint, uri_: string],
 ) {
   const { request: approveReq } = await publicClient.simulateContract({
-    ...M3TRS,
+    ...MyToken,
     account: account!,
     functionName: 'approve',
     args: approveArgs,
