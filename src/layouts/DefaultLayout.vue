@@ -1,6 +1,8 @@
 <script lang="ts" setup>
-import { useAppKitAccount } from '@reown/appkit/vue'
+import { useAppKitAccount, useAppKit } from '@reown/appkit/vue'
+import { watch } from 'vue'
 
+const { open } = useAppKit()
 const eip155Account = useAppKitAccount({ namespace: 'eip155' })
 const links = [
   { path: '/dashboard', slug: 'Dashboard' },
@@ -11,6 +13,16 @@ const links = [
 
 const sidebarActiveClass =
   'opacity-80 text-primary-container border-primary-container border-r-4 bg-[#00FF41]/10'
+
+watch(
+  () => eip155Account.value.isConnected,
+  (isConnected, prev) => {
+    if (prev !== undefined && !isConnected) {
+      open()
+    }
+  },
+  { immediate: false },
+)
 </script>
 
 <template>
@@ -48,7 +60,8 @@ const sidebarActiveClass =
           <span class="material-symbols-outlined text-[20px]">settings</span>
         </button>
         <div
-          class="flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded box-glow border border-primary/20"
+          @click="open({ view: 'Account' })"
+          class="flex cursor-pointer items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded box-glow border border-primary/20"
         >
           <div
             class="w-2 h-2 rounded-[9999px] bg-primary-container shadow-[0_0_8px_rgba(0,255,65,0.8)]"
