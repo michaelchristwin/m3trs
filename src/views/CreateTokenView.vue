@@ -1,11 +1,14 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
+import { z } from 'zod'
 import { useReadContract } from '@wagmi/vue'
 import type { Address, BaseError } from 'viem'
 import { account } from '@/config/viem-clients'
 import { M3TRS } from '@/config/smart-contracts/M3TRS'
 import { approveAndMint } from '@/actions/approveAndMint'
 import { MyToken } from '@/config/smart-contracts/MyToken'
+import { useMutation } from '@tanstack/vue-query'
 
 const selectedCardClass: Record<string, string> = {
   selected:
@@ -27,15 +30,35 @@ const {
   },
 })
 
-const selectedId = ref<bigint | null>(null) // default selected
+const schema = z.object({
+  tokenId: z.bigint({
+    error: (issue) => (issue.input === undefined ? 'Select an NFT' : 'Invalid token ID'),
+  }),
+  metadataUrl: z.string('Invalid URL').refine(
+    (val) => val.startsWith('ipfs://'),
+    //|| val.includes('gateway')
+    //|| val.includes('ipfs.io')
+    { message: 'Must be an IPFS URL' },
+  ),
+})
 
-const submit = async (e: Event) => {
-  const formData = new FormData(e.target as HTMLFormElement)
-  const metedata_url = formData.get('metedata_url') as string
+const { handleSubmit, setFieldValue, errors, values, meta } = useForm({
+  validationSchema: toTypedSchema(schema),
+})
+
+const onSubmit = handleSubmit(async (formValues) => {
   await approveAndMint(
-    [M3TRS.address, selectedId.value!],
-    [account as Address, selectedId.value!, metedata_url],
+    [M3TRS.address, formValues.tokenId],
+    [account as Address, formValues.tokenId, formValues.metadataUrl],
   )
+})
+const { mutateAsync, isPending: mutationIsPending } = useMutation({
+  mutationFn: onSubmit,
+  mutationKey: ['approveAndMint'],
+})
+
+function onSelectNFT(tokenId: bigint) {
+  setFieldValue('tokenId', tokenId)
 }
 </script>
 
@@ -51,7 +74,7 @@ const submit = async (e: Event) => {
       </p>
     </div>
     <!-- Wizard Layout -->
-    <form class="grid grid-cols-1 lg:grid-cols-12 gap-8" @submit.prevent="submit">
+    <form class="grid grid-cols-1 lg:grid-cols-12 gap-8" @submit.prevent="mutateAsync">
       <!-- Left Column: Form Steps -->
       <div class="lg:col-span-8 space-y-12">
         <!-- Step 1: Select M3TER -->
@@ -75,14 +98,16 @@ const submit = async (e: Event) => {
               v-else
               v-for="tokenId in tokenIds"
               :key="tokenId.toString()"
-              @click="selectedId = tokenId"
+              @click="onSelectNFT(tokenId)"
               :class="[
-                selectedId === tokenId ? selectedCardClass.selected : selectedCardClass.unselected,
+                values.tokenId === tokenId
+                  ? selectedCardClass.selected
+                  : selectedCardClass.unselected,
               ]"
             >
               <!-- Selected indicator -->
               <div
-                v-if="selectedId === tokenId"
+                v-if="values.tokenId === tokenId"
                 class="absolute top-2 right-2 text-primary-container"
               >
                 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">
@@ -103,7 +128,7 @@ const submit = async (e: Event) => {
               <div
                 :class="[
                   'font-mono text-lg font-bold',
-                  selectedId === tokenId ? 'text-primary-container' : 'text-on-surface',
+                  values.tokenId === tokenId ? 'text-primary-container' : 'text-on-surface',
                 ]"
               >
                 #{{ Number(tokenId) }}
@@ -113,6 +138,7 @@ const submit = async (e: Event) => {
               <div class="font-mono text-xs text-on-surface-variant mt-1">CAP: 500 kWh</div>
             </div>
           </div>
+          <span class="text-red-500 italic text-[13px]">{{ errors.tokenId }}</span>
         </section>
         <!-- Step 2: Configure Token -->
         <section
@@ -166,17 +192,18 @@ const submit = async (e: Event) => {
             <!-- Metadata URI Input -->
             <div class="relative">
               <label
-                for="metedata_url"
                 class="block font-mono text-[0.6875rem] uppercase tracking-widest text-on-surface-variant mb-2"
                 >Metadata URI</label
               >
               <input
-                name="metedata_url"
+                :value="values.metadataUrl"
+                @input="setFieldValue('metadataUrl', ($event.target as HTMLInputElement).value)"
                 class="input-underline w-full font-mono text-sm text-on-surface pb-2 px-0 bg-transparent focus:ring-0"
                 placeholder="ipfs://..."
                 type="text"
               />
             </div>
+            <span class="text-red-500 italic text-[12px]">{{ errors.metadataUrl }}</span>
           </div>
         </section>
       </div>
@@ -193,7 +220,7 @@ const submit = async (e: Event) => {
             <div class="space-y-4 mb-8">
               <div class="flex justify-between items-center pb-2 border-b border-surface-variant">
                 <span class="font-mono text-xs text-on-surface-variant uppercase">Asset</span>
-                <span class="font-mono text-sm text-on-surface">M3TER #501</span>
+                <span class="font-mono text-sm text-on-surface">M3TER #{{ values.tokenId }}</span>
               </div>
               <div class="flex justify-between items-center pb-2 border-b border-surface-variant">
                 <span class="font-mono text-xs text-on-surface-variant uppercase">Supply</span>
@@ -220,10 +247,26 @@ const submit = async (e: Event) => {
             </div>
             <button
               type="submit"
-              class="w-full bg-primary-container text-on-primary-container font-headline font-bold uppercase tracking-wider py-4 rounded hover:bg-primary-fixed transition-colors shadow-[0_0_15px_rgba(0,255,65,0.2)] flex justify-center items-center gap-2"
+              :disabled="!meta.valid || mutationIsPending"
+              class="w-full bg-primary-container disabled:bg-primary-container/50 disabled:cursor-not-allowed! text-on-primary-container font-headline font-bold uppercase tracking-wider py-4 rounded hover:bg-primary-fixed transition-colors shadow-[0_0_15px_rgba(0,255,65,0.2)] flex justify-center items-center gap-2"
             >
               <span class="material-symbols-outlined">rocket_launch</span>
-              Create Token
+              <span>Create Token</span>
+              <svg
+                v-if="mutationIsPending"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-loader-circle-icon lucide-loader-circle animate-spin text-[14px]"
+              >
+                <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+              </svg>
             </button>
           </section>
         </div>
