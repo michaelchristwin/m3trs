@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-
+import { useHead } from '@unhead/vue'
+import { useRouter, useRoute } from 'vue-router'
+const route = useRoute()
 const router = useRouter()
 
-function handleBack() {
+useHead({
+  title: `Holdings | Token ${route.params.tokenId}`,
+  meta: [{ name: 'description', content: `Details for token ${route.params.tokenId}` }],
+})
+const handleBack = () => {
   if (window.history.length > 1) {
     router.back()
   } else {

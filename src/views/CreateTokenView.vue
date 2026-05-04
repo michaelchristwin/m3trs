@@ -9,6 +9,12 @@ import { M3TRS } from '@/config/smart-contracts/M3TRS'
 import { approveAndMint } from '@/actions/approveAndMint'
 import { MyToken } from '@/config/smart-contracts/MyToken'
 import { useMutation } from '@tanstack/vue-query'
+import { useHead } from '@unhead/vue'
+
+useHead({
+  title: 'Create Token',
+  meta: [{ name: 'description', content: 'Create TRS token' }],
+})
 
 const selectedCardClass: Record<string, string> = {
   selected:

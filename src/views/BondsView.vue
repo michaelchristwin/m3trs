@@ -1,3 +1,11 @@
+<script lang="ts" setup>
+import { useHead } from '@unhead/vue'
+useHead({
+  title: 'Bonds',
+  meta: [{ name: 'description', content: '' }],
+})
+</script>
+
 <template>
   <header class="mb-8 md:mb-12">
     <h1 class="font-headline text-3xl md:text-4xl font-bold tracking-tight text-on-surface mb-2">

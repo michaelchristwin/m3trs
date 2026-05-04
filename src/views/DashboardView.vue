@@ -1,5 +1,10 @@
 <script lang="ts" setup>
 import { useAppKitAccount } from '@reown/appkit/vue'
+import { useHead } from '@unhead/vue'
+useHead({
+  title: 'Dashboard',
+  meta: [{ name: 'description', content: 'dashboard' }],
+})
 
 const eip155Account = useAppKitAccount({ namespace: 'eip155' })
 </script>
