@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import AccrueButton from '@/components/buttons/AccrueButton.vue'
+import CollectButton from '@/components/buttons/CollectButton.vue'
 import { useHead } from '@unhead/vue'
 import { useRouter, useRoute } from 'vue-router'
 const route = useRoute()
@@ -69,7 +71,7 @@ const handleBack = () => {
         <div class="p-6 flex flex-col gap-6">
           <div>
             <label
-              class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-[0.05em] block mb-1"
+              class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-1"
               >URI</label
             >
             <a
@@ -82,14 +84,14 @@ const handleBack = () => {
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label
-                class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-[0.05em] block mb-1"
+                class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-1"
                 >Supply</label
               >
               <div class="font-mono text-lg text-on-surface">1000</div>
             </div>
             <div>
               <label
-                class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-[0.05em] block mb-1"
+                class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-1"
                 >M3TER ID</label
               >
               <div class="font-mono text-lg text-secondary">#501</div>
@@ -98,7 +100,7 @@ const handleBack = () => {
           <div class="w-full h-px bg-surface-container"></div>
           <div>
             <label
-              class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-[0.05em] block mb-1"
+              class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-1"
               >Stop Time</label
             >
             <div class="font-mono text-sm text-on-surface mb-1">2024-12-31</div>
@@ -137,7 +139,7 @@ const handleBack = () => {
         <div class="p-6 md:p-8 flex flex-col md:flex-row gap-8 relative z-10">
           <div class="flex-1 flex flex-col justify-center">
             <label
-              class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-[0.05em] block mb-2"
+              class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2"
               >Total Accrued</label
             >
             <div
@@ -156,23 +158,23 @@ const handleBack = () => {
           <div class="w-full h-px bg-surface-container md:hidden"></div>
           <div class="flex-1 flex flex-col justify-center">
             <label
-              class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-[0.05em] block mb-2"
+              class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2"
               >Your Claimable</label
             >
             <div class="font-mono text-3xl text-primary mb-6">
               $45.<span class="text-primary/60">22</span>
             </div>
             <div class="flex flex-col sm:flex-row gap-3">
-              <button
+              <AccrueButton
+                inner-text="Accrue Revenue"
+                :token-id="$route.params.tokenId"
                 class="flex-1 bg-transparent ghost-border-primary text-primary font-headline font-bold text-sm py-3 px-4 rounded hover:bg-primary/5 transition-all"
-              >
-                Accrue Revenue
-              </button>
-              <button
+              />
+              <CollectButton
+                inner-text="Collect Revenue"
+                :token-id="$route.params.tokenId"
                 class="flex-1 bg-primary-container text-on-primary-container font-headline font-bold text-sm py-3 px-4 rounded hover:brightness-110 transition-all glow-primary glass-gradient-primary"
-              >
-                Collect Revenue
-              </button>
+              />
             </div>
           </div>
         </div>
@@ -195,7 +197,7 @@ const handleBack = () => {
           <div class="flex flex-col md:flex-row gap-6 items-end">
             <div class="flex-1 w-full">
               <label
-                class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-[0.05em] block mb-2"
+                class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2"
                 >Recipient Address</label
               >
               <div class="relative">
@@ -213,7 +215,7 @@ const handleBack = () => {
             </div>
             <div class="w-full md:w-1/3">
               <label
-                class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-[0.05em] block mb-2"
+                class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2"
                 >Amount</label
               >
               <input

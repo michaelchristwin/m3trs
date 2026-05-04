@@ -5,7 +5,7 @@ import { MyToken } from '@/config/smart-contracts/MyToken'
 
 async function approveAndMint(
   approveArgs: [account: Address, id: bigint],
-  mintArgs: [to: Address, id: bigint, uri_: string],
+  mintArgs: [_supply: bigint, _m3terId: bigint, _stopTime: bigint, _uri: string],
 ) {
   const { request: approveReq } = await publicClient.simulateContract({
     ...MyToken,
@@ -21,7 +21,7 @@ async function approveAndMint(
   const { request: mintReq } = await publicClient.simulateContract({
     ...M3TRS,
     account: account!,
-    functionName: 'mint',
+    functionName: 'create',
     args: mintArgs,
   })
   const mintTxHash = await walletClient.writeContract(mintReq)

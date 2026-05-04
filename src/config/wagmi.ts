@@ -19,3 +19,9 @@ const wagmiAdapter = new WagmiAdapter({
 })
 
 export { wagmiAdapter, metadata, networks, projectId }
+
+declare module '@wagmi/vue' {
+  interface Register {
+    config: typeof wagmiAdapter.wagmiConfig
+  }
+}

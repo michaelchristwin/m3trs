@@ -23,6 +23,7 @@
     "@vee-validate/zod": "^4.15.1",
     "@wagmi/vue": "^0.5.11",
     "nitro": "3.0.260429-beta",
+    "pinata": "^2.5.6",
     "pinia": "^3.0.4",
     "tailwindcss": "^4.2.4",
     "vee-validate": "^4.15.1",

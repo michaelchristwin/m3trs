@@ -8,4 +8,10 @@ export default defineConfig({
     deployConfig: true,
     nodeCompat: true,
   },
+  runtimeConfig: {
+    pinataApiKey: '',
+    pinataApiSecret: '',
+    pinataJwt: '',
+    pinataGatewayUrl: '',
+  },
 })

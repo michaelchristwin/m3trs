@@ -1,15 +1,14 @@
 <script lang="ts" setup>
-import { useForm } from 'vee-validate'
-import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
-import { useReadContract } from '@wagmi/vue'
+import { useHead } from '@unhead/vue'
+import { useForm } from 'vee-validate'
 import type { Address, BaseError } from 'viem'
-import { account } from '@/config/viem-clients'
+import { useMutation } from '@tanstack/vue-query'
+import { toTypedSchema } from '@vee-validate/zod'
 import { M3TRS } from '@/config/smart-contracts/M3TRS'
 import { approveAndMint } from '@/actions/approveAndMint'
+import { useConnection, useReadContract } from '@wagmi/vue'
 import { MyToken } from '@/config/smart-contracts/MyToken'
-import { useMutation } from '@tanstack/vue-query'
-import { useHead } from '@unhead/vue'
 
 useHead({
   title: 'Create Token',
@@ -22,7 +21,7 @@ const selectedCardClass: Record<string, string> = {
   unselected:
     'min-w-full sm:min-w-65 sm:max-w-65 shrink-0 bg-surface-container-low p-4 rounded cursor-pointer border border-transparent hover:border-outline-variant transition-colors ghost-border sm:snap-start',
 }
-
+const { address } = useConnection()
 const {
   data: tokenIds,
   error,
@@ -30,9 +29,9 @@ const {
 } = useReadContract({
   ...MyToken,
   functionName: 'tokensOfOwner',
-  args: [account as Address],
+  args: [address.value as Address],
   query: {
-    enabled: !!account,
+    enabled: !!address,
   },
 })
 
@@ -40,12 +39,15 @@ const schema = z.object({
   tokenId: z.bigint({
     error: (issue) => (issue.input === undefined ? 'Select an NFT' : 'Invalid token ID'),
   }),
-  metadataUrl: z.string('Invalid URL').refine(
-    (val) => val.startsWith('ipfs://'),
-    //|| val.includes('gateway')
-    //|| val.includes('ipfs.io')
-    { message: 'Must be an IPFS URL' },
-  ),
+  metadataUrl: z
+    .string('Invalid URL')
+    .refine((val) => val.startsWith('ipfs://'), { message: 'Must be an IPFS URL' }),
+  supply: z.number().positive({ error: 'Supply must be greater than 0' }),
+  stopTime: z.iso
+    .datetime({ local: true })
+    .transform((val) => new Date(val)) // local → Date (UTC internally)
+    .refine((date) => !isNaN(date.getTime()), 'Invalid date')
+    .transform((date) => date.getTime()), // → UTC timestamp (number)
 })
 
 const { handleSubmit, setFieldValue, errors, values, meta } = useForm({
@@ -53,9 +55,10 @@ const { handleSubmit, setFieldValue, errors, values, meta } = useForm({
 })
 
 const onSubmit = handleSubmit(async (formValues) => {
+  const { supply, tokenId, stopTime, metadataUrl } = formValues
   await approveAndMint(
     [M3TRS.address, formValues.tokenId],
-    [account as Address, formValues.tokenId, formValues.metadataUrl],
+    [BigInt(supply), tokenId, BigInt(stopTime), metadataUrl],
   )
 })
 const { mutateAsync, isPending: mutationIsPending } = useMutation({
@@ -168,11 +171,14 @@ function onSelectNFT(tokenId: bigint) {
                   class="input-underline w-full font-mono text-2xl text-on-surface pb-2 px-0 bg-transparent focus:ring-0"
                   placeholder="0"
                   type="number"
-                  value="10000"
+                  :value="values.supply"
+                  @input="
+                    setFieldValue('supply', ($event.target as HTMLInputElement).valueAsNumber)
+                  "
                 />
                 <span
                   class="font-mono text-sm text-outline-variant ml-3 pb-2 border-b border-outline-variant"
-                  >RVT</span
+                  >TRS</span
                 >
               </div>
             </div>
@@ -191,7 +197,8 @@ function onSelectNFT(tokenId: bigint) {
                 <input
                   class="bg-transparent border-none w-full font-mono text-lg text-on-surface pb-2 px-0 focus:ring-0"
                   type="datetime-local"
-                  value="2024-12-31T23:59"
+                  :value="values.stopTime"
+                  @input="setFieldValue('stopTime', ($event.target as HTMLInputElement).value)"
                 />
               </div>
             </div>
@@ -238,7 +245,10 @@ function onSelectNFT(tokenId: bigint) {
               </div>
             </div>
             <!-- Warning Box -->
-            <div class="bg-secondary-container/10 border-l-2 border-secondary-container p-4 mb-8">
+            <div
+              class="bg-secondary-container/10 border-l-2 border-secondary-container p-4 mb-8"
+              v-if="values.tokenId != undefined"
+            >
               <div class="flex items-start gap-3">
                 <span
                   class="material-symbols-outlined text-secondary-container"
@@ -246,8 +256,8 @@ function onSelectNFT(tokenId: bigint) {
                   >warning</span
                 >
                 <p class="font-body text-sm text-secondary-fixed">
-                  Depositing M3TER <span class="font-mono">#501</span> locks it in the contract
-                  until expiry.
+                  Depositing M3TER <span class="font-mono">{{ values.tokenId }}</span> locks it in
+                  the contract until expiry.
                 </p>
               </div>
             </div>

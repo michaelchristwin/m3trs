@@ -1,9 +1,20 @@
 <script lang="ts" setup>
+import { M3TRS } from '@/config/smart-contracts/M3TRS'
 import { useHead } from '@unhead/vue'
+import { useWriteContract } from '@wagmi/vue'
 useHead({
   title: 'Bonds',
   meta: [{ name: 'description', content: '' }],
 })
+const { mutateAsync, isPending } = useWriteContract()
+
+const expire = async (id: number) => {
+  await mutateAsync({
+    ...M3TRS,
+    functionName: 'expire',
+    args: [BigInt(id)],
+  })
+}
 </script>
 
 <template>
@@ -30,7 +41,7 @@ useHead({
       </div>
       <div class="mb-6">
         <p
-          class="text-[0.6875rem] font-headline tracking-[0.05em] text-on-surface-variant uppercase mb-1"
+          class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
         >
           METER_ID
         </p>
@@ -39,7 +50,7 @@ useHead({
       <div class="grid grid-cols-2 gap-4 mb-8">
         <div>
           <p
-            class="text-[0.6875rem] font-headline tracking-[0.05em] text-on-surface-variant uppercase mb-1"
+            class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
           >
             TOKEN_ID
           </p>
@@ -47,7 +58,7 @@ useHead({
         </div>
         <div>
           <p
-            class="text-[0.6875rem] font-headline tracking-[0.05em] text-on-surface-variant uppercase mb-1"
+            class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
           >
             STOP_TIME
           </p>
@@ -56,7 +67,7 @@ useHead({
       </div>
       <div class="bg-surface-container-high rounded p-4 mb-6 border-l-2 border-primary-container">
         <p
-          class="text-[0.6875rem] font-headline tracking-[0.05em] text-on-surface-variant uppercase mb-1"
+          class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
         >
           COUNTDOWN
         </p>
@@ -64,6 +75,8 @@ useHead({
       </div>
       <div class="mt-auto pt-4 border-t border-outline-variant/20">
         <button
+          @click="expire(3)"
+          :disabled="isPending"
           class="w-full py-3 bg-primary-container text-on-primary-container font-headline font-bold text-sm rounded hover:bg-primary transition-all duration-200 shadow-[0_0_15px_rgba(0,255,65,0.1)] hover:shadow-[0_0_20px_rgba(0,255,65,0.2)]"
         >
           [EXPIRE]
@@ -82,7 +95,7 @@ useHead({
       </div>
       <div class="mb-6">
         <p
-          class="text-[0.6875rem] font-headline tracking-[0.05em] text-on-surface-variant uppercase mb-1"
+          class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
         >
           METER_ID
         </p>
@@ -91,7 +104,7 @@ useHead({
       <div class="grid grid-cols-2 gap-4 mb-8">
         <div>
           <p
-            class="text-[0.6875rem] font-headline tracking-[0.05em] text-on-surface-variant uppercase mb-1"
+            class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
           >
             TOKEN_ID
           </p>
@@ -99,7 +112,7 @@ useHead({
         </div>
         <div>
           <p
-            class="text-[0.6875rem] font-headline tracking-[0.05em] text-on-surface-variant uppercase mb-1"
+            class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
           >
             STOP_TIME
           </p>
@@ -108,7 +121,7 @@ useHead({
       </div>
       <div class="bg-surface-container-high rounded p-4 mb-6 border-l-2 border-secondary-container">
         <p
-          class="text-[0.6875rem] font-headline tracking-[0.05em] text-on-surface-variant uppercase mb-1"
+          class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
         >
           COUNTDOWN
         </p>
@@ -135,7 +148,7 @@ useHead({
       </div>
       <div class="mb-6">
         <p
-          class="text-[0.6875rem] font-headline tracking-[0.05em] text-on-surface-variant uppercase mb-1"
+          class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
         >
           METER_ID
         </p>
@@ -144,7 +157,7 @@ useHead({
       <div class="grid grid-cols-2 gap-4 mb-8">
         <div>
           <p
-            class="text-[0.6875rem] font-headline tracking-[0.05em] text-on-surface-variant uppercase mb-1"
+            class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
           >
             TOKEN_ID
           </p>
@@ -152,7 +165,7 @@ useHead({
         </div>
         <div>
           <p
-            class="text-[0.6875rem] font-headline tracking-[0.05em] text-on-surface-variant uppercase mb-1"
+            class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
           >
             STOP_TIME
           </p>
@@ -161,7 +174,7 @@ useHead({
       </div>
       <div class="bg-surface-container-high rounded p-4 mb-6 border-l-2 border-secondary-container">
         <p
-          class="text-[0.6875rem] font-headline tracking-[0.05em] text-on-surface-variant uppercase mb-1"
+          class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
         >
           COUNTDOWN
         </p>
