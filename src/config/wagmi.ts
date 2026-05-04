@@ -1,11 +1,8 @@
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
-
 import { sepolia, type AppKitNetwork } from '@reown/appkit/networks'
 
-const projectId = import.meta.env.VITE_PROJECT_ID
-if (!projectId) {
-  throw Error('WalletConnect ProjectID is unavailble')
-}
+const projectId = import.meta.env.VITE_PROJECT_ID || ''
+
 const metadata = {
   name: 'M3trs',
   description: 'M3trs dev',
