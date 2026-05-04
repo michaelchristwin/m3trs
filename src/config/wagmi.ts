@@ -1,5 +1,5 @@
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
-import { createAppKit } from '@reown/appkit/vue'
+
 import { sepolia, type AppKitNetwork } from '@reown/appkit/networks'
 
 const projectId = import.meta.env.VITE_PROJECT_ID
@@ -20,13 +20,5 @@ const wagmiAdapter = new WagmiAdapter({
   networks,
   projectId,
 })
-createAppKit({
-  adapters: [wagmiAdapter],
-  networks,
-  projectId,
-  metadata,
-  features: {
-    analytics: false,
-  },
-})
-export { wagmiAdapter }
+
+export { wagmiAdapter, metadata, networks, projectId }
