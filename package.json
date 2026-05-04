@@ -29,6 +29,7 @@
     "viem": "^2.48.7",
     "vue": "^3.5.33",
     "vue-router": "^5.0.6",
+    "wrangler": "^4.87.0",
     "zod": "^4.4.1"
   },
   "devDependencies": {
