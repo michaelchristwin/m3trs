@@ -1,7 +1,7 @@
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { sepolia, type AppKitNetwork } from '@reown/appkit/networks'
 
-const projectId = import.meta.env.VITE_PROJECT_ID || ''
+const projectId = import.meta.env.VITE_PROJECT_ID as string
 
 const metadata = {
   name: 'M3trs',
