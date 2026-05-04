@@ -6,7 +6,7 @@ const projectId = import.meta.env.VITE_PROJECT_ID || ''
 const metadata = {
   name: 'M3trs',
   description: 'M3trs dev',
-  url: 'https://m3trs.pages.dev',
+  url: 'https://m3trs.kelechukwuchristwin.workers.dev',
   icons: ['https://avatars.githubusercontent.com/u/179229932'],
 }
 
