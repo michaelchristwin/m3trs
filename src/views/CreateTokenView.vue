@@ -2,7 +2,7 @@
 import { z } from 'zod'
 import { useHead } from '@unhead/vue'
 import { useForm } from 'vee-validate'
-import type { Address, BaseError } from 'viem'
+import { parseUnits, type Address, type BaseError } from 'viem'
 import { useMutation } from '@tanstack/vue-query'
 import { toTypedSchema } from '@vee-validate/zod'
 import { M3TRS } from '@/config/smart-contracts/M3TRS'
@@ -42,7 +42,11 @@ const schema = z.object({
   metadataUrl: z
     .string('Invalid URL')
     .refine((val) => val.startsWith('ipfs://'), { message: 'Must be an IPFS URL' }),
-  supply: z.number().positive({ error: 'Supply must be greater than 0' }),
+  supply: z
+    .string()
+    .min(1, 'Required')
+    .regex(/^\d+(\.\d+)?$/, 'Invalid number format')
+    .transform((val) => parseUnits(val, 18)), // → bigint,
   stopTime: z.iso
     .datetime({ local: true })
     .transform((val) => new Date(val)) // local → Date (UTC internally)
@@ -66,8 +70,12 @@ const { mutateAsync, isPending: mutationIsPending } = useMutation({
   mutationKey: ['approveAndMint'],
 })
 
-function onSelectNFT(tokenId: bigint) {
+const onSelectNFT = (tokenId: bigint) => {
   setFieldValue('tokenId', tokenId)
+}
+const convertToLocaleDate = (dateStr: string) => {
+  const date = new Date(dateStr)
+  return date.toLocaleDateString('en-US')
 }
 </script>
 
@@ -174,9 +182,7 @@ function onSelectNFT(tokenId: bigint) {
                   placeholder="0"
                   type="number"
                   :value="values.supply"
-                  @input="
-                    setFieldValue('supply', ($event.target as HTMLInputElement).valueAsNumber)
-                  "
+                  @input="setFieldValue('supply', ($event.target as HTMLInputElement).value)"
                 />
                 <span
                   class="font-mono text-sm text-outline-variant ml-3 pb-2 border-b border-outline-variant"
@@ -241,11 +247,13 @@ function onSelectNFT(tokenId: bigint) {
               </div>
               <div class="flex justify-between items-center pb-2 border-b border-surface-variant">
                 <span class="font-mono text-xs text-on-surface-variant uppercase">Supply</span>
-                <span class="font-mono text-sm text-on-surface">10,000 RVT</span>
+                <span class="font-mono text-sm text-on-surface">{{ values.supply }} TRS</span>
               </div>
               <div class="flex justify-between items-center pb-2 border-b border-surface-variant">
                 <span class="font-mono text-xs text-on-surface-variant uppercase">Expiry</span>
-                <span class="font-mono text-sm text-secondary-container">12/31/2024</span>
+                <span class="font-mono text-sm text-secondary-container">{{
+                  values.stopTime ? convertToLocaleDate(values.stopTime) : ''
+                }}</span>
               </div>
             </div>
             <!-- Warning Box -->

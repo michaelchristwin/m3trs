@@ -5,7 +5,7 @@ import { useForm } from 'vee-validate'
 import { useRouter, useRoute } from 'vue-router'
 import { toTypedSchema } from '@vee-validate/zod'
 import { M3TRS } from '@/config/smart-contracts/M3TRS'
-import { type Address, isAddress, getAddress } from 'viem'
+import { type Address, isAddress, getAddress, parseUnits } from 'viem'
 import AccrueButton from '@/components/buttons/AccrueButton.vue'
 import CollectButton from '@/components/buttons/CollectButton.vue'
 import { useConnection, useWaitForTransactionReceipt, useWriteContract } from '@wagmi/vue'
@@ -35,9 +35,10 @@ const formSchema = z.object({
     })
     .transform((val) => getAddress(val)), // checksummed,
   amount: z
-    .number()
-    .positive()
-    .transform((val) => BigInt(val)),
+    .string()
+    .min(1, 'Required')
+    .regex(/^\d+(\.\d+)?$/, 'Invalid number format')
+    .transform((val) => parseUnits(val, 18)), // → bigint,
 })
 const { handleSubmit, setFieldValue, values, meta } = useForm({
   validationSchema: toTypedSchema(formSchema),
@@ -271,7 +272,7 @@ const {
                 placeholder="0.00"
                 type="number"
                 :value="values.amount"
-                @input="setFieldValue('amount', ($event.target as HTMLInputElement).valueAsNumber)"
+                @input="setFieldValue('amount', ($event.target as HTMLInputElement).value)"
               />
             </div>
             <button
