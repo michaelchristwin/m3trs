@@ -1,8 +1,14 @@
 <script setup lang="ts">
+import { z } from 'zod'
+import { useHead } from '@unhead/vue'
+import { useForm } from 'vee-validate'
+import { useRouter, useRoute } from 'vue-router'
+import { toTypedSchema } from '@vee-validate/zod'
+import { M3TRS } from '@/config/smart-contracts/M3TRS'
+import { type Address, isAddress, getAddress } from 'viem'
 import AccrueButton from '@/components/buttons/AccrueButton.vue'
 import CollectButton from '@/components/buttons/CollectButton.vue'
-import { useHead } from '@unhead/vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useConnection, useWaitForTransactionReceipt, useWriteContract } from '@wagmi/vue'
 const route = useRoute()
 const router = useRouter()
 
@@ -17,6 +23,44 @@ const handleBack = () => {
     router.push({ name: 'holdings' })
   }
 }
+
+const { address } = useConnection()
+
+const { mutateAsync, isPending, data: txHash } = useWriteContract()
+const formSchema = z.object({
+  recipientAddress: z
+    .string()
+    .refine((val) => isAddress(val), {
+      message: 'Invalid Ethereum address',
+    })
+    .transform((val) => getAddress(val)), // checksummed,
+  amount: z
+    .number()
+    .positive()
+    .transform((val) => BigInt(val)),
+})
+const { handleSubmit, setFieldValue, values, meta } = useForm({
+  validationSchema: toTypedSchema(formSchema),
+})
+const onSubmit = handleSubmit(async ({ recipientAddress, amount }) => {
+  await mutateAsync({
+    ...M3TRS,
+    functionName: 'safeTransferFrom',
+    args: [
+      address.value as Address,
+      recipientAddress,
+      BigInt(route.params.tokenId as string),
+      amount,
+      '0x',
+    ],
+  })
+})
+const {
+  isLoading: isConfirming,
+  // isSuccess: isConfirmed
+} = useWaitForTransactionReceipt({
+  hash: txHash,
+})
 </script>
 
 <template>
@@ -194,7 +238,7 @@ const handleBack = () => {
           </h3>
         </div>
         <div class="p-6 md:p-8">
-          <div class="flex flex-col md:flex-row gap-6 items-end">
+          <form class="flex flex-col md:flex-row gap-6 items-end" @submit.prevent="onSubmit">
             <div class="flex-1 w-full">
               <label
                 class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2"
@@ -210,6 +254,10 @@ const handleBack = () => {
                   class="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-mono text-sm focus:ring-0 focus:border-primary focus:shadow-[0_1px_0_0_rgba(0,255,65,1)] transition-all pl-8 pb-2 pt-2 placeholder:text-on-surface/20"
                   placeholder="0x..."
                   type="text"
+                  :value="values.recipientAddress"
+                  @input="
+                    setFieldValue('recipientAddress', ($event.target as HTMLInputElement).value)
+                  "
                 />
               </div>
             </div>
@@ -222,14 +270,19 @@ const handleBack = () => {
                 class="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-mono text-sm focus:ring-0 focus:border-primary focus:shadow-[0_1px_0_0_rgba(0,255,65,1)] transition-all pb-2 pt-2 placeholder:text-on-surface/20 text-right"
                 placeholder="0.00"
                 type="number"
+                :value="values.amount"
+                @input="setFieldValue('amount', ($event.target as HTMLInputElement).valueAsNumber)"
               />
             </div>
             <button
+              type="submit"
+              :disabled="!meta.valid || isPending || isConfirming"
+              @click.prevent
               class="w-full md:w-auto bg-transparent ghost-border-primary text-primary font-headline font-bold text-sm py-2.5 px-8 rounded hover:bg-primary/5 transition-all whitespace-nowrap self-stretch md:self-auto mb-1"
             >
               Execute Transfer
             </button>
-          </div>
+          </form>
         </div>
       </div>
     </div>

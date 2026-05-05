@@ -147,7 +147,9 @@ function onSelectNFT(tokenId: bigint) {
               <div class="font-mono text-xs text-on-surface-variant mt-1">CAP: 500 kWh</div>
             </div>
           </div>
-          <span class="text-red-500 italic text-[13px]">{{ errors.tokenId }}</span>
+          <span class="text-red-500 italic text-[13px]" v-if="errors.tokenId">{{
+            errors.tokenId
+          }}</span>
         </section>
         <!-- Step 2: Configure Token -->
         <section
@@ -216,7 +218,9 @@ function onSelectNFT(tokenId: bigint) {
                 type="text"
               />
             </div>
-            <span class="text-red-500 italic text-[12px]">{{ errors.metadataUrl }}</span>
+            <span class="text-red-500 italic text-[12px]" v-if="errors.metadataUrl">{{
+              errors.metadataUrl
+            }}</span>
           </div>
         </section>
       </div>
