@@ -8,6 +8,7 @@ import { nitro } from 'nitro/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue(), nitro(), tailwindcss(), vueDevTools()],
+
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
