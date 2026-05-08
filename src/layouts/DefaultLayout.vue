@@ -4,12 +4,6 @@ import { watch } from 'vue'
 
 const { open } = useAppKit()
 const eip155Account = useAppKitAccount({ namespace: 'eip155' })
-const links = [
-  { path: '/dashboard', slug: 'Dashboard' },
-  { path: '/create-token', slug: 'Create' },
-  { path: '/holdings', slug: 'My Holdings' },
-  { path: '/bonds', slug: 'My Bonds' },
-] as const
 
 const sidebarActiveClass =
   'opacity-80 text-primary-container border-primary-container border-r-4 bg-[#00FF41]/10'
@@ -39,15 +33,6 @@ watch(
       </RouterLink>
     </div>
     <div class="flex items-center gap-6 font-headline uppercase tracking-wider text-xs">
-      <div class="hidden md:flex items-center gap-6" v-for="link in links" :key="link.slug">
-        <RouterLink
-          active-class="text-primary-container font-bold"
-          :to="link.path"
-          class="text-[#e5e2e1]/60 hover:bg-[#00FF41]/10 hover:text-[#00FF41] transition-colors px-3 py-2 rounded scale-95 active:duration-100"
-        >
-          {{ link.slug }}
-        </RouterLink>
-      </div>
       <div class="flex items-center gap-4 border-l border-surface-variant pl-4">
         <button
           class="text-[#e5e2e1]/60 hover:text-[#00FF41] transition-colors relative flex items-center justify-center h-8 w-8 rounded hover:bg-surface-container-high"
@@ -78,15 +63,19 @@ watch(
     class="fixed top-0 left-0 w-full z-50 flex md:hidden items-center justify-between px-4 h-16 bg-[#131313] shadow-[0_0_15px_rgba(0,255,65,0.05)] rounded-none mb-1 transition-all duration-300"
   >
     <!-- Leading Avatar -->
-    <div
+    <!-- <div
       class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/30"
     >
       <span class="material-symbols-outlined text-outline" style="font-variation-settings: 'FILL' 1"
         >account_circle</span
       >
-    </div>
+    </div> -->
     <!-- Headline -->
-    <h1 class="font-['Space_Grotesk'] font-bold tracking-tighter text-[#00FF41] text-xl">M3TRS</h1>
+    <RouterLink
+      :to="{ name: 'dashboard' }"
+      class="font-['Space_Grotesk'] font-bold tracking-tighter text-[#00FF41] text-xl"
+      >M3TRS</RouterLink
+    >
     <!-- Trailing Icon -->
     <button
       class="text-neutral-500 hover:bg-[#00FF41]/10 transition-all duration-300 active:scale-95 w-10 h-10 flex items-center justify-center rounded-full"
@@ -97,29 +86,6 @@ watch(
   <aside
     class="hidden md:flex fixed left-0 top-16 h-[calc(100vh-64px)] w-64 border-r border-[#00FF41]/10 bg-[#131313] flex-col justify-between py-4 z-40"
   >
-    <div class="px-4 mb-8">
-      <div
-        class="flex items-center gap-3 p-3 bg-surface-container-low rounded border border-surface-variant"
-      >
-        <div class="w-10 h-10 rounded bg-surface-variant overflow-hidden">
-          <img
-            alt="Abstract user avatar pattern in dark neon colors"
-            class="w-full h-full object-cover opacity-80 mix-blend-luminosity"
-            data-alt="Abstract generative art in dark charcoal and neon green, suitable for a technical profile avatar"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBELnh6CFNtlfyzENKxH92rOPNHAigrLvrcAoqujzsqdoCHO18wm0_2Z6GKNlLyRihFFWqVF-FBlvPOewuXmC2hB9RJuUzWda4UBp0Im_DjwA_KDGZHzddS-uiAOCu3jBDm-9O1ePQcRP3jNigTzYjMm8bvoNeMQEhTB6J5FEhbNaSwKS3WcqjiZAuBAmBuGulwLfR3tHQRwuyVaYCPAuOz6QQcx5LXAU3bvTUbv5fgCT9qsIA5_SL-Ybl_Yw5TvxKGh5Kn377F42wS"
-          />
-        </div>
-        <div>
-          <div class="font-mono-data text-sm text-on-surface">OPERATOR_01</div>
-          <div class="font-label-caps text-on-surface-variant flex items-center gap-1">
-            <span class="material-symbols-outlined text-[12px] text-primary-container"
-              >check_circle</span
-            >
-            Verified Node
-          </div>
-        </div>
-      </div>
-    </div>
     <nav class="flex-1 font-['Space_Grotesk'] font-medium text-sm">
       <RouterLink
         :active-class="sidebarActiveClass"

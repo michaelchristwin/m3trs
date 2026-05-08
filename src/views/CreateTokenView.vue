@@ -9,12 +9,13 @@ import { M3TRS } from '@/config/smart-contracts/M3TRS'
 import { approveAndMint } from '@/actions/approveAndMint'
 import { useConnection, useReadContract } from '@wagmi/vue'
 import { MyToken } from '@/config/smart-contracts/MyToken'
+import { ref } from 'vue'
 
 useHead({
   title: 'Create Token',
   meta: [{ name: 'description', content: 'Create TRS token' }],
 })
-
+const metadataUrl = ref('')
 const selectedCardClass: Record<string, string> = {
   selected:
     'min-w-full sm:min-w-65 sm:max-w-65 shrink-0 bg-surface-container-high p-4 rounded cursor-pointer border-2 border-primary-container relative overflow-hidden shadow-[0_0_15px_rgba(0,255,65,0.1)] sm:snap-start',
@@ -39,9 +40,7 @@ const schema = z.object({
   tokenId: z.bigint({
     error: (issue) => (issue.input === undefined ? 'Select an NFT' : 'Invalid token ID'),
   }),
-  metadataUrl: z
-    .string('Invalid URL')
-    .refine((val) => val.startsWith('ipfs://'), { message: 'Must be an IPFS URL' }),
+  description: z.string('Invalid URL'),
   supply: z
     .string()
     .min(1, 'Required')
@@ -59,10 +58,11 @@ const { handleSubmit, setFieldValue, errors, values, meta } = useForm({
 })
 
 const onSubmit = handleSubmit(async (formValues) => {
-  const { supply, tokenId, stopTime, metadataUrl } = formValues
+  const { supply, tokenId, stopTime, description } = formValues
+  console.log(description)
   await approveAndMint(
     [M3TRS.address, formValues.tokenId],
-    [BigInt(supply), tokenId, BigInt(stopTime), metadataUrl],
+    [BigInt(supply), tokenId, BigInt(stopTime), metadataUrl.value],
   )
 })
 const { mutateAsync, isPending: mutationIsPending } = useMutation({
@@ -217,15 +217,15 @@ const convertToLocaleDate = (dateStr: string) => {
                 >Metadata URI</label
               >
               <input
-                :value="values.metadataUrl"
-                @input="setFieldValue('metadataUrl', ($event.target as HTMLInputElement).value)"
+                :value="values.description"
+                @input="setFieldValue('description', ($event.target as HTMLInputElement).value)"
                 class="input-underline w-full font-mono text-sm text-on-surface pb-2 px-0 bg-transparent focus:ring-0"
                 placeholder="ipfs://..."
                 type="text"
               />
             </div>
-            <span class="text-red-500 italic text-[12px]" v-if="errors.metadataUrl">{{
-              errors.metadataUrl
+            <span class="text-red-500 italic text-[12px]" v-if="errors.description">{{
+              errors.description
             }}</span>
           </div>
         </section>

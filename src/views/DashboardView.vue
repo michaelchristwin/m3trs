@@ -31,19 +31,6 @@ const eip155Account = useAppKitAccount({ namespace: 'eip155' })
         >
       </p>
     </div>
-    <div class="flex items-center gap-4 font-mono-data text-xs">
-      <div class="flex flex-col items-end">
-        <span class="text-on-surface-variant">NETWORK STATUS</span>
-        <span class="text-primary-container flex items-center gap-1.5"
-          ><div class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></div>
-          OPTIMAL</span
-        >
-      </div>
-      <div class="flex flex-col items-end border-l border-surface-variant pl-4">
-        <span class="text-on-surface-variant">BLOCK HEIGHT</span>
-        <span class="text-on-surface">18,492,011</span>
-      </div>
-    </div>
   </div>
   <!-- Three Panel Grid -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
