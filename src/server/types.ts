@@ -1,7 +1,7 @@
 interface DecodedPayload {
   stopTime: bigint
   description: string
-  buf: Buffer
+  name: string
 }
 
 export { type DecodedPayload }

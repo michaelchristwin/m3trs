@@ -9,13 +9,12 @@ import { M3TRS } from '@/config/smart-contracts/M3TRS'
 import { approveAndMint } from '@/actions/approveAndMint'
 import { useConnection, useReadContract } from '@wagmi/vue'
 import { MyToken } from '@/config/smart-contracts/MyToken'
-import { ref } from 'vue'
 
 useHead({
   title: 'Create Token',
   meta: [{ name: 'description', content: 'Create TRS token' }],
 })
-const metadataUrl = ref('')
+
 const selectedCardClass: Record<string, string> = {
   selected:
     'min-w-full sm:min-w-65 sm:max-w-65 shrink-0 bg-surface-container-high p-4 rounded cursor-pointer border-2 border-primary-container relative overflow-hidden shadow-[0_0_15px_rgba(0,255,65,0.1)] sm:snap-start',
@@ -40,7 +39,7 @@ const schema = z.object({
   tokenId: z.bigint({
     error: (issue) => (issue.input === undefined ? 'Select an NFT' : 'Invalid token ID'),
   }),
-  description: z.string('Invalid URL'),
+  description: z.string({ error: 'Required' }),
   supply: z
     .string()
     .min(1, 'Required')
@@ -59,10 +58,15 @@ const { handleSubmit, setFieldValue, errors, values, meta } = useForm({
 
 const onSubmit = handleSubmit(async (formValues) => {
   const { supply, tokenId, stopTime, description } = formValues
-  console.log(description)
+  const data = { name: 'Demo', stopTime, description }
+  const resp = await fetch('/metadata', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+  const url = await resp.json()
   await approveAndMint(
     [M3TRS.address, formValues.tokenId],
-    [BigInt(supply), tokenId, BigInt(stopTime), metadataUrl.value],
+    [BigInt(supply), tokenId, BigInt(stopTime), url as string],
   )
 })
 const { mutateAsync, isPending: mutationIsPending } = useMutation({
@@ -185,7 +189,7 @@ const convertToLocaleDate = (dateStr: string) => {
                   @input="setFieldValue('supply', ($event.target as HTMLInputElement).value)"
                 />
                 <span
-                  class="font-mono text-sm text-outline-variant ml-3 pb-2 border-b border-outline-variant"
+                  class="font-mono text-sm text-on-surface ml-3 pb-2 border-b border-outline-variant"
                   >TRS</span
                 >
               </div>
@@ -199,11 +203,11 @@ const convertToLocaleDate = (dateStr: string) => {
               <div
                 class="flex items-center border-b border-outline-variant focus-within:border-primary-container focus-within:shadow-[0_4px_6px_-1px_rgba(0,255,65,0.08)] transition-all"
               >
-                <span class="material-symbols-outlined text-outline-variant mr-3 pb-2"
+                <span class="material-symbols-outlined text-on-surface mr-3 pb-2"
                   >calendar_month</span
                 >
                 <input
-                  class="bg-transparent border-none w-full font-mono text-lg text-on-surface pb-2 px-0 focus:ring-0"
+                  class="bg-transparent border-none w-full font-mono text-lg text-on-surface pb-2 px-0 focus:ring-0 scheme-dark"
                   type="datetime-local"
                   :value="values.stopTime"
                   @input="setFieldValue('stopTime', ($event.target as HTMLInputElement).value)"
@@ -214,13 +218,14 @@ const convertToLocaleDate = (dateStr: string) => {
             <div class="relative">
               <label
                 class="block font-mono text-[0.6875rem] uppercase tracking-widest text-on-surface-variant mb-2"
-                >Metadata URI</label
+                >Description</label
               >
-              <input
+              <textarea
                 :value="values.description"
+                rows="4"
                 @input="setFieldValue('description', ($event.target as HTMLInputElement).value)"
                 class="input-underline w-full font-mono text-sm text-on-surface pb-2 px-0 bg-transparent focus:ring-0"
-                placeholder="ipfs://..."
+                placeholder="Description"
                 type="text"
               />
             </div>

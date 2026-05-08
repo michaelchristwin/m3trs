@@ -3,7 +3,7 @@ import { defineHandler } from 'nitro'
 import { ArweaveSigner, TurboFactory } from '@ardrive/turbo-sdk'
 
 export default defineHandler(async (event) => {
-  const _body = await event.req.json()
+  const body = await event.req.json()
   const arweave = Arweave.init({
     host: 'arweave.net',
     protocol: 'https',
@@ -11,5 +11,12 @@ export default defineHandler(async (event) => {
   })
   const key = await arweave.wallets.generate()
   const signer = new ArweaveSigner(key)
-  const _turbo = TurboFactory.authenticated({ signer })
+  const turbo = TurboFactory.authenticated({ signer })
+  const result = await turbo.upload({
+    data: JSON.stringify(body),
+    dataItemOpts: {
+      tags: [{ name: 'Content-Type', value: 'application/json' }],
+    },
+  })
+  return `https://arweave.net/${result.id}`
 })
