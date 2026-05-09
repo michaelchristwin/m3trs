@@ -16,11 +16,12 @@ const openTokenDetails = (tokenId: number) => {
     },
   })
 }
+
 const statusPillClasses: Record<string, string> = {
   Active:
-    'bg-primary-container/15 text-primary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold',
+    'text-primary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold',
   Expiring:
-    'bg-secondary-container/15 text-secondary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold',
+    'text-secondary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold',
 }
 </script>
 <template>
@@ -58,12 +59,12 @@ const statusPillClasses: Record<string, string> = {
       <AccrueButton
         inner-text="Accrue"
         :token-id="tokenId"
-        class="md:block hidden px-3 py-1.5 rounded border border-outline-variant/20 text-on-surface hover:text-primary hover:border-primary/50 transition-colors text-xs font-headline uppercase tracking-wider"
+        class="md:block hidden px-3 py-1.5 rounded-[30px] border border-primary/50 text-on-surface transition-colors text-xs font-headline uppercase tracking-wider hover:bg-sky-500/10 hover:border-sky-500 hover:text-sky-400"
       />
       <CollectButton
         inner-text="Collect"
         :token-id="tokenId"
-        class="md:block hidden px-3 py-1.5 rounded border border-outline-variant/20 text-on-surface hover:text-primary hover:border-primary/50 transition-colors text-xs font-headline uppercase tracking-wider"
+        class="md:block hidden px-3 py-1.5 rounded-[30px] border border-primary/50 text-on-surface transition-colors text-xs font-headline uppercase tracking-wider hover:bg-emerald-500/10 hover:border-emerald-500 hover:text-emerald-400"
       />
       <button
         @click.prevent

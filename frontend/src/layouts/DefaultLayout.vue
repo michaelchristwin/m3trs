@@ -44,7 +44,7 @@ watch(
         >
           <span class="material-symbols-outlined text-[20px]">settings</span>
         </button>
-        <div
+        <button
           @click="open({ view: 'Account' })"
           class="flex cursor-pointer items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded box-glow border border-primary/20"
         >
@@ -54,7 +54,7 @@ watch(
           <span class="font-mono-data text-[#00FF41] text-xs"
             >{{ eip155Account.address?.slice(0, 4) }}...{{ eip155Account.address?.slice(-4) }}</span
           >
-        </div>
+        </button>
       </div>
     </div>
   </header>
@@ -62,26 +62,30 @@ watch(
   <header
     class="fixed top-0 left-0 w-full z-50 flex md:hidden items-center justify-between px-4 h-16 bg-[#131313] shadow-[0_0_15px_rgba(0,255,65,0.05)] rounded-none mb-1 transition-all duration-300"
   >
-    <!-- Leading Avatar -->
-    <!-- <div
-      class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/30"
-    >
-      <span class="material-symbols-outlined text-outline" style="font-variation-settings: 'FILL' 1"
-        >account_circle</span
-      >
-    </div> -->
-    <!-- Headline -->
     <RouterLink
       :to="{ name: 'dashboard' }"
       class="font-['Space_Grotesk'] font-bold tracking-tighter text-[#00FF41] text-xl"
       >M3TRS</RouterLink
     >
     <!-- Trailing Icon -->
-    <button
-      class="text-neutral-500 hover:bg-[#00FF41]/10 transition-all duration-300 active:scale-95 w-10 h-10 flex items-center justify-center rounded-full"
-    >
-      <span class="material-symbols-outlined">notifications</span>
-    </button>
+    <div class="space-x-2 flex items-center">
+      <button
+        class="text-neutral-500 hover:bg-[#00FF41]/10 transition-all duration-300 active:scale-95 w-10 h-10 flex items-center justify-center rounded-full"
+      >
+        <span class="material-symbols-outlined">notifications</span>
+      </button>
+      <button
+        @click="open({ view: 'Account' })"
+        class="flex cursor-pointer items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded box-glow border border-primary/20"
+      >
+        <div
+          class="w-2 h-2 rounded-[9999px] bg-primary-container shadow-[0_0_8px_rgba(0,255,65,0.8)]"
+        ></div>
+        <span class="font-mono-data text-[#00FF41] text-xs"
+          >{{ eip155Account.address?.slice(0, 4) }}...{{ eip155Account.address?.slice(-4) }}</span
+        >
+      </button>
+    </div>
   </header>
   <aside
     class="hidden md:flex fixed left-0 top-16 h-[calc(100vh-64px)] w-64 border-r border-[#00FF41]/10 bg-[#131313] flex-col justify-between py-4 z-40"

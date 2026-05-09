@@ -222,10 +222,10 @@ const convertToLocaleDate = (dateStr: string) => {
               >
               <textarea
                 :value="values.description"
-                rows="4"
+                rows="3"
                 @input="setFieldValue('description', ($event.target as HTMLInputElement).value)"
                 class="input-underline w-full font-mono text-sm text-on-surface pb-2 px-0 bg-transparent focus:ring-0"
-                placeholder="Description"
+                placeholder="......"
                 type="text"
               />
             </div>

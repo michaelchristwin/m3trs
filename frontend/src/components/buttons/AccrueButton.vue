@@ -20,7 +20,7 @@ const {
 })
 </script>
 <template>
-  <button :disabled="isPending || isConfirming" @click="accrueRevenue" :class="props.class">
+  <button :disabled="isPending || isConfirming" @click.stop="accrueRevenue" :class="props.class">
     {{ innerText }}
   </button>
 </template>
