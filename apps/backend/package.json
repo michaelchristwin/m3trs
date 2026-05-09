@@ -9,7 +9,7 @@
   "dependencies": {
     "@ardrive/turbo-sdk": "^1.41.2",
     "arweave": "^1.15.7",
-    "elysia": "latest"
+    "elysia": "1.4.28"
   },
   "devDependencies": {
     "bun-types": "latest"

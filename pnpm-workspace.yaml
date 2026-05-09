@@ -1,14 +1,10 @@
 packages:
   - "apps/*"
   - "packages/*"
-
 allowBuilds:
   '@reown/appkit': true
-  bufferutil: false
-  esbuild: true
-  keccak: false
-  secp256k1: false
-  sharp: false
-  utf-8-validate: false
-  vue-demi: false
- 
+  bufferutil: true
+  keccak: true
+  secp256k1: true
+  utf-8-validate: true
+  vue-demi: true

@@ -9,3 +9,7 @@
     }
   ]
 }
+
+// "paths": {
+//       "@m3trs/contracts": ["../../packages/contracts/src/index.ts"]
+//     },

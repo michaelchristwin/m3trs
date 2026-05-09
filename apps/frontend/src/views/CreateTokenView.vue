@@ -9,7 +9,7 @@ import { M3TRS } from "@/config/smart-contracts/M3TRS";
 import { approveAndMint } from "@/actions/approveAndMint";
 import { useConnection, useReadContract } from "@wagmi/vue";
 import { MyToken } from "@/config/smart-contracts/MyToken";
-import { treaty } from "@elysia/eden";
+import { client } from "@/config/eden-client";
 
 useHead({
   title: "Create Token",
@@ -56,21 +56,15 @@ const schema = z.object({
 const { handleSubmit, setFieldValue, errors, values, meta } = useForm({
   validationSchema: toTypedSchema(schema),
 });
-import type { App } from "../../../backend/src";
-
-const client = treaty<App>("localhost:8080");
 
 const onSubmit = handleSubmit(async (formValues) => {
   const { supply, tokenId, stopTime, description } = formValues;
-  const data = { name: "Demo", stopTime, description };
-  const resp = await fetch("/metadata", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-  const url = await resp.json();
+  const metadata = { name: "Demo", stopTime, description };
+  const { data: url } = await client.metadata.post(metadata);
+  if (!url) throw Error("Metadata upload failed");
   await approveAndMint(
     [M3TRS.address, formValues.tokenId],
-    [BigInt(supply), tokenId, BigInt(stopTime), url as string],
+    [BigInt(supply), tokenId, BigInt(stopTime), url],
   );
 });
 const { mutateAsync, isPending: mutationIsPending } = useMutation({

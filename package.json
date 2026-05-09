@@ -1,6 +1,8 @@
 {
+  "name": "m3trs",
+  "private": true,
   "packageManager": "pnpm@11.0.8",
   "devDependencies": {
-    "turbo": "^2.9.10"
+    "turbo": "2.9.12"
   }
 }
