@@ -111,7 +111,7 @@ const convertToLocaleDate = (dateStr: string) => {
             class="flex flex-col gap-4 max-h-[70vh] overflow-y-auto sm:flex-row sm:overflow-x-auto sm:overflow-y-hidden sm:max-h-none sm:scroll-smooth sm:snap-x sm:snap-mandatory custom-scrollbar"
           >
             <div v-if="isPending">
-              <p>Loading...</p>
+              <p>Loading M3ters...</p>
             </div>
             <div v-else-if="error">
               Error: {{ (error as BaseError).shortMessage || error.message }}
