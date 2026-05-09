@@ -1,86 +1,90 @@
 <script lang="ts" setup>
-import { z } from 'zod'
-import { useHead } from '@unhead/vue'
-import { useForm } from 'vee-validate'
-import { parseUnits, type Address, type BaseError } from 'viem'
-import { useMutation } from '@tanstack/vue-query'
-import { toTypedSchema } from '@vee-validate/zod'
-import { M3TRS } from '@/config/smart-contracts/M3TRS'
-import { approveAndMint } from '@/actions/approveAndMint'
-import { useConnection, useReadContract } from '@wagmi/vue'
-import { MyToken } from '@/config/smart-contracts/MyToken'
+import { z } from "zod";
+import { useHead } from "@unhead/vue";
+import { useForm } from "vee-validate";
+import { parseUnits, type Address, type BaseError } from "viem";
+import { useMutation } from "@tanstack/vue-query";
+import { toTypedSchema } from "@vee-validate/zod";
+import { M3TRS } from "@/config/smart-contracts/M3TRS";
+import { approveAndMint } from "@/actions/approveAndMint";
+import { useConnection, useReadContract } from "@wagmi/vue";
+import { MyToken } from "@/config/smart-contracts/MyToken";
+import { treaty } from "@elysia/eden";
 
 useHead({
-  title: 'Create Token',
-  meta: [{ name: 'description', content: 'Create TRS token' }],
-})
+  title: "Create Token",
+  meta: [{ name: "description", content: "Create TRS token" }],
+});
 
 const selectedCardClass: Record<string, string> = {
   selected:
-    'min-w-full sm:min-w-65 sm:max-w-65 shrink-0 bg-surface-container-high p-4 rounded cursor-pointer border-2 border-primary-container relative overflow-hidden shadow-[0_0_15px_rgba(0,255,65,0.1)] sm:snap-start',
+    "min-w-full sm:min-w-65 sm:max-w-65 shrink-0 bg-surface-container-high p-4 rounded cursor-pointer border-2 border-primary-container relative overflow-hidden shadow-[0_0_15px_rgba(0,255,65,0.1)] sm:snap-start",
   unselected:
-    'min-w-full sm:min-w-65 sm:max-w-65 shrink-0 bg-surface-container-low p-4 rounded cursor-pointer border border-transparent hover:border-outline-variant transition-colors ghost-border sm:snap-start',
-}
-const { address } = useConnection()
+    "min-w-full sm:min-w-65 sm:max-w-65 shrink-0 bg-surface-container-low p-4 rounded cursor-pointer border border-transparent hover:border-outline-variant transition-colors ghost-border sm:snap-start",
+};
+const { address } = useConnection();
 const {
   data: tokenIds,
   error,
   isPending,
 } = useReadContract({
   ...MyToken,
-  functionName: 'tokensOfOwner',
+  functionName: "tokensOfOwner",
   args: [address.value as Address],
   query: {
     enabled: !!address,
   },
-})
+});
 
 const schema = z.object({
   tokenId: z.bigint({
-    error: (issue) => (issue.input === undefined ? 'Select an NFT' : 'Invalid token ID'),
+    error: (issue) => (issue.input === undefined ? "Select an NFT" : "Invalid token ID"),
   }),
-  description: z.string({ error: 'Required' }),
+  description: z.string({ error: "Required" }),
   supply: z
     .string()
-    .min(1, 'Required')
-    .regex(/^\d+(\.\d+)?$/, 'Invalid number format')
+    .min(1, "Required")
+    .regex(/^\d+(\.\d+)?$/, "Invalid number format")
     .transform((val) => parseUnits(val, 18)), // → bigint,
   stopTime: z.iso
     .datetime({ local: true })
     .transform((val) => new Date(val)) // local → Date (UTC internally)
-    .refine((date) => !isNaN(date.getTime()), 'Invalid date')
+    .refine((date) => !isNaN(date.getTime()), "Invalid date")
     .transform((date) => date.getTime()), // → UTC timestamp (number)
-})
+});
 
 const { handleSubmit, setFieldValue, errors, values, meta } = useForm({
   validationSchema: toTypedSchema(schema),
-})
+});
+import type { App } from "../../../backend/src";
+
+const client = treaty<App>("localhost:8080");
 
 const onSubmit = handleSubmit(async (formValues) => {
-  const { supply, tokenId, stopTime, description } = formValues
-  const data = { name: 'Demo', stopTime, description }
-  const resp = await fetch('/metadata', {
-    method: 'POST',
+  const { supply, tokenId, stopTime, description } = formValues;
+  const data = { name: "Demo", stopTime, description };
+  const resp = await fetch("/metadata", {
+    method: "POST",
     body: JSON.stringify(data),
-  })
-  const url = await resp.json()
+  });
+  const url = await resp.json();
   await approveAndMint(
     [M3TRS.address, formValues.tokenId],
     [BigInt(supply), tokenId, BigInt(stopTime), url as string],
-  )
-})
+  );
+});
 const { mutateAsync, isPending: mutationIsPending } = useMutation({
   mutationFn: onSubmit,
-  mutationKey: ['approveAndMint'],
-})
+  mutationKey: ["approveAndMint"],
+});
 
 const onSelectNFT = (tokenId: bigint) => {
-  setFieldValue('tokenId', tokenId)
-}
+  setFieldValue("tokenId", tokenId);
+};
 const convertToLocaleDate = (dateStr: string) => {
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('en-US')
-}
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-US");
+};
 </script>
 
 <template>
@@ -131,7 +135,10 @@ const convertToLocaleDate = (dateStr: string) => {
                 v-if="values.tokenId === tokenId"
                 class="absolute top-2 right-2 text-primary-container"
               >
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">
+                <span
+                  class="material-symbols-outlined"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                >
                   check_circle
                 </span>
               </div>
@@ -257,7 +264,7 @@ const convertToLocaleDate = (dateStr: string) => {
               <div class="flex justify-between items-center pb-2 border-b border-surface-variant">
                 <span class="font-mono text-xs text-on-surface-variant uppercase">Expiry</span>
                 <span class="font-mono text-sm text-secondary-container">{{
-                  values.stopTime ? convertToLocaleDate(values.stopTime) : ''
+                  values.stopTime ? convertToLocaleDate(values.stopTime) : ""
                 }}</span>
               </div>
             </div>
@@ -269,7 +276,7 @@ const convertToLocaleDate = (dateStr: string) => {
               <div class="flex items-start gap-3">
                 <span
                   class="material-symbols-outlined text-secondary-container"
-                  style="font-variation-settings: 'FILL' 1"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
                   >warning</span
                 >
                 <p class="font-body text-sm text-secondary-fixed">
