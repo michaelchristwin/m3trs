@@ -4,5 +4,10 @@
   "packageManager": "pnpm@11.0.8",
   "devDependencies": {
     "turbo": "2.9.12"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "check-types": "turbo run check-types"
   }
 }
