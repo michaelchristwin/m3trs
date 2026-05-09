@@ -6,8 +6,9 @@
       "name": "trade",
       "dependencies": {
         "@ardrive/turbo-sdk": "^1.41.2",
+        "@elysia/cors": "^1.4.2",
         "arweave": "^1.15.7",
-        "elysia": "latest",
+        "elysia": "1.4.28",
       },
       "devDependencies": {
         "bun-types": "latest",
@@ -54,6 +55,8 @@
     "@dha-team/arbundles": ["@dha-team/arbundles@1.0.4", "", { "dependencies": { "@ethersproject/bytes": "5.7.0", "@ethersproject/hash": "5.7.0", "@ethersproject/providers": "5.7.2", "@ethersproject/signing-key": "5.7.0", "@ethersproject/transactions": "5.7.0", "@ethersproject/wallet": "5.7.0", "@noble/ed25519": "1.6.1", "arweave": "1.15.7", "base64url": "3.0.1", "bs58": "4.0.1", "keccak": "3.0.2", "secp256k1": "5.0.0" }, "optionalDependencies": { "@randlabs/myalgo-connect": "1.1.2", "algosdk": "1.13.1", "arweave-stream-tx": "1.1.0", "multistream": "4.1.0", "tmp-promise": "3.0.2" } }, "sha512-T/4pv6bosp4caV32EubHTqDzLAqL6481Bsqd348JO0h+HSaMysloY/pFSLwZf9U3IvkJngIZ4njrYQUkjSkkwA=="],
 
     "@ecies/ciphers": ["@ecies/ciphers@0.2.6", "", { "peerDependencies": { "@noble/ciphers": "^1.0.0" } }, "sha512-patgsRPKGkhhoBjETV4XxD0En4ui5fbX0hzayqI3M8tvNMGUoUvmyYAIWwlxBc1KX5cturfqByYdj5bYGRpN9g=="],
+
+    "@elysia/cors": ["@elysia/cors@1.4.2", "", { "peerDependencies": { "elysia": ">= 1.4.0" } }, "sha512-dXkfo1IxZWJkJReNYnPJorJqb+XpWno0D/YWlMEJSkiFIFd751zJ4R/YswAYdo88mLWo8cycEj673o7L+gbxsw=="],
 
     "@ethereumjs/common": ["@ethereumjs/common@3.2.0", "", { "dependencies": { "@ethereumjs/util": "^8.1.0", "crc-32": "^1.2.0" } }, "sha512-pksvzI0VyLgmuEF2FA/JR/4/y6hcPq8OUail3/AvycBaW1d5VSauOZzqGvJ3RTmR4MU35lWE8KseKOsEhrFRBA=="],
 

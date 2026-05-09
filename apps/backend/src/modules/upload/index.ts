@@ -17,9 +17,14 @@ export const upload = new Elysia().post(
     const result = await turbo.upload({
       data: JSON.stringify(body),
       dataItemOpts: {
-        tags: [{ name: "Content-Type", value: "application/json" }],
+        tags: [
+          { name: "Content-Type", value: "application/json" },
+          { name: "App-Name", value: "M3trs" },
+          { name: "Title", value: body.name },
+        ],
       },
     });
+
     return `https://arweave.net/${result.id}`;
   },
   {

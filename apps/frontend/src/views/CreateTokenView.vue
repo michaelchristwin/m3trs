@@ -2,14 +2,14 @@
 import { z } from "zod";
 import { useHead } from "@unhead/vue";
 import { useForm } from "vee-validate";
-import { parseUnits, type Address, type BaseError } from "viem";
+import { client } from "@/config/eden-client";
 import { useMutation } from "@tanstack/vue-query";
 import { toTypedSchema } from "@vee-validate/zod";
 import { M3TRS } from "@/config/smart-contracts/M3TRS";
 import { approveAndMint } from "@/actions/approveAndMint";
-import { useConnection, useReadContract } from "@wagmi/vue";
 import { MyToken } from "@/config/smart-contracts/MyToken";
-import { client } from "@/config/eden-client";
+import { useConnection, useReadContract } from "@wagmi/vue";
+import { type Address, type BaseError } from "viem";
 
 useHead({
   title: "Create Token",
@@ -45,12 +45,12 @@ const schema = z.object({
     .string()
     .min(1, "Required")
     .regex(/^\d+(\.\d+)?$/, "Invalid number format")
-    .transform((val) => parseUnits(val, 18)), // → bigint,
+    .transform((val) => BigInt(val)), // → bigint,
   stopTime: z.iso
     .datetime({ local: true })
     .transform((val) => new Date(val)) // local → Date (UTC internally)
     .refine((date) => !isNaN(date.getTime()), "Invalid date")
-    .transform((date) => date.getTime()), // → UTC timestamp (number)
+    .transform((date) => Math.floor(date.getTime() / 1000)), // → UTC timestamp (number)
 });
 
 const { handleSubmit, setFieldValue, errors, values, meta } = useForm({
@@ -59,13 +59,14 @@ const { handleSubmit, setFieldValue, errors, values, meta } = useForm({
 
 const onSubmit = handleSubmit(async (formValues) => {
   const { supply, tokenId, stopTime, description } = formValues;
-  const metadata = { name: "Demo", stopTime, description };
+  const metadata = {
+    name: `TRS-${tokenId}-${new Date(stopTime * 1000).toISOString().split("T")[0]}`,
+    stopTime,
+    description,
+  };
   const { data: url } = await client.metadata.post(metadata);
   if (!url) throw Error("Metadata upload failed");
-  await approveAndMint(
-    [M3TRS.address, formValues.tokenId],
-    [BigInt(supply), tokenId, BigInt(stopTime), url],
-  );
+  await approveAndMint([M3TRS.address, tokenId], [BigInt(supply), tokenId, BigInt(stopTime), url]);
 });
 const { mutateAsync, isPending: mutationIsPending } = useMutation({
   mutationFn: onSubmit,
