@@ -65,6 +65,7 @@ const onSubmit = handleSubmit(async (formValues) => {
     description,
   };
   const { data: url } = await client.metadata.post(metadata);
+  console.log(`[metadata url]: ${url}`);
   if (!url) throw Error("Metadata upload failed");
   await approveAndMint([M3TRS.address, tokenId], [BigInt(supply), tokenId, BigInt(stopTime), url]);
 });
