@@ -1,5 +1,5 @@
 {
-  "name": "m3trs-frontend",
+  "name": "@m3trs/frontend",
   "version": "0.0.1",
   "private": true,
   "type": "module",
