@@ -1,8 +1,8 @@
-import { m3trs_ABI } from './M3TRS-ABI'
+import { m3trs_ABI } from "./M3TRS-ABI";
 
 const M3TRS = {
-  address: '0xaA9ee92737c680a1c1b822FB7f184AC046d9acdC',
+  address: "0x2D229893fe1173EFbF43a54F67E63c44064Ca007",
   abi: m3trs_ABI,
-} as const
+} as const;
 
-export { M3TRS }
+export { M3TRS };

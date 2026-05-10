@@ -4,13 +4,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts",
-    "start": "bun run src/index.ts"
+    "start": "output/server",
+    "build": "bun build \t--compile \t--minify-whitespace \t--minify-syntax \t--target bun \t--outfile output/server \tsrc/index.ts"
   },
   "dependencies": {
     "@ardrive/turbo-sdk": "^1.41.2",
     "@elysia/cors": "^1.4.2",
     "arweave": "^1.15.7",
-    "elysia": "1.4.28"
+    "elysia": "1.4.28",
+    "logixlysia": "6.3.2"
   },
   "devDependencies": {
     "bun-types": "latest"

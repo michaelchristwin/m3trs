@@ -1,15 +1,10 @@
-import { Elysia } from "elysia";
-import { cors } from "@elysia/cors";
-import { upload } from "./modules/upload";
+import cluster from "node:cluster";
+import os from "node:os";
+import process from "node:process";
 
-const app = new Elysia()
-  .get("/", () => "Hello Elysia")
-  .use(cors())
-  .use(upload)
-  .listen(8080);
-
-console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,
-);
-
-export type App = typeof app;
+if (cluster.isPrimary) {
+  for (let i = 0; i < os.availableParallelism(); i++) cluster.fork();
+} else {
+  await import("./server");
+  console.log(`Worker ${process.pid} started`);
+}
