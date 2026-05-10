@@ -8,7 +8,7 @@ import { DuneQueryModel } from "./model";
 export abstract class DuneQuery {
   static async getMeterTokensByOwner({
     owner,
-  }: DuneQueryModel["getMeterTokensByOwnerBody"]) {
+  }: DuneQueryModel["getMeterTokensByOwnerParams"]) {
     const dune = new DuneClient("$DUNE_API_KEY");
     const query_result = await dune.getLatestResult({
       queryId: 7462197,
@@ -16,5 +16,6 @@ export abstract class DuneQuery {
         new QueryParameter(ParameterType.TEXT, "owner", owner),
       ],
     });
+    return query_result;
   }
 }

@@ -29,6 +29,7 @@ export const upload = new Elysia().post(
   },
   {
     body: UploadModel.uploadBody,
+
     response: {
       200: UploadModel.uploadResponse,
       400: UploadModel.uploadInvalid,

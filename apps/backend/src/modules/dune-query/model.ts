@@ -1,9 +1,12 @@
 import { t, type UnwrapSchema } from "elysia";
+import { ResultsResponseSchema } from "./types";
 
 export const DuneQueryModel = {
-  getMeterTokensByOwnerBody: t.Object({
+  getMeterTokensByOwnerParams: t.Object({
     owner: t.String(),
   }),
+  MeterTokensByOwnerResponse: ResultsResponseSchema,
+  ServerError: t.Literal("Interal Server Error"),
 } as const;
 
 export type DuneQueryModel = {
