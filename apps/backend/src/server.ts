@@ -1,3 +1,5 @@
+// Server file
+
 import { Elysia } from "elysia";
 import { cors } from "@elysia/cors";
 import logixlysia from "logixlysia";
