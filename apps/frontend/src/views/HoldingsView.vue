@@ -1,29 +1,54 @@
 <script lang="ts" setup>
-import HoldingsListItem from '@/components/HoldingsListItem.vue'
-
+import HoldingsListItem from "@/components/HoldingsListItem.vue";
+import { client } from "@/config/eden-client";
+import { useQuery } from "@tanstack/vue-query";
+import { useConnection } from "@wagmi/vue";
+import { computed, watch } from "vue";
+const { address } = useConnection();
+const { data: tokens } = useQuery({
+  queryKey: ["holdings", address],
+  queryFn: async () => {
+    const res = await client.dune["meter-tokens-by-owner"]({ owner: address.value! }).get();
+    if (res.error) {
+      throw res.error;
+    }
+    return res.data.result?.rows;
+  },
+  enabled: !!address.value,
+});
+const tokenMap = computed(
+  () =>
+    tokens.value?.map((t) => ({
+      id: t.token_id as string,
+      amount: t.amount as string,
+    })) ?? [],
+);
+watch(tokenMap, (value) => {
+  value.map((v) => console.log(v));
+});
 type Holding = {
-  tokenId: number
-  balance: number
-  claimableUsd: number
-  stopTime: number
-  status: 'Active' | 'Expiring'
-}
+  tokenId: number;
+  balance: number;
+  claimableUsd: number;
+  stopTime: number;
+  status: "Active" | "Expiring";
+};
 const holdings: Holding[] = [
   {
     tokenId: 101,
     balance: 250,
     claimableUsd: 45.22,
     stopTime: 45,
-    status: 'Active',
+    status: "Active",
   },
   {
     tokenId: 88,
     balance: 100,
     claimableUsd: 12.1,
     stopTime: 2,
-    status: 'Expiring',
+    status: "Expiring",
   },
-]
+];
 </script>
 <template>
   <div class="md:flex block justify-between items-end mb-8">

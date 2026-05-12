@@ -1,4 +1,4 @@
-const m3trs_ABI = [
+const TRS_ABI = [
   { inputs: [], stateMutability: 'nonpayable', type: 'constructor' },
   { inputs: [], name: 'AccountBalanceOverflow', type: 'error' },
   { inputs: [], name: 'ArrayLengthsMismatch', type: 'error' },
@@ -296,4 +296,4 @@ const m3trs_ABI = [
   },
 ] as const
 
-export { m3trs_ABI }
+export { TRS_ABI }

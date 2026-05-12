@@ -1,67 +1,67 @@
 <script setup lang="ts">
-import { z } from 'zod'
-import { useHead } from '@unhead/vue'
-import { useForm } from 'vee-validate'
-import { useRouter, useRoute } from 'vue-router'
-import { toTypedSchema } from '@vee-validate/zod'
-import { M3TRS } from '@/config/smart-contracts/M3TRS'
-import { type Address, isAddress, getAddress, parseUnits } from 'viem'
-import AccrueButton from '@/components/buttons/AccrueButton.vue'
-import CollectButton from '@/components/buttons/CollectButton.vue'
-import { useConnection, useWaitForTransactionReceipt, useWriteContract } from '@wagmi/vue'
-const route = useRoute()
-const router = useRouter()
+import { z } from "zod";
+import { useHead } from "@unhead/vue";
+import { useForm } from "vee-validate";
+import { useRouter, useRoute } from "vue-router";
+import { toTypedSchema } from "@vee-validate/zod";
+import { TRS } from "@/config/smart-contracts/TRS/TRS";
+import { type Address, isAddress, getAddress, parseUnits } from "viem";
+import AccrueButton from "@/components/buttons/AccrueButton.vue";
+import CollectButton from "@/components/buttons/CollectButton.vue";
+import { useConnection, useWaitForTransactionReceipt, useWriteContract } from "@wagmi/vue";
+const route = useRoute();
+const router = useRouter();
 
 useHead({
   title: `Holdings | Token ${route.params.tokenId}`,
-  meta: [{ name: 'description', content: `Details for token ${route.params.tokenId}` }],
-})
+  meta: [{ name: "description", content: `Details for token ${route.params.tokenId}` }],
+});
 const handleBack = () => {
   if (window.history.length > 1) {
-    router.back()
+    router.back();
   } else {
-    router.push({ name: 'holdings' })
+    router.push({ name: "holdings" });
   }
-}
+};
 
-const { address } = useConnection()
+const { address } = useConnection();
 
-const { mutateAsync, isPending, data: txHash } = useWriteContract()
+const { mutateAsync, isPending, data: txHash } = useWriteContract();
 const formSchema = z.object({
   recipientAddress: z
     .string()
     .refine((val) => isAddress(val), {
-      message: 'Invalid Ethereum address',
+      message: "Invalid Ethereum address",
     })
     .transform((val) => getAddress(val)), // checksummed,
   amount: z
     .string()
-    .min(1, 'Required')
-    .regex(/^\d+(\.\d+)?$/, 'Invalid number format')
+    .min(1, "Required")
+    .regex(/^\d+(\.\d+)?$/, "Invalid number format")
     .transform((val) => parseUnits(val, 18)), // → bigint,
-})
+});
 const { handleSubmit, setFieldValue, values, meta } = useForm({
   validationSchema: toTypedSchema(formSchema),
-})
+});
 const onSubmit = handleSubmit(async ({ recipientAddress, amount }) => {
   await mutateAsync({
-    ...M3TRS,
-    functionName: 'safeTransferFrom',
+    ...TRS,
+    functionName: "safeTransferFrom",
     args: [
       address.value as Address,
       recipientAddress,
       BigInt(route.params.tokenId as string),
       amount,
-      '0x',
+      "0x",
     ],
-  })
-})
+  });
+});
 const {
   isLoading: isConfirming,
   // isSuccess: isConfirmed
 } = useWaitForTransactionReceipt({
   hash: txHash,
-})
+});
 </script>
 
 <template>

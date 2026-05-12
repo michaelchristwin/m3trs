@@ -1,23 +1,23 @@
 <script lang="ts" setup>
-import { M3TRS } from '@/config/smart-contracts/M3TRS'
-import { useWaitForTransactionReceipt, useWriteContract } from '@wagmi/vue'
+import { TRS } from "@/config/smart-contracts/TRS/TRS";
+import { useWaitForTransactionReceipt, useWriteContract } from "@wagmi/vue";
 
-defineProps(['status', 'meterId', 'tokenId', 'stopTime'])
-const { mutateAsync, isPending, data: txHash } = useWriteContract()
+defineProps(["status", "meterId", "tokenId", "stopTime"]);
+const { mutateAsync, isPending, data: txHash } = useWriteContract();
 const expire = async (id: number) => {
   await mutateAsync({
-    ...M3TRS,
-    functionName: 'expire',
+    ...TRS,
+    functionName: "expire",
     args: [BigInt(id)],
-  })
-}
+  });
+};
 
 const {
   isLoading: isConfirming,
   // isSuccess: isConfirmed
 } = useWaitForTransactionReceipt({
   hash: txHash,
-})
+});
 </script>
 <template>
   <article

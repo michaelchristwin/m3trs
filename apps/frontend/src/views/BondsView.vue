@@ -1,20 +1,20 @@
 <script lang="ts" setup>
-import { M3TRS } from '@/config/smart-contracts/M3TRS'
-import { useHead } from '@unhead/vue'
-import { useWriteContract } from '@wagmi/vue'
+import { TRS } from "@/config/smart-contracts/TRS/TRS";
+import { useHead } from "@unhead/vue";
+import { useWriteContract } from "@wagmi/vue";
 useHead({
-  title: 'Bonds',
-  meta: [{ name: 'description', content: '' }],
-})
-const { mutateAsync, isPending } = useWriteContract()
+  title: "Bonds",
+  meta: [{ name: "description", content: "" }],
+});
+const { mutateAsync, isPending } = useWriteContract();
 
 const expire = async (id: number) => {
   await mutateAsync({
-    ...M3TRS,
-    functionName: 'expire',
+    ...TRS,
+    functionName: "expire",
     args: [BigInt(id)],
-  })
-}
+  });
+};
 </script>
 
 <template>

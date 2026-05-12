@@ -5,9 +5,9 @@ import { useForm } from "vee-validate";
 import { client } from "@/config/eden-client";
 import { useMutation } from "@tanstack/vue-query";
 import { toTypedSchema } from "@vee-validate/zod";
-import { M3TRS } from "@/config/smart-contracts/M3TRS";
+import { TRS } from "@/config/smart-contracts/TRS/TRS";
 import { approveAndMint } from "@/actions/approveAndMint";
-import { MyToken } from "@/config/smart-contracts/MyToken";
+import { MyToken } from "@/config/smart-contracts/MyToken/MyToken";
 import { useConnection, useReadContract } from "@wagmi/vue";
 import { type Address, type BaseError } from "viem";
 
@@ -68,7 +68,7 @@ const onSubmit = handleSubmit(async (formValues) => {
   console.log(`[metadata url]: ${url}`);
   ///
   if (!url) throw Error("Metadata upload failed");
-  await approveAndMint([M3TRS.address, tokenId], [BigInt(supply), tokenId, BigInt(stopTime), url]);
+  await approveAndMint([TRS.address, tokenId], [BigInt(supply), tokenId, BigInt(stopTime), url]);
 });
 const { mutateAsync, isPending: mutationIsPending } = useMutation({
   mutationFn: onSubmit,
