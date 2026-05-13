@@ -3,19 +3,18 @@ import HoldingsListItem from "@/components/HoldingsListItem.vue";
 import { client } from "@/config/eden-client";
 import { publicClient } from "@/config/viem-clients";
 import { useQuery } from "@tanstack/vue-query";
-import { useConnection } from "@wagmi/vue";
 import { setMeterNFT } from "@/config/smart-contracts/MeterNFT/MeterNFT";
 import type { Address } from "viem";
 
-const { address } = useConnection();
+const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
 const { data: enrichedTokens } = useQuery({
   queryKey: ["enriched-holdings", address],
-  enabled: !!address.value,
+  enabled: !!address,
   queryFn: async () => {
     // 1. get holdings
     const res = await client.dune["meter-tokens-by-owner"]({
-      owner: address.value!,
+      owner: address,
     }).get();
 
     if (res.error) {
