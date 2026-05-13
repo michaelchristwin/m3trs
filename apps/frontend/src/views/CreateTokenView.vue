@@ -30,7 +30,7 @@ const {
 } = useReadContract({
   ...MyToken,
   functionName: "tokensOfOwner",
-  args: [address.value as Address],
+  args: ["0xb2403f83C23748b26B06173db7527383482E8c5a" as Address],
   query: {
     enabled: !!address,
   },
