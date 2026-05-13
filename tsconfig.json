@@ -1,4 +1,15 @@
 {
   "files": [],
-  "references": [{ "path": "./apps/frontend" }, { "path": "./apps/backend" }]
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ]
 }
+
+// "paths": {
+//       "@m3trs/contracts": ["../../packages/contracts/src/index.ts"]
+//     },
