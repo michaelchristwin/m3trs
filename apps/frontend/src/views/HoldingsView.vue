@@ -4,8 +4,9 @@ import { client } from "@/config/eden-client";
 import { publicClient } from "@/config/viem-clients";
 import { useQuery } from "@tanstack/vue-query";
 import { useConnection } from "@wagmi/vue";
+import { setMeterNFT } from "@/config/smart-contracts/MeterNFT/MeterNFT";
 import type { Address } from "viem";
-import { computed, watch } from "vue";
+
 const { address } = useConnection();
 
 const { data: enrichedTokens } = useQuery({
@@ -31,9 +32,10 @@ const { data: enrichedTokens } = useQuery({
 
         // get token uri
         const tokenUri = await publicClient.readContract({
-          
-          
-        })
+          ...setMeterNFT(tokenId as Address),
+          functionName: "uri",
+          args: [BigInt(tokenId)],
+        });
         //getTokenUri(tokenId);
 
         // fetch metadata
@@ -49,7 +51,7 @@ const { data: enrichedTokens } = useQuery({
     );
   },
 });
-
+console.log(enrichedTokens);
 type Holding = {
   tokenId: number;
   balance: number;
