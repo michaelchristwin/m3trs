@@ -1,5 +1,5 @@
 import type { Address } from "viem";
-import { M3TRS } from "@/config/smart-contracts/TRS/TRS";
+import { TRS } from "@/config/smart-contracts/TRS/TRS";
 import { account, walletClient, publicClient } from "@/config/viem-clients";
 import { MyToken } from "@/config/smart-contracts/MyToken/MyToken";
 
@@ -19,7 +19,7 @@ async function approveAndMint(
   });
 
   const { request: mintReq } = await publicClient.simulateContract({
-    ...M3TRS,
+    ...TRS,
     account: account!,
     functionName: "create",
     args: mintArgs,

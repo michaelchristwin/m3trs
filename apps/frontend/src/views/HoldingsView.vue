@@ -1,31 +1,55 @@
 <script lang="ts" setup>
 import HoldingsListItem from "@/components/HoldingsListItem.vue";
 import { client } from "@/config/eden-client";
+import { publicClient } from "@/config/viem-clients";
 import { useQuery } from "@tanstack/vue-query";
 import { useConnection } from "@wagmi/vue";
+import type { Address } from "viem";
 import { computed, watch } from "vue";
 const { address } = useConnection();
-const { data: tokens } = useQuery({
-  queryKey: ["holdings", address],
+
+const { data: enrichedTokens } = useQuery({
+  queryKey: ["enriched-holdings", address],
+  enabled: !!address.value,
   queryFn: async () => {
-    const res = await client.dune["meter-tokens-by-owner"]({ owner: address.value! }).get();
+    // 1. get holdings
+    const res = await client.dune["meter-tokens-by-owner"]({
+      owner: address.value!,
+    }).get();
+
     if (res.error) {
       throw res.error;
     }
-    return res.data.result?.rows;
+
+    const rows = res.data.result?.rows ?? [];
+
+    // 2. enrich in parallel
+    return Promise.all(
+      rows.map(async (t) => {
+        const tokenId = t.token_id as string;
+        const amount = t.amount as string;
+
+        // get token uri
+        const tokenUri = await publicClient.readContract({
+          
+          
+        })
+        //getTokenUri(tokenId);
+
+        // fetch metadata
+        const metadata = await fetch(tokenUri).then((r) => r.json());
+
+        return {
+          id: tokenId,
+          amount,
+          tokenUri,
+          metadata,
+        };
+      }),
+    );
   },
-  enabled: !!address.value,
 });
-const tokenMap = computed(
-  () =>
-    tokens.value?.map((t) => ({
-      id: t.token_id as string,
-      amount: t.amount as string,
-    })) ?? [],
-);
-watch(tokenMap, (value) => {
-  value.map((v) => console.log(v));
-});
+
 type Holding = {
   tokenId: number;
   balance: number;
