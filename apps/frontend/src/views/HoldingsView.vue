@@ -17,6 +17,7 @@ const { data, error, isPending } = useQuery({
 });
 effect(() => {
   console.log(data.value?.nfts);
+  console.log(data.value?.nfts);
 });
 type Holding = {
   tokenId: number;
