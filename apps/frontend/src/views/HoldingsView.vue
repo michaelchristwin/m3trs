@@ -1,25 +1,23 @@
 <script lang="ts" setup>
 import HoldingsListItem from "@/components/HoldingsListItem.vue";
+import { useQuery } from "@tanstack/vue-query";
+import { collections } from "@/config/opensea/collections";
+import { effect } from "vue";
+import { trpc } from "@/config/trpc-client";
 
-// import { useQuery } from "@tanstack/vue-query";
-// import { collections } from "@/config/opensea/collections";
-// import { effect } from "vue";
+const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
-// const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
-
-// const {data: nfts, error, isPending} = useQuery({
-//   queryKey:["getNfts", address],
-//   queryFn:async ()=> {
-//     const resp = await client.opensea.nfts({owner:address})({collection: collections.holdings}).get()
-//     if (resp.error) {
-//       throw resp.error
-//     }
-//     return resp.data
-//   }
-// })
-// effect(() => {
-//   console.log(nfts.value)
-// })
+const { data, error, isPending } = useQuery({
+  queryKey: ["getNfts", address],
+  queryFn: () =>
+    trpc.opensea.getNFTByAccount.query({
+      owner: address,
+      collection: collections.holdings,
+    }),
+});
+effect(() => {
+  console.log(data.value?.nfts);
+});
 type Holding = {
   tokenId: number;
   balance: number;
@@ -47,7 +45,11 @@ const holdings: Holding[] = [
 <template>
   <div class="md:flex block justify-between items-end mb-8">
     <div>
-      <h1 class="font-headline text-3xl font-bold tracking-tight text-on-surface">My Holdings</h1>
+      <h1
+        class="font-headline text-3xl font-bold tracking-tight text-on-surface"
+      >
+        My Holdings
+      </h1>
       <p class="text-on-surface-variant text-sm mt-1 font-body">
         ERC1155 Contract Balances &amp; Revenue Status
       </p>
@@ -55,7 +57,9 @@ const holdings: Holding[] = [
     <button
       class="bg-primary-container md:w-auto w-full text-on-primary-container px-6 py-2.5 rounded hover:bg-primary-fixed-dim transition-all glow-primary font-headline text-sm font-bold tracking-wider uppercase flex items-center justify-center gap-2"
     >
-      <span class="material-symbols-outlined text-[18px]" data-icon="account_balance_wallet"
+      <span
+        class="material-symbols-outlined text-[18px]"
+        data-icon="account_balance_wallet"
         >account_balance_wallet</span
       >
       Collect All Revenue
@@ -106,7 +110,9 @@ const holdings: Holding[] = [
       class="bg-surface-container-lowest border border-surface-variant/50 rounded p-4 font-mono-data text-xs text-on-surface-variant opacity-70"
     >
       <div class="mb-1">&gt;[SYSTEM] Connected to node: eu-west-data-relay</div>
-      <div class="mb-1">&gt;[SYNC] Contract state verified at block 18492044</div>
+      <div class="mb-1">
+        &gt;[SYNC] Contract state verified at block 18492044
+      </div>
       <div class="mb-1 text-primary-container">
         &gt;[OK] Balances retrieved successfully. 0ms latency.
       </div>
