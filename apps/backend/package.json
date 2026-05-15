@@ -1,0 +1,23 @@
+{
+  "name": "@m3trs/backend",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "dependencies": {
+    "@m3trs/trpc": "workspace:*",
+    "@trpc/server": "^11.17.0",
+    "zod": "^4.4.3",
+    "@hono/trpc-server": "0.4.2",
+    "hono": "4.12.18"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
