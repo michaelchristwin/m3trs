@@ -22,6 +22,6 @@ export const openSeaRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      return await OpenseaQuery.getNFTOwners(input);
+      return await OpenseaQuery.getNFTByOwners(input);
     }),
 });

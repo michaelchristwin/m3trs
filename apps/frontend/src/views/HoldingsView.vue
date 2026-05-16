@@ -2,7 +2,7 @@
 import HoldingsListItem from "@/components/HoldingsListItem.vue";
 import { useQuery } from "@tanstack/vue-query";
 import { collections } from "@/config/opensea/collections";
-import { effect } from "vue";
+import { computed, effect } from "vue";
 import { trpc } from "@/config/trpc-client";
 
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
@@ -17,31 +17,24 @@ const { data, error, isPending } = useQuery({
 });
 effect(() => {
   console.log(data.value?.nfts);
-  //console.log(data.value?.nfts);
 });
-type Holding = {
-  tokenId: number;
-  balance: number;
-  claimableUsd: number;
-  stopTime: number;
-  status: "Active" | "Expiring";
-};
-const holdings: Holding[] = [
-  {
-    tokenId: 101,
-    balance: 250,
-    claimableUsd: 45.22,
-    stopTime: 45,
-    status: "Active",
-  },
-  {
-    tokenId: 88,
-    balance: 100,
-    claimableUsd: 12.1,
-    stopTime: 2,
-    status: "Expiring",
-  },
-];
+
+const holdings = computed(() => {
+  return (
+    data.value?.nfts?.map((nft) => {
+      return {
+        name: nft.name,
+        tokenId: nft.identifier,
+        metadataUrl: nft.metadataUrl,
+        status: "Active",
+        contract: nft.contract,
+      };
+    }) ?? []
+  );
+});
+effect(() => {
+  console.log(holdings.value);
+});
 </script>
 <template>
   <div class="md:flex block justify-between items-end mb-8">
@@ -72,7 +65,7 @@ const holdings: Holding[] = [
     <div
       class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-surface-container-highest rounded-t font-headline text-xs uppercase tracking-widest text-on-surface-variant items-center"
     >
-      <div class="col-span-2">Token ID</div>
+      <div class="col-span-2">Token Name</div>
       <div class="col-span-1 text-right">Balance</div>
       <div class="col-span-2 text-right">Claimable USD</div>
       <div class="col-span-2 text-right">Stop Time</div>
@@ -82,15 +75,16 @@ const holdings: Holding[] = [
     <!-- Table Body (Rows via Spacing & Surface Container Shifts) -->
     <div
       class="flex flex-col gap-1 mt-1"
-      v-for="{ tokenId, status, stopTime, balance, claimableUsd } in holdings"
+      v-if="holdings.length > 0"
+      v-for="{ tokenId, status, metadataUrl, contract, name } in holdings"
       :key="tokenId"
     >
       <HoldingsListItem
         :token-id="tokenId"
         :status="status"
-        :stop-time="stopTime"
-        :balance="balance"
-        :claimable-usd="claimableUsd"
+        :metadata-url="metadataUrl"
+        :contract="contract"
+        :name="name"
       />
     </div>
   </div>

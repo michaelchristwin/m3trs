@@ -12,7 +12,7 @@ export abstract class OpenseaQuery {
       address: owner,
     });
   }
-  static async getNFTOwners({
+  static async getNFTByOwners({
     owner,
     identifier,
     limit,

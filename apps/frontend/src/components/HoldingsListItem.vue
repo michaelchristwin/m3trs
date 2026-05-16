@@ -1,28 +1,56 @@
 <script lang="ts" setup>
-import { useAppKitAccount } from '@reown/appkit/vue'
-import { useRouter } from 'vue-router'
-import AccrueButton from './buttons/AccrueButton.vue'
-import CollectButton from './buttons/CollectButton.vue'
-defineProps(['tokenId', 'status', 'balance', 'claimableUsd', 'stopTime'])
-const router = useRouter()
+import { useRouter } from "vue-router";
+import AccrueButton from "./buttons/AccrueButton.vue";
+import CollectButton from "./buttons/CollectButton.vue";
+import { useQuery } from "@tanstack/vue-query";
+import { trpc } from "@/config/trpc-client";
+import { computed } from "vue";
+import { useReadContract } from "@wagmi/vue";
+import { TRS } from "@/config/smart-contracts/TRS/TRS";
+const props = defineProps([
+  "tokenId",
+  "metadataUrl",
+  "status",
+  "contract",
+  "name",
+]);
+const router = useRouter();
+const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
-const eip155Account = useAppKitAccount({ namespace: 'eip155' })
 const openTokenDetails = (tokenId: number) => {
   router.push({
-    name: 'token details',
+    name: "token details",
     params: {
-      walletAddress: eip155Account.value.address,
+      walletAddress: address,
       tokenId: tokenId,
     },
-  })
-}
-
+  });
+};
+const { data } = useQuery({
+  queryKey: ["getNftsByIdentifier"],
+  queryFn: () =>
+    trpc.opensea.getNFTByOwners.query({
+      owner: props.contract,
+      identifier: props.tokenId,
+    }),
+  enabled: !!props.contract && !!props.tokenId,
+});
+const total = computed(() => {
+  return (
+    data.value?.owners.reduce((sum, owner) => sum + owner.quantity, 0) ?? 0
+  );
+});
+const { data: revenue, isLoading } = useReadContract({
+  ...TRS,
+  functionName: "revenue",
+  args: [address, BigInt(props.tokenId)],
+});
 const statusPillClasses: Record<string, string> = {
   Active:
-    'text-primary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold',
+    "text-primary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold",
   Expiring:
-    'text-secondary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold',
-}
+    "text-secondary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold",
+};
 </script>
 <template>
   <div
@@ -37,18 +65,18 @@ const statusPillClasses: Record<string, string> = {
     ></div>
     <div class="md:col-span-2 text-sm text-on-surface">
       <span class="md:hidden text-on-surface-variant">Token ID: </span>
-      <span class="font-mono-data">#{{ tokenId }}</span>
+      <span class="font-mono-data">{{ name }}</span>
     </div>
     <div class="col-span-1 font-mono-data text-sm text-on-surface text-right">
-      {{ balance }}
+      {{ total }}
     </div>
     <div class="md:col-span-2 text-sm text-primary md:text-right">
       <span class="md:hidden text-on-surface-variant">Claimable: </span>
-      ${{ claimableUsd.toFixed(2) }}
+      {{ Number(revenue!) }}
     </div>
     <div class="md:col-span-2 text-sm text-on-surface md:text-right">
       <span class="md:hidden text-on-surface-variant">Stop Time: </span>
-      {{ stopTime }}d left
+      2d left
     </div>
     <div class="md:col-span-2 md:flex md:justify-center">
       <span :class="statusPillClasses[status]">
@@ -70,7 +98,11 @@ const statusPillClasses: Record<string, string> = {
         @click.prevent
         class="md:block hidden px-3 py-1.5 rounded bg-transparent text-on-surface-variant hover:text-on-surface transition-colors items-center justify-center"
       >
-        <span class="material-symbols-outlined text-[18px]" data-icon="more_horiz">more_horiz</span>
+        <span
+          class="material-symbols-outlined text-[18px]"
+          data-icon="more_horiz"
+          >more_horiz</span
+        >
       </button>
     </div>
   </div>
