@@ -4,7 +4,8 @@ import AccrueButton from "./buttons/AccrueButton.vue";
 import CollectButton from "./buttons/CollectButton.vue";
 import { useQuery } from "@tanstack/vue-query";
 import { trpc } from "@/config/trpc-client";
-import { computed } from "vue";
+import { computed, effect, provide } from "vue";
+import { formatDistanceToNow } from "date-fns";
 import { useReadContract } from "@wagmi/vue";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
 const props = defineProps([
@@ -14,15 +15,21 @@ const props = defineProps([
   "contract",
   "name",
 ]);
+interface Metadata {
+  name: string;
+  stopTime: number;
+  description: string;
+}
 const router = useRouter();
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
-const openTokenDetails = (tokenId: number) => {
+const openTokenDetails = (tokenName: string) => {
+  console.log(tokenName);
   router.push({
     name: "token details",
     params: {
       walletAddress: address,
-      tokenId: tokenId,
+      tokenName,
     },
   });
 };
@@ -45,6 +52,25 @@ const { data: revenue, isLoading } = useReadContract({
   functionName: "revenue",
   args: [address, BigInt(props.tokenId)],
 });
+const { data: metadata, isLoading: isLoadingMetadata } = useQuery<Metadata>({
+  queryKey: ["getMetadata", props.metadataUrl],
+  queryFn: () => fetch(props.metadataUrl).then((res) => res.json()),
+  enabled: !!props.metadataUrl,
+});
+
+effect(() => {
+  console.log(metadata.value);
+});
+provide(
+  "metadata",
+  JSON.stringify({
+    ...metadata.value,
+    metadataUrl: props.metadataUrl,
+    status: props.status,
+    tokenId: props.tokenId,
+  }),
+);
+
 const statusPillClasses: Record<string, string> = {
   Active:
     "text-primary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold",
@@ -52,9 +78,10 @@ const statusPillClasses: Record<string, string> = {
     "text-secondary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold",
 };
 </script>
+
 <template>
   <div
-    @click="openTokenDetails(tokenId)"
+    @click="openTokenDetails(props.name)"
     aria-label="Open token details"
     class="relative grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 px-4 md:px-6 py-4 cursor-pointer bg-surface-container-low rounded group hover:bg-surface-container transition-colors items-center"
   >
@@ -72,11 +99,21 @@ const statusPillClasses: Record<string, string> = {
     </div>
     <div class="md:col-span-2 text-sm text-primary md:text-right">
       <span class="md:hidden text-on-surface-variant">Claimable: </span>
-      {{ Number(revenue!) }}
+      <div
+        v-if="isLoading"
+        class="inline-block h-4 w-20 rounded bg-surface-container-highest animate-pulse"
+      ></div>
+      <span v-else>{{ Number(revenue || 0) }}</span>
     </div>
     <div class="md:col-span-2 text-sm text-on-surface md:text-right">
       <span class="md:hidden text-on-surface-variant">Stop Time: </span>
-      2d left
+      <div
+        v-if="isLoadingMetadata"
+        class="inline-block h-4 w-20 rounded bg-surface-container-highest animate-pulse"
+      ></div>
+      <span v-else-if="metadata != undefined">
+        {{ formatDistanceToNow(new Date(metadata.stopTime * 1000)) }} left
+      </span>
     </div>
     <div class="md:col-span-2 md:flex md:justify-center">
       <span :class="statusPillClasses[status]">

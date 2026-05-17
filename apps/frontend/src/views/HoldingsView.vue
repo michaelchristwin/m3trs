@@ -2,21 +2,18 @@
 import HoldingsListItem from "@/components/HoldingsListItem.vue";
 import { useQuery } from "@tanstack/vue-query";
 import { collections } from "@/config/opensea/collections";
-import { computed, effect } from "vue";
+import { computed } from "vue";
 import { trpc } from "@/config/trpc-client";
 
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
-const { data, error, isPending } = useQuery({
+const { data, isLoading } = useQuery({
   queryKey: ["getNfts", address],
   queryFn: () =>
     trpc.opensea.getNFTByAccount.query({
       owner: address,
       collection: collections.holdings,
     }),
-});
-effect(() => {
-  console.log(data.value?.nfts);
 });
 
 const holdings = computed(() => {
@@ -31,9 +28,6 @@ const holdings = computed(() => {
       };
     }) ?? []
   );
-});
-effect(() => {
-  console.log(holdings.value);
 });
 </script>
 <template>
@@ -72,6 +66,8 @@ effect(() => {
       <div class="col-span-2 text-center">Status</div>
       <div class="col-span-3 text-right">Actions</div>
     </div>
+    <!-- Skeleton Rows -->
+
     <!-- Table Body (Rows via Spacing & Surface Container Shifts) -->
     <div
       class="flex flex-col gap-1 mt-1"
@@ -86,6 +82,48 @@ effect(() => {
         :contract="contract"
         :name="name"
       />
+    </div>
+    <div
+      v-for="i in 5"
+      v-else-if="isLoading"
+      :key="i"
+      class="hidden md:grid grid-cols-12 gap-4 px-6 py-4 border-b border-outline-variant animate-pulse items-center"
+    >
+      <!-- Token -->
+      <div class="col-span-2 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-surface-container-highest"></div>
+
+        <div class="space-y-2">
+          <div class="h-4 w-28 rounded bg-surface-container-highest"></div>
+          <div class="h-3 w-20 rounded bg-surface-container-highest"></div>
+        </div>
+      </div>
+
+      <!-- Balance -->
+      <div class="col-span-1 flex justify-end">
+        <div class="h-4 w-16 rounded bg-surface-container-highest"></div>
+      </div>
+
+      <!-- Claimable USD -->
+      <div class="col-span-2 flex justify-end">
+        <div class="h-4 w-24 rounded bg-surface-container-highest"></div>
+      </div>
+
+      <!-- Stop Time -->
+      <div class="col-span-2 flex justify-end">
+        <div class="h-4 w-32 rounded bg-surface-container-highest"></div>
+      </div>
+
+      <!-- Status -->
+      <div class="col-span-2 flex justify-center">
+        <div class="h-8 w-24 rounded-full bg-surface-container-highest"></div>
+      </div>
+
+      <!-- Actions -->
+      <div class="col-span-3 flex justify-end gap-2">
+        <div class="h-10 w-24 rounded-lg bg-surface-container-highest"></div>
+        <div class="h-10 w-24 rounded-lg bg-surface-container-highest"></div>
+      </div>
     </div>
   </div>
   <!-- Terminal Output / Log Area (Decorative industrial element) -->

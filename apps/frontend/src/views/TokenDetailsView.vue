@@ -8,13 +8,23 @@ import { TRS } from "@/config/smart-contracts/TRS/TRS";
 import { type Address, isAddress, getAddress, parseUnits } from "viem";
 import AccrueButton from "@/components/buttons/AccrueButton.vue";
 import CollectButton from "@/components/buttons/CollectButton.vue";
-import { useConnection, useWaitForTransactionReceipt, useWriteContract } from "@wagmi/vue";
+import {
+  useConnection,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "@wagmi/vue";
+import { inject } from "vue";
 const route = useRoute();
 const router = useRouter();
 
 useHead({
-  title: `Holdings | Token ${route.params.tokenId}`,
-  meta: [{ name: "description", content: `Details for token ${route.params.tokenId}` }],
+  title: `Holdings | Token ${route.params.tokenName}`,
+  meta: [
+    {
+      name: "description",
+      content: `Details for token ${route.params.tokenName}`,
+    },
+  ],
 });
 const handleBack = () => {
   if (window.history.length > 1) {
@@ -56,12 +66,11 @@ const onSubmit = handleSubmit(async ({ recipientAddress, amount }) => {
     ],
   });
 });
-const {
-  isLoading: isConfirming,
-  // isSuccess: isConfirmed
-} = useWaitForTransactionReceipt({
+const { isLoading: isConfirming } = useWaitForTransactionReceipt({
   hash: txHash,
 });
+
+const metadata = inject("metadata");
 </script>
 
 <template>
@@ -73,23 +82,34 @@ const {
         aria-label="Navigate back"
         class="text-on-surface/50 hover:text-primary transition-colors flex items-center gap-1 font-headline text-sm"
       >
-        <span class="material-symbols-outlined text-sm" data-icon="arrow_back">arrow_back</span>
+        <span class="material-symbols-outlined text-sm" data-icon="arrow_back"
+          >arrow_back</span
+        >
         Back
       </button>
     </div>
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
       <div>
-        <h1 class="font-headline font-bold text-3xl md:text-5xl text-on-surface tracking-tight">
-          Token <span class="font-mono text-primary">#{{ $route.params.tokenId }}</span>
+        <h1
+          class="font-headline font-bold text-3xl md:text-5xl text-on-surface tracking-tight"
+        >
+          Token
+          <span class="font-mono text-primary">{{
+            $route.params.tokenName
+          }}</span>
         </h1>
-        <p class="font-mono text-sm text-on-surface/50 mt-2 tracking-widest uppercase">
+        <p
+          class="font-mono text-sm text-on-surface/50 mt-2 tracking-widest uppercase"
+        >
           Contract Details &amp; Revenue Hub
         </p>
       </div>
       <div
         class="flex items-center bg-primary-container/15 px-4 py-1.5 rounded-pill ghost-border-primary self-start md:self-auto"
       >
-        <span class="w-2 h-2 rounded-full bg-primary-container mr-2 animate-pulse"></span>
+        <span
+          class="w-2 h-2 rounded-full bg-primary-container mr-2 animate-pulse"
+        ></span>
         <span
           class="font-headline font-bold text-sm text-primary-container uppercase tracking-wider"
           >Active</span
@@ -105,11 +125,17 @@ const {
       <div
         class="bg-surface-container-low rounded-lg ghost-border-outline overflow-hidden flex flex-col"
       >
-        <div class="bg-surface-container-highest px-6 py-4 flex items-center justify-between">
-          <h3 class="font-headline font-bold text-on-surface text-sm uppercase tracking-wider">
+        <div
+          class="bg-surface-container-highest px-6 py-4 flex items-center justify-between"
+        >
+          <h3
+            class="font-headline font-bold text-on-surface text-sm uppercase tracking-wider"
+          >
             Metadata
           </h3>
-          <span class="material-symbols-outlined text-on-surface/50 text-lg" data-icon="data_object"
+          <span
+            class="material-symbols-outlined text-on-surface/50 text-lg"
+            data-icon="data_object"
             >data_object</span
           >
         </div>
@@ -193,7 +219,9 @@ const {
               $1,200.<span class="text-on-surface/40">00</span>
             </div>
             <div class="flex items-center gap-2 text-primary mt-2">
-              <span class="material-symbols-outlined text-sm" data-icon="trending_up"
+              <span
+                class="material-symbols-outlined text-sm"
+                data-icon="trending_up"
                 >trending_up</span
               >
               <span class="font-mono text-xs">+12.4% this epoch</span>
@@ -225,8 +253,12 @@ const {
         </div>
       </div>
       <!-- Transfer Panel -->
-      <div class="bg-surface-container-low rounded-lg ghost-border-outline overflow-hidden">
-        <div class="bg-surface-container-highest px-6 py-4 flex items-center justify-between">
+      <div
+        class="bg-surface-container-low rounded-lg ghost-border-outline overflow-hidden"
+      >
+        <div
+          class="bg-surface-container-highest px-6 py-4 flex items-center justify-between"
+        >
           <h3
             class="font-headline font-bold text-on-surface text-sm uppercase tracking-wider flex items-center gap-2"
           >
@@ -239,7 +271,10 @@ const {
           </h3>
         </div>
         <div class="p-6 md:p-8">
-          <form class="flex flex-col md:flex-row gap-6 items-end" @submit.prevent="onSubmit">
+          <form
+            class="flex flex-col md:flex-row gap-6 items-end"
+            @submit.prevent="onSubmit"
+          >
             <div class="flex-1 w-full">
               <label
                 class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2"
@@ -257,7 +292,10 @@ const {
                   type="text"
                   :value="values.recipientAddress"
                   @input="
-                    setFieldValue('recipientAddress', ($event.target as HTMLInputElement).value)
+                    setFieldValue(
+                      'recipientAddress',
+                      ($event.target as HTMLInputElement).value,
+                    )
                   "
                 />
               </div>
@@ -272,7 +310,12 @@ const {
                 placeholder="0.00"
                 type="number"
                 :value="values.amount"
-                @input="setFieldValue('amount', ($event.target as HTMLInputElement).value)"
+                @input="
+                  setFieldValue(
+                    'amount',
+                    ($event.target as HTMLInputElement).value,
+                  )
+                "
               />
             </div>
             <button
@@ -299,7 +342,9 @@ const {
       <h3
         class="font-headline font-bold text-error text-sm uppercase tracking-wider flex items-center gap-2"
       >
-        <span class="material-symbols-outlined text-error text-lg" data-icon="warning"
+        <span
+          class="material-symbols-outlined text-error text-lg"
+          data-icon="warning"
           >warning</span
         >
         Contract Expiry
@@ -311,7 +356,8 @@ const {
     >
       <div>
         <p class="font-mono text-sm text-on-surface/80">
-          Stop time has passed. Manual expiry execution required to finalize state.
+          Stop time has passed. Manual expiry execution required to finalize
+          state.
         </p>
         <p class="font-mono text-xs text-error/80 mt-1">
           Warning: This action is irreversible and halts all revenue accrual.
