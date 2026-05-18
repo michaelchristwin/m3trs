@@ -13,7 +13,6 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "@wagmi/vue";
-import { inject } from "vue";
 const route = useRoute();
 const router = useRouter();
 
@@ -69,8 +68,6 @@ const onSubmit = handleSubmit(async ({ recipientAddress, amount }) => {
 const { isLoading: isConfirming } = useWaitForTransactionReceipt({
   hash: txHash,
 });
-
-const metadata = inject("metadata");
 </script>
 
 <template>

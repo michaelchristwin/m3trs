@@ -4,10 +4,9 @@ import AccrueButton from "./buttons/AccrueButton.vue";
 import CollectButton from "./buttons/CollectButton.vue";
 import { useQuery } from "@tanstack/vue-query";
 import { trpc } from "@/config/trpc-client";
-import { computed, effect, provide } from "vue";
 import { formatDistanceToNow } from "date-fns";
-import { useReadContract } from "@wagmi/vue";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
+import { publicClient } from "@/config/viem-clients";
 const props = defineProps([
   "tokenId",
   "metadataUrl",
@@ -28,48 +27,42 @@ const openTokenDetails = (tokenName: string) => {
   router.push({
     name: "token details",
     params: {
-      walletAddress: address,
       tokenName,
+    },
+    query: {
+      tokenId: props.tokenId,
+      contract: props.contract,
     },
   });
 };
-const { data } = useQuery({
-  queryKey: ["getNftsByIdentifier"],
-  queryFn: () =>
-    trpc.opensea.getNFTByOwners.query({
+const { data: metadata, isLoading } = useQuery({
+  queryKey: ["getNftByIdentifier", props.tokenId],
+  queryFn: async () => {
+    const nftByOwners = await trpc.opensea.getNFTByOwners.query({
       owner: props.contract,
       identifier: props.tokenId,
-    }),
-  enabled: !!props.contract && !!props.tokenId,
+    });
+    const supply =
+      nftByOwners?.owners.reduce((sum, owner) => sum + owner.quantity, 0) ?? 0;
+    const revenue = await publicClient.readContract({
+      ...TRS,
+      functionName: "revenue",
+      args: [address, BigInt(props.tokenId)],
+    });
+    const metadata: Metadata = await fetch(props.metadataUrl).then((res) =>
+      res.json(),
+    );
+    return {
+      ...metadata,
+      supply,
+      revenue,
+      status: props.status,
+      contract: props.contract,
+      name: props.name,
+    };
+  },
+  enabled: !!props.contract && !!props.tokenId && !!props.metadataUrl,
 });
-const total = computed(() => {
-  return (
-    data.value?.owners.reduce((sum, owner) => sum + owner.quantity, 0) ?? 0
-  );
-});
-const { data: revenue, isLoading } = useReadContract({
-  ...TRS,
-  functionName: "revenue",
-  args: [address, BigInt(props.tokenId)],
-});
-const { data: metadata, isLoading: isLoadingMetadata } = useQuery<Metadata>({
-  queryKey: ["getMetadata", props.metadataUrl],
-  queryFn: () => fetch(props.metadataUrl).then((res) => res.json()),
-  enabled: !!props.metadataUrl,
-});
-
-effect(() => {
-  console.log(metadata.value);
-});
-provide(
-  "metadata",
-  JSON.stringify({
-    ...metadata.value,
-    metadataUrl: props.metadataUrl,
-    status: props.status,
-    tokenId: props.tokenId,
-  }),
-);
 
 const statusPillClasses: Record<string, string> = {
   Active:
@@ -95,7 +88,7 @@ const statusPillClasses: Record<string, string> = {
       <span class="font-mono-data">{{ name }}</span>
     </div>
     <div class="col-span-1 font-mono-data text-sm text-on-surface text-right">
-      {{ total }}
+      {{ metadata?.supply }}
     </div>
     <div class="md:col-span-2 text-sm text-primary md:text-right">
       <span class="md:hidden text-on-surface-variant">Claimable: </span>
@@ -103,12 +96,14 @@ const statusPillClasses: Record<string, string> = {
         v-if="isLoading"
         class="inline-block h-4 w-20 rounded bg-surface-container-highest animate-pulse"
       ></div>
-      <span v-else>{{ Number(revenue || 0) }}</span>
+      <span v-else-if="metadata != undefined">{{
+        Number(metadata.revenue)
+      }}</span>
     </div>
     <div class="md:col-span-2 text-sm text-on-surface md:text-right">
       <span class="md:hidden text-on-surface-variant">Stop Time: </span>
       <div
-        v-if="isLoadingMetadata"
+        v-if="isLoading"
         class="inline-block h-4 w-20 rounded bg-surface-container-highest animate-pulse"
       ></div>
       <span v-else-if="metadata != undefined">
