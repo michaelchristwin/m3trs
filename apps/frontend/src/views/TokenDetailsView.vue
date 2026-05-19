@@ -9,10 +9,11 @@ import { type Address, isAddress, getAddress, parseUnits } from "viem";
 import AccrueButton from "@/components/buttons/AccrueButton.vue";
 import CollectButton from "@/components/buttons/CollectButton.vue";
 import {
-  useConnection,
+  useReadContract,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "@wagmi/vue";
+import { formatDistanceToNow } from "date-fns";
 const route = useRoute();
 const router = useRouter();
 
@@ -33,7 +34,12 @@ const handleBack = () => {
   }
 };
 
-const { address } = useConnection();
+const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
+const { data: token, isLoading } = useReadContract({
+  ...TRS,
+  functionName: "token",
+  args: [route.query.tokenId],
+});
 
 const { mutateAsync, isPending, data: txHash } = useWriteContract();
 const formSchema = z.object({
@@ -57,7 +63,7 @@ const onSubmit = handleSubmit(async ({ recipientAddress, amount }) => {
     ...TRS,
     functionName: "safeTransferFrom",
     args: [
-      address.value as Address,
+      address as Address,
       recipientAddress,
       BigInt(route.params.tokenId as string),
       amount,
@@ -109,7 +115,7 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
         ></span>
         <span
           class="font-headline font-bold text-sm text-primary-container uppercase tracking-wider"
-          >Active</span
+          >{{ token?.[1] }}</span
         >
       </div>
     </div>
@@ -117,7 +123,67 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
   <!-- Bento Grid Layout -->
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
     <!-- Left Column (Metadata) -->
-    <div class="lg:col-span-4 flex flex-col gap-6">
+    <div
+      class="lg:col-span-4 flex flex-col gap-6 animate-pulse"
+      v-if="isLoading"
+    >
+      <div
+        class="bg-surface-container-low rounded-lg ghost-border-outline overflow-hidden flex flex-col"
+      >
+        <!-- Header -->
+        <div
+          class="bg-surface-container-highest px-6 py-4 flex items-center justify-between"
+        >
+          <div class="h-4 w-24 rounded bg-surface-container"></div>
+
+          <div class="h-5 w-5 rounded bg-surface-container"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6 flex flex-col gap-6">
+          <!-- URI -->
+          <div>
+            <div class="h-3 w-12 rounded bg-surface-container mb-2"></div>
+
+            <div class="h-4 w-full rounded bg-surface-container"></div>
+          </div>
+
+          <!-- Divider -->
+          <div class="w-full h-px bg-surface-container"></div>
+
+          <!-- Supply + Meter ID -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <div class="h-3 w-16 rounded bg-surface-container mb-2"></div>
+
+              <div class="h-6 w-20 rounded bg-surface-container"></div>
+            </div>
+
+            <div>
+              <div class="h-3 w-20 rounded bg-surface-container mb-2"></div>
+
+              <div class="h-6 w-16 rounded bg-surface-container"></div>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="w-full h-px bg-surface-container"></div>
+
+          <!-- Stop Time -->
+          <div>
+            <div class="h-3 w-20 rounded bg-surface-container mb-2"></div>
+
+            <div class="h-4 w-32 rounded bg-surface-container mb-2"></div>
+
+            <div class="h-6 w-40 rounded bg-surface-container"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="lg:col-span-4 flex flex-col gap-6"
+      v-else-if="token !== undefined"
+    >
       <!-- Metadata Card -->
       <div
         class="bg-surface-container-low rounded-lg ghost-border-outline overflow-hidden flex flex-col"
@@ -143,9 +209,10 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
               >URI</label
             >
             <a
+              :href="token[4]"
+              target="_blank"
               class="font-mono text-sm text-primary hover:underline break-all truncate block"
-              href="#"
-              >ipfs://Qm...xYz</a
+              >{{ token[4] }}</a
             >
           </div>
           <div class="w-full h-px bg-surface-container"></div>
@@ -155,14 +222,18 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
                 class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-1"
                 >Supply</label
               >
-              <div class="font-mono text-lg text-on-surface">1000</div>
+              <div class="font-mono text-lg text-on-surface">
+                {{ token[1] }}
+              </div>
             </div>
             <div>
               <label
                 class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-1"
                 >M3TER ID</label
               >
-              <div class="font-mono text-lg text-secondary">#501</div>
+              <div class="font-mono text-lg text-secondary">
+                #{{ token[2] }}
+              </div>
             </div>
           </div>
           <div class="w-full h-px bg-surface-container"></div>
@@ -171,11 +242,16 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
               class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-1"
               >Stop Time</label
             >
-            <div class="font-mono text-sm text-on-surface mb-1">2024-12-31</div>
+            <div class="font-mono text-sm text-on-surface mb-1">
+              {{
+                new Date(Number(token[3]) * 1000).toISOString().split("T")[0]
+              }}
+            </div>
             <div
               class="font-mono text-xs text-secondary-container bg-secondary-container/10 inline-block px-2 py-0.5 rounded"
             >
-              Expires in 45 days
+              Expires in
+              {{ formatDistanceToNow(new Date(Number(token[3]) * 1000)) }}
             </div>
           </div>
         </div>

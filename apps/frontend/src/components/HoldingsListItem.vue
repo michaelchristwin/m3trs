@@ -7,6 +7,7 @@ import { trpc } from "@/config/trpc-client";
 import { formatDistanceToNow } from "date-fns";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
 import { publicClient } from "@/config/viem-clients";
+import { checksumAddress, type Address } from "viem";
 const props = defineProps([
   "tokenId",
   "metadataUrl",
@@ -31,10 +32,10 @@ const openTokenDetails = (tokenName: string) => {
     },
     query: {
       tokenId: props.tokenId,
-      contract: props.contract,
     },
   });
 };
+
 const { data: metadata, isLoading } = useQuery({
   queryKey: ["getNftByIdentifier", props.tokenId],
   queryFn: async () => {
@@ -43,12 +44,19 @@ const { data: metadata, isLoading } = useQuery({
       identifier: props.tokenId,
     });
     const supply =
-      nftByOwners?.owners.reduce((sum, owner) => sum + owner.quantity, 0) ?? 0;
+      nftByOwners?.owners
+        .filter(
+          (owner) =>
+            checksumAddress(owner.address as Address) ===
+            checksumAddress(address),
+        )
+        .reduce((sum, owner) => sum + owner.quantity, 0) ?? 0;
     const revenue = await publicClient.readContract({
       ...TRS,
       functionName: "revenue",
       args: [address, BigInt(props.tokenId)],
     });
+
     const metadata: Metadata = await fetch(props.metadataUrl).then((res) =>
       res.json(),
     );
