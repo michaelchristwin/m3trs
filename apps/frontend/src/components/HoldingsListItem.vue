@@ -8,6 +8,7 @@ import { wagmiAdapter } from "@/config/wagmi";
 import { formatDistanceToNow } from "date-fns";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
 import { checksumAddress } from "viem";
+
 const props = defineProps([
   "tokenId",
   "metadataUrl",
@@ -75,7 +76,9 @@ const { data: metadata, isLoading } = useQuery({
   },
   enabled: !!props.contract && !!props.tokenId && !!props.metadataUrl,
 });
-
+// effect(() => {
+//   console.log("TokenId: ", props.tokenId);
+// });
 const statusPillClasses: Record<string, string> = {
   Active:
     "text-primary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold",

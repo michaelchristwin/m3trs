@@ -1,19 +1,24 @@
 <script setup lang="ts">
 import { z } from "zod";
+import { readContracts } from "@wagmi/core";
 import { useHead } from "@unhead/vue";
 import { useForm } from "vee-validate";
 import { useRouter, useRoute } from "vue-router";
 import { toTypedSchema } from "@vee-validate/zod";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
-import { type Address, isAddress, getAddress, parseUnits } from "viem";
+import {
+  type Address,
+  isAddress,
+  getAddress,
+  parseUnits,
+  checksumAddress,
+} from "viem";
 import AccrueButton from "@/components/buttons/AccrueButton.vue";
 import CollectButton from "@/components/buttons/CollectButton.vue";
-import {
-  useReadContract,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from "@wagmi/vue";
+import { useWaitForTransactionReceipt, useWriteContract } from "@wagmi/vue";
 import { formatDistanceToNow } from "date-fns";
+import { useQuery } from "@tanstack/vue-query";
+import { wagmiAdapter } from "@/config/wagmi";
 const route = useRoute();
 const router = useRouter();
 
@@ -35,10 +40,47 @@ const handleBack = () => {
 };
 
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
-const { data: token, isLoading } = useReadContract({
-  ...TRS,
-  functionName: "token",
-  args: [BigInt(route.query.tokenId as string)],
+
+const { data, isLoading } = useQuery({
+  queryKey: ["getData", route.query.tokenId],
+  queryFn: async () => {
+    const result = await readContracts(wagmiAdapter.wagmiConfig, {
+      contracts: [
+        {
+          ...TRS,
+          functionName: "token",
+          args: [BigInt(route.query.tokenId as string)],
+        },
+        {
+          ...TRS,
+          functionName: "accRevenuePerToken",
+          args: [BigInt(route.query.tokenId as string)],
+        },
+        {
+          ...TRS,
+          functionName: "revenue",
+          args: [
+            checksumAddress(address),
+            BigInt(route.query.tokenId as string),
+          ],
+        },
+      ],
+    });
+    if (result[0].error) {
+      throw result[0].error;
+    }
+    if (result[1].error) {
+      throw result[1].error;
+    }
+    if (result[2].error) {
+      throw result[2].error;
+    }
+    return {
+      token: result[0].result,
+      accRevenuePerToken: Number(result[1].result * result[0].result[1]) / 1e18,
+      revenue: Number(result[1].result),
+    };
+  },
 });
 
 const { mutateAsync, isPending, data: txHash } = useWriteContract();
@@ -115,7 +157,7 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
         ></span>
         <span
           class="font-headline font-bold text-sm text-primary-container uppercase tracking-wider"
-          >{{ token?.[1] }}</span
+          >{{ data?.token[1] }}</span
         >
       </div>
     </div>
@@ -182,7 +224,7 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
     </div>
     <div
       class="lg:col-span-4 flex flex-col gap-6"
-      v-else-if="token !== undefined"
+      v-else-if="data !== undefined"
     >
       <!-- Metadata Card -->
       <div
@@ -209,10 +251,10 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
               >URI</label
             >
             <a
-              :href="token[4]"
+              :href="data.token[4]"
               target="_blank"
               class="font-mono text-sm text-primary hover:underline break-all truncate block"
-              >{{ token[4] }}</a
+              >{{ data.token[4] }}</a
             >
           </div>
           <div class="w-full h-px bg-surface-container"></div>
@@ -223,7 +265,7 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
                 >Supply</label
               >
               <div class="font-mono text-lg text-on-surface">
-                {{ token[1] }}
+                {{ data.token[1] }}
               </div>
             </div>
             <div>
@@ -232,7 +274,7 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
                 >M3TER ID</label
               >
               <div class="font-mono text-lg text-secondary">
-                #{{ token[2] }}
+                #{{ data.token[2] }}
               </div>
             </div>
           </div>
@@ -244,14 +286,16 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
             >
             <div class="font-mono text-sm text-on-surface mb-1">
               {{
-                new Date(Number(token[3]) * 1000).toISOString().split("T")[0]
+                new Date(Number(data.token[3]) * 1000)
+                  .toISOString()
+                  .split("T")[0]
               }}
             </div>
             <div
               class="font-mono text-xs text-secondary-container bg-secondary-container/10 inline-block px-2 py-0.5 rounded"
             >
               Expires in
-              {{ formatDistanceToNow(new Date(Number(token[3]) * 1000)) }}
+              {{ formatDistanceToNow(new Date(Number(data.token[3]) * 1000)) }}
             </div>
           </div>
         </div>
@@ -289,7 +333,7 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
             <div
               class="font-mono text-[3.5rem] leading-none text-on-surface font-light tracking-tight mb-2"
             >
-              $1,200.<span class="text-on-surface/40">00</span>
+              ${{ data?.accRevenuePerToken.toFixed(2) }}
             </div>
             <div class="flex items-center gap-2 text-primary mt-2">
               <span
@@ -308,13 +352,13 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
               >Your Claimable</label
             >
             <div class="font-mono text-3xl text-primary mb-6">
-              $45.<span class="text-primary/60">22</span>
+              ${{ data?.revenue.toFixed(2) }}
             </div>
             <div class="flex flex-col sm:flex-row gap-3">
               <AccrueButton
                 inner-text="Accrue Revenue"
                 :token-id="$route.params.tokenId"
-                class="flex-1 bg-transparent ghost-border-primary text-primary font-headline font-bold text-sm py-3 px-4 rounded hover:bg-primary/5 transition-all"
+                class="flex-1 bg-transparent border-primary/30 border text-primary font-headline font-bold text-sm py-3 px-4 rounded hover:bg-primary/5 transition-all"
               />
               <CollectButton
                 inner-text="Collect Revenue"
