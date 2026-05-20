@@ -1,13 +1,13 @@
 <script lang="ts" setup>
+import { readContracts } from "@wagmi/core";
 import { useRouter } from "vue-router";
 import AccrueButton from "./buttons/AccrueButton.vue";
 import CollectButton from "./buttons/CollectButton.vue";
 import { useQuery } from "@tanstack/vue-query";
-import { trpc } from "@/config/trpc-client";
+import { wagmiAdapter } from "@/config/wagmi";
 import { formatDistanceToNow } from "date-fns";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
-import { publicClient } from "@/config/viem-clients";
-import { checksumAddress, type Address } from "viem";
+import { checksumAddress } from "viem";
 const props = defineProps([
   "tokenId",
   "metadataUrl",
@@ -39,24 +39,28 @@ const openTokenDetails = (tokenName: string) => {
 const { data: metadata, isLoading } = useQuery({
   queryKey: ["getNftByIdentifier", props.tokenId],
   queryFn: async () => {
-    const nftByOwners = await trpc.opensea.getNFTByOwners.query({
-      owner: props.contract,
-      identifier: props.tokenId,
+    const result = await readContracts(wagmiAdapter.wagmiConfig, {
+      contracts: [
+        {
+          ...TRS,
+          functionName: "balanceOf",
+          args: [checksumAddress(address), BigInt(props.tokenId)],
+        },
+        {
+          ...TRS,
+          functionName: "revenue",
+          args: [address, BigInt(props.tokenId)],
+        },
+      ],
     });
-    const supply =
-      nftByOwners?.owners
-        .filter(
-          (owner) =>
-            checksumAddress(owner.address as Address) ===
-            checksumAddress(address),
-        )
-        .reduce((sum, owner) => sum + owner.quantity, 0) ?? 0;
-    const revenue = await publicClient.readContract({
-      ...TRS,
-      functionName: "revenue",
-      args: [address, BigInt(props.tokenId)],
-    });
-
+    if (result[0].error) {
+      throw result[0].error;
+    }
+    if (result[1].error) {
+      throw result[1].error;
+    }
+    const supply = Number(result[0].result);
+    const revenue = Number(result[1].result);
     const metadata: Metadata = await fetch(props.metadataUrl).then((res) =>
       res.json(),
     );

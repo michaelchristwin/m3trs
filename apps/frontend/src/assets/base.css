@@ -71,6 +71,9 @@ body {
 button {
   cursor: pointer;
 }
+button:disabled {
+  cursor: not-allowed;
+}
 
 /* WebKit (Chrome, Edge, Safari) */
 .custom-scrollbar::-webkit-scrollbar {

@@ -38,7 +38,7 @@ const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 const { data: token, isLoading } = useReadContract({
   ...TRS,
   functionName: "token",
-  args: [route.query.tokenId],
+  args: [BigInt(route.query.tokenId as string)],
 });
 
 const { mutateAsync, isPending, data: txHash } = useWriteContract();
