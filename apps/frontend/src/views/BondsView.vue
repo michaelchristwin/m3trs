@@ -5,8 +5,6 @@ import { trpc } from "@/config/trpc-client";
 import { useQuery } from "@tanstack/vue-query";
 import { useHead } from "@unhead/vue";
 
-import { effect } from "vue";
-
 useHead({
   title: "Bonds",
   meta: [{ name: "description", content: "" }],
@@ -22,21 +20,29 @@ const { data: bonds, isLoading } = useQuery({
       collection: collections.bonds,
     }),
 });
-
-effect(() => {
-  console.log(bonds.value?.nfts);
-});
 </script>
 
 <template>
-  <header class="mb-8 md:mb-12">
+  <header class="mb-8 md:mb-12 animate-pulse" v-if="isLoading">
+    <!-- Title -->
+    <div
+      class="h-10 md:h-12 w-64 rounded bg-surface-container-highest mb-3"
+    ></div>
+
+    <!-- Stats line -->
+    <div
+      class="h-4 w-full max-w-2xl rounded bg-surface-container-highest"
+    ></div>
+  </header>
+  <header class="mb-8 md:mb-12" v-else-if="bonds">
     <h1
       class="font-headline text-3xl md:text-4xl font-bold tracking-tight text-on-surface mb-2"
     >
       BOND ASSETS
     </h1>
     <p class="text-on-surface-variant font-mono text-sm max-w-2xl">
-      ACTIVE_CONTRACTS: <span class="text-primary-container">03</span> |
+      ACTIVE_CONTRACTS:
+      <span class="text-primary-container">{{ bonds.nfts.length }}</span> |
       TOTAL_LOCKED_VALUE:
       <span class="text-on-surface">1,450 kWh</span>
     </p>
@@ -95,121 +101,13 @@ effect(() => {
   </div>
   <div
     class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-    v-else-if="bonds !== undefined"
-    v-for="bond in bonds.nfts"
+    v-else-if="bonds"
   >
-    <!-- Card 1: REDEEMABLE -->
-    <BondCard :token-id="bond.identifier" :metadata-url="bond.metadataUrl" />
-    <!-- Card 2: PENDING -->
+    <BondCard
+      v-for="bond in bonds.nfts"
+      :key="bond.identifier"
+      :token-id="bond.identifier"
+      :metadata-url="bond.metadataUrl"
+    />
   </div>
 </template>
-
-<!-- <article
-      class="bg-surface-container-low rounded-lg p-6 flex flex-col relative overflow-hidden group"
-    >
-    
-      <div
-        class="absolute top-6 right-6 rounded-full px-3 py-1 text-xs font-mono font-bold bg-surface-container-highest text-on-surface-variant border border-outline-variant/30"
-      >
-        PENDING
-      </div>
-      <div class="mb-6">
-        <p
-          class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
-        >
-          METER_ID
-        </p>
-        <p class="font-mono text-xl text-on-surface">#502</p>
-      </div>
-      <div class="grid grid-cols-2 gap-4 mb-8">
-        <div>
-          <p
-            class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
-          >
-            TOKEN_ID
-          </p>
-          <p class="font-mono text-sm text-on-surface">#102</p>
-        </div>
-        <div>
-          <p
-            class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
-          >
-            STOP_TIME
-          </p>
-          <p class="font-mono text-sm text-on-surface">2024-12-31</p>
-        </div>
-      </div>
-      <div
-        class="bg-surface-container-high rounded p-4 mb-6 border-l-2 border-secondary-container"
-      >
-        <p
-          class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
-        >
-          COUNTDOWN
-        </p>
-        <p class="font-mono text-2xl text-secondary-container">45 DAYS</p>
-      </div>
-      <div class="mt-auto pt-4 border-t border-outline-variant/20">
-        <button
-          class="w-full py-3 bg-surface-container-highest text-on-surface-variant font-headline font-bold text-sm rounded cursor-not-allowed opacity-50"
-          disabled
-        >
-          [EXPIRE]
-        </button>
-      </div>
-    </article>
-   
-    <article
-      class="bg-surface-container-low rounded-lg p-6 flex flex-col relative overflow-hidden group"
-    >
-    
-      <div
-        class="absolute top-6 right-6 rounded-full px-3 py-1 text-xs font-mono font-bold bg-surface-container-highest text-on-surface-variant border border-outline-variant/30"
-      >
-        PENDING
-      </div>
-      <div class="mb-6">
-        <p
-          class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
-        >
-          METER_ID
-        </p>
-        <p class="font-mono text-xl text-on-surface">#503</p>
-      </div>
-      <div class="grid grid-cols-2 gap-4 mb-8">
-        <div>
-          <p
-            class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
-          >
-            TOKEN_ID
-          </p>
-          <p class="font-mono text-sm text-on-surface">#103</p>
-        </div>
-        <div>
-          <p
-            class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
-          >
-            STOP_TIME
-          </p>
-          <p class="font-mono text-sm text-on-surface">2024-12-31</p>
-        </div>
-      </div>
-      <div
-        class="bg-surface-container-high rounded p-4 mb-6 border-l-2 border-secondary-container"
-      >
-        <p
-          class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
-        >
-          COUNTDOWN
-        </p>
-        <p class="font-mono text-2xl text-secondary-container">12 DAYS</p>
-      </div>
-      <div class="mt-auto pt-4 border-t border-outline-variant/20">
-        <button
-          class="w-full py-3 bg-surface-container-highest text-on-surface-variant font-headline font-bold text-sm rounded cursor-not-allowed opacity-50"
-          disabled
-        >
-          [EXPIRE]
-        </button>
-      </div>
-    </article> -->

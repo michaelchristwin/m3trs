@@ -6,9 +6,11 @@ import { useMutation, useQuery } from "@tanstack/vue-query";
 import { toTypedSchema } from "@vee-validate/zod";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
 import { approveAndMint } from "@/actions/approveAndMint";
-import { type BaseError } from "viem";
+import { checksumAddress, type BaseError } from "viem";
 import { collections } from "@/config/opensea/collections";
 import { trpc } from "@/config/trpc-client";
+import { format } from "date-fns";
+import { useScreenSize } from "@/composables/useScreenSize";
 
 useHead({
   title: "Create Token",
@@ -26,12 +28,16 @@ const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 const { data, error, isPending } = useQuery({
   queryKey: ["getNfts", address],
   queryFn: () =>
-    trpc.opensea.getNFTByAccount.query({ owner: address, collection: collections.meters }),
+    trpc.opensea.getNFTByAccount.query({
+      owner: address,
+      collection: collections.meters,
+    }),
 });
 
 const schema = z.object({
   tokenId: z.bigint({
-    error: (issue) => (issue.input === undefined ? "Select an NFT" : "Invalid token ID"),
+    error: (issue) =>
+      issue.input === undefined ? "Select an NFT" : "Invalid token ID",
   }),
   description: z.string({ error: "Required" }),
   supply: z
@@ -51,17 +57,33 @@ const { handleSubmit, setFieldValue, errors, values, meta } = useForm({
 });
 
 const onSubmit = handleSubmit(async (formValues) => {
+  const { width, height } = useScreenSize();
   const { supply, tokenId, stopTime, description } = formValues;
+  const name = `TRS-#${tokenId}-${format(stopTime * 1000, "yyyy-MM-dd")}`;
+  const imageUrl = await trpc.arweave.uploadImage.mutate({
+    name,
+    width: width.value,
+    height: height.value,
+    url: "https://google.com",
+    id: "",
+  });
   const metadata = {
-    name: `TRS-${tokenId}-${new Date(stopTime * 1000).toISOString().split("T")[0]}`,
-    stopTime,
+    name,
+    image: imageUrl,
     description,
+    attributes: [
+      { display_type: "date", trait_type: "stop_time", value: stopTime },
+      { trait_type: "creator", value: checksumAddress(address) },
+    ],
   };
   const url = await trpc.arweave.uplodMetadata.mutate(metadata);
   console.log(`[metadata url]: ${url}`);
   ///
   if (!url) throw Error("Metadata upload failed");
-  await approveAndMint([TRS.address, tokenId], [BigInt(supply), tokenId, BigInt(stopTime), url]);
+  await approveAndMint(
+    [TRS.address, tokenId],
+    [BigInt(supply), tokenId, BigInt(stopTime), url],
+  );
 });
 const { mutateAsync, isPending: mutationIsPending } = useMutation({
   mutationFn: onSubmit,
@@ -81,25 +103,36 @@ const convertToLocaleDate = (dateStr: string) => {
   <div class="max-w-4xl mx-auto">
     <!-- Header -->
     <div class="mb-12">
-      <h1 class="text-3xl md:text-5xl font-bold font-headline text-on-surface mb-2 tracking-tight">
+      <h1
+        class="text-3xl md:text-5xl font-bold font-headline text-on-surface mb-2 tracking-tight"
+      >
         Revenue Token Wizard
       </h1>
-      <p class="text-on-surface-variant font-mono text-sm uppercase tracking-widest">
+      <p
+        class="text-on-surface-variant font-mono text-sm uppercase tracking-widest"
+      >
         Initialization Sequence // Step 2
       </p>
     </div>
     <!-- Wizard Layout -->
-    <form class="grid grid-cols-1 lg:grid-cols-12 gap-8" @submit.prevent="mutateAsync">
+    <form
+      class="grid grid-cols-1 lg:grid-cols-12 gap-8"
+      @submit.prevent="mutateAsync"
+    >
       <!-- Left Column: Form Steps -->
       <div class="lg:col-span-8 space-y-12">
         <!-- Step 1: Select M3TER -->
-        <section class="bg-surface-container-low p-6 rounded-lg ghost-border relative">
+        <section
+          class="bg-surface-container-low p-6 rounded-lg ghost-border relative"
+        >
           <div
             class="absolute -left-3 -top-3 w-8 h-8 rounded-full bg-surface-container-high border border-outline flex items-center justify-center font-mono text-sm text-on-surface"
           >
             1
           </div>
-          <h2 class="font-headline text-xl text-on-surface mb-6 ml-4">Select M3TER NFT</h2>
+          <h2 class="font-headline text-xl text-on-surface mb-6 ml-4">
+            Select M3TER NFT
+          </h2>
           <div
             class="flex flex-col gap-4 max-h-[70vh] overflow-y-auto sm:flex-row sm:overflow-x-auto sm:overflow-y-hidden sm:max-h-none sm:scroll-smooth sm:snap-x sm:snap-mandatory custom-scrollbar"
           >
@@ -137,7 +170,9 @@ const convertToLocaleDate = (dateStr: string) => {
               <div
                 class="w-full h-24 bg-surface-container-lowest mb-3 rounded overflow-hidden ghost-border flex items-center justify-center"
               >
-                <span class="material-symbols-outlined text-4xl text-outline-variant">
+                <span
+                  class="material-symbols-outlined text-4xl text-outline-variant"
+                >
                   memory
                 </span>
               </div>
@@ -155,7 +190,9 @@ const convertToLocaleDate = (dateStr: string) => {
               </div>
 
               <!-- CAP -->
-              <div class="font-mono text-xs text-on-surface-variant mt-1">CAP: 500 kWh</div>
+              <div class="font-mono text-xs text-on-surface-variant mt-1">
+                CAP: 500 kWh
+              </div>
             </div>
           </div>
           <span class="text-red-500 italic text-[13px]" v-if="errors.tokenId">{{
@@ -171,7 +208,9 @@ const convertToLocaleDate = (dateStr: string) => {
           >
             2
           </div>
-          <h2 class="font-headline text-xl text-primary-container mb-8 ml-4">Configure Token</h2>
+          <h2 class="font-headline text-xl text-primary-container mb-8 ml-4">
+            Configure Token
+          </h2>
           <div class="space-y-8">
             <!-- Supply Input -->
             <div class="relative">
@@ -185,7 +224,12 @@ const convertToLocaleDate = (dateStr: string) => {
                   placeholder="0"
                   type="number"
                   :value="values.supply"
-                  @input="setFieldValue('supply', ($event.target as HTMLInputElement).value)"
+                  @input="
+                    setFieldValue(
+                      'supply',
+                      ($event.target as HTMLInputElement).value,
+                    )
+                  "
                 />
                 <span
                   class="font-mono text-sm text-on-surface ml-3 pb-2 border-b border-outline-variant"
@@ -202,14 +246,20 @@ const convertToLocaleDate = (dateStr: string) => {
               <div
                 class="flex items-center border-b border-outline-variant focus-within:border-primary-container focus-within:shadow-[0_4px_6px_-1px_rgba(0,255,65,0.08)] transition-all"
               >
-                <span class="material-symbols-outlined text-on-surface mr-3 pb-2"
+                <span
+                  class="material-symbols-outlined text-on-surface mr-3 pb-2"
                   >calendar_month</span
                 >
                 <input
                   class="bg-transparent border-none w-full font-mono text-lg text-on-surface pb-2 px-0 focus:ring-0 scheme-dark"
                   type="datetime-local"
                   :value="values.stopTime"
-                  @input="setFieldValue('stopTime', ($event.target as HTMLInputElement).value)"
+                  @input="
+                    setFieldValue(
+                      'stopTime',
+                      ($event.target as HTMLInputElement).value,
+                    )
+                  "
                 />
               </div>
             </div>
@@ -222,39 +272,69 @@ const convertToLocaleDate = (dateStr: string) => {
               <textarea
                 :value="values.description"
                 rows="3"
-                @input="setFieldValue('description', ($event.target as HTMLInputElement).value)"
+                @input="
+                  setFieldValue(
+                    'description',
+                    ($event.target as HTMLInputElement).value,
+                  )
+                "
                 class="input-underline w-full font-mono text-sm text-on-surface pb-2 px-0 bg-transparent focus:ring-0"
                 placeholder="......"
                 type="text"
               />
             </div>
-            <span class="text-red-500 italic text-[12px]" v-if="errors.description">{{
-              errors.description
-            }}</span>
+            <span
+              class="text-red-500 italic text-[12px]"
+              v-if="errors.description"
+              >{{ errors.description }}</span
+            >
           </div>
         </section>
       </div>
       <!-- Right Column: Review & Action -->
       <div class="lg:col-span-4">
         <div class="sticky top-24">
-          <section class="bg-surface-container-low p-6 rounded-lg ghost-border relative">
+          <section
+            class="bg-surface-container-low p-6 rounded-lg ghost-border relative"
+          >
             <div
               class="absolute -left-3 -top-3 w-8 h-8 rounded-full bg-surface-container-high border border-outline flex items-center justify-center font-mono text-sm text-on-surface"
             >
               3
             </div>
-            <h2 class="font-headline text-xl text-on-surface mb-6 ml-4">Review</h2>
+            <h2 class="font-headline text-xl text-on-surface mb-6 ml-4">
+              Review
+            </h2>
             <div class="space-y-4 mb-8">
-              <div class="flex justify-between items-center pb-2 border-b border-surface-variant">
-                <span class="font-mono text-xs text-on-surface-variant uppercase">Asset</span>
-                <span class="font-mono text-sm text-on-surface">M3TER #{{ values.tokenId }}</span>
+              <div
+                class="flex justify-between items-center pb-2 border-b border-surface-variant"
+              >
+                <span
+                  class="font-mono text-xs text-on-surface-variant uppercase"
+                  >Asset</span
+                >
+                <span class="font-mono text-sm text-on-surface"
+                  >M3TER #{{ values.tokenId }}</span
+                >
               </div>
-              <div class="flex justify-between items-center pb-2 border-b border-surface-variant">
-                <span class="font-mono text-xs text-on-surface-variant uppercase">Supply</span>
-                <span class="font-mono text-sm text-on-surface">{{ values.supply }} TRS</span>
+              <div
+                class="flex justify-between items-center pb-2 border-b border-surface-variant"
+              >
+                <span
+                  class="font-mono text-xs text-on-surface-variant uppercase"
+                  >Supply</span
+                >
+                <span class="font-mono text-sm text-on-surface"
+                  >{{ values.supply }} TRS</span
+                >
               </div>
-              <div class="flex justify-between items-center pb-2 border-b border-surface-variant">
-                <span class="font-mono text-xs text-on-surface-variant uppercase">Expiry</span>
+              <div
+                class="flex justify-between items-center pb-2 border-b border-surface-variant"
+              >
+                <span
+                  class="font-mono text-xs text-on-surface-variant uppercase"
+                  >Expiry</span
+                >
                 <span class="font-mono text-sm text-secondary-container">{{
                   values.stopTime ? convertToLocaleDate(values.stopTime) : ""
                 }}</span>
@@ -272,8 +352,9 @@ const convertToLocaleDate = (dateStr: string) => {
                   >warning</span
                 >
                 <p class="font-body text-sm text-secondary-fixed">
-                  Depositing M3TER <span class="font-mono">{{ values.tokenId }}</span> locks it in
-                  the contract until expiry.
+                  Depositing M3TER
+                  <span class="font-mono">{{ values.tokenId }}</span> locks it
+                  in the contract until expiry.
                 </p>
               </div>
             </div>

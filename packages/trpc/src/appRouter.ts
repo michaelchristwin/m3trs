@@ -1,6 +1,5 @@
 import { router } from ".";
 import { arweaveRouter } from "./routers/arweave";
-
 import { openSeaRouter } from "./routers/opensea";
 
 export const appRouter = router({

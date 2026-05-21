@@ -23,7 +23,6 @@ const holdings = computed(() => {
         name: nft.name,
         tokenId: nft.identifier,
         metadataUrl: nft.metadataUrl,
-        status: "Active",
         contract: nft.contract,
       };
     }) ?? []
@@ -72,12 +71,11 @@ const holdings = computed(() => {
     <div
       class="flex flex-col gap-1 mt-1"
       v-if="holdings.length > 0"
-      v-for="{ tokenId, status, metadataUrl, contract, name } in holdings"
+      v-for="{ tokenId, metadataUrl, contract, name } in holdings"
       :key="tokenId"
     >
       <HoldingsListItem
         :token-id="tokenId"
-        :status="status"
         :metadata-url="metadataUrl"
         :contract="contract"
         :name="name"

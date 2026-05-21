@@ -7,11 +7,12 @@
     "./router": "./src/appRouter.ts"
   },
   "dependencies": {
-    "@m3trs/opensea-sdk": "workspace:*",
-    "zod": "^4.4.3",
-    "@trpc/server": "^11.17.0",
     "@ardrive/turbo-sdk": "^1.41.2",
-    "arweave": "^1.15.7"
+    "@m3trs/opensea-sdk": "workspace:*",
+    "@trpc/server": "^11.17.0",
+    "arweave": "^1.15.7",
+    "playwright": "^1.60.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/bun": "latest"

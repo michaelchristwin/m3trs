@@ -1,6 +1,6 @@
 import Arweave from "arweave";
 import { ArweaveSigner, TurboFactory } from "@ardrive/turbo-sdk";
-import type { UploadModel } from "./model";
+import type { UploadImage, UploadModel } from "./model";
 
 export abstract class ArweaveUpload {
   static async uploadMetadata({ uploadBody }: UploadModel) {
@@ -23,6 +23,26 @@ export abstract class ArweaveUpload {
       },
     });
 
+    return `https://arweave.net/${result.id}`;
+  }
+  static async uploadImage({ image, name }: UploadImage) {
+    const arweave = Arweave.init({
+      host: "arweave.net",
+      protocol: "https",
+      port: 443,
+    });
+    const key = await arweave.wallets.generate();
+    const signer = new ArweaveSigner(key);
+    const turbo = TurboFactory.authenticated({ signer });
+    const result = await turbo.upload({
+      data: image,
+      dataItemOpts: {
+        tags: [
+          { name: "Content-Type", value: "image/webp" },
+          { name: "Title", value: name },
+        ],
+      },
+    });
     return `https://arweave.net/${result.id}`;
   }
 }

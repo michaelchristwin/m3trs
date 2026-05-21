@@ -133,7 +133,33 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
         Back
       </button>
     </div>
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div
+      class="flex flex-col md:flex-row md:items-end justify-between gap-6 animate-pulse"
+      v-if="isLoading"
+    >
+      <div>
+        <!-- Title -->
+        <div
+          class="h-10 md:h-14 w-72 md:w-96 rounded bg-surface-container-highest"
+        ></div>
+
+        <!-- Subtitle -->
+        <div class="h-4 w-56 mt-3 rounded bg-surface-container-highest"></div>
+      </div>
+
+      <!-- Status pill -->
+      <div
+        class="flex items-center px-4 py-2 rounded-full bg-surface-container-highest self-start md:self-auto"
+      >
+        <div class="w-2 h-2 rounded-full bg-surface-container-high mr-2"></div>
+
+        <div class="h-4 w-20 rounded bg-surface-container-high"></div>
+      </div>
+    </div>
+    <div
+      class="flex flex-col md:flex-row md:items-end justify-between gap-6"
+      v-else-if="data"
+    >
       <div>
         <h1
           class="font-headline font-bold text-3xl md:text-5xl text-on-surface tracking-tight"
@@ -157,7 +183,7 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
         ></span>
         <span
           class="font-headline font-bold text-sm text-primary-container uppercase tracking-wider"
-          >{{ data?.token[1] }}</span
+          >{{ data.token[1] }}</span
         >
       </div>
     </div>
@@ -331,9 +357,16 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
               >Total Accrued</label
             >
             <div
+              class="font-mono text-[3.5rem] leading-none font-light tracking-tight mb-2 animate-pulse"
+              v-if="isLoading"
+            >
+              <div class="h-12 w-48 rounded bg-surface-container-highest"></div>
+            </div>
+            <div
+              v-else-if="data"
               class="font-mono text-[3.5rem] leading-none text-on-surface font-light tracking-tight mb-2"
             >
-              ${{ data?.accRevenuePerToken.toFixed(2) }}
+              ${{ data.accRevenuePerToken.toFixed(2) }}
             </div>
             <div class="flex items-center gap-2 text-primary mt-2">
               <span
@@ -351,8 +384,11 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
               class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2"
               >Your Claimable</label
             >
-            <div class="font-mono text-3xl text-primary mb-6">
-              ${{ data?.revenue.toFixed(2) }}
+            <div class="font-mono text-3xl mb-6 animate-pulse" v-if="isLoading">
+              <div class="h-8 w-40 rounded bg-surface-container-highest"></div>
+            </div>
+            <div class="font-mono text-3xl text-primary mb-6" v-else-if="data">
+              ${{ data.revenue.toFixed(2) }}
             </div>
             <div class="flex flex-col sm:flex-row gap-3">
               <AccrueButton
