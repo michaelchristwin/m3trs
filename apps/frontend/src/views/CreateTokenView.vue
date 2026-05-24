@@ -6,7 +6,7 @@ import { useMutation, useQuery } from "@tanstack/vue-query";
 import { toTypedSchema } from "@vee-validate/zod";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
 import { approveAndMint } from "@/actions/approveAndMint";
-import { checksumAddress, type BaseError } from "viem";
+import { checksumAddress, type BaseError, keccak256, encodePacked } from "viem";
 import { collections } from "@/config/opensea/collections";
 import { trpc } from "@/config/trpc-client";
 import { format } from "date-fns";
@@ -67,6 +67,13 @@ const onSubmit = handleSubmit(async (formValues) => {
     url: "https://google.com",
     id: "",
   });
+
+  const hash = keccak256(
+    encodePacked(
+      ["uint256", "uint256", "uint256"],
+      [tokenId, supply, BigInt(stopTime)],
+    ),
+  );
   const metadata = {
     name,
     image: imageUrl,
@@ -74,6 +81,7 @@ const onSubmit = handleSubmit(async (formValues) => {
     attributes: [
       { display_type: "date", trait_type: "stop_time", value: stopTime },
       { trait_type: "creator", value: checksumAddress(address) },
+      { trait_type: "token_id", value: hash },
     ],
   };
   const url = await trpc.arweave.uplodMetadata.mutate(metadata);
