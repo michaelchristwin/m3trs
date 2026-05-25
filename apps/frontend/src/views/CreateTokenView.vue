@@ -10,7 +10,6 @@ import { checksumAddress, type BaseError, keccak256, encodePacked } from "viem";
 import { collections } from "@/config/opensea/collections";
 import { trpc } from "@/config/trpc-client";
 import { format } from "date-fns";
-import { useScreenSize } from "@/composables/useScreenSize";
 
 useHead({
   title: "Create Token",
@@ -57,16 +56,8 @@ const { handleSubmit, setFieldValue, errors, values, meta } = useForm({
 });
 
 const onSubmit = handleSubmit(async (formValues) => {
-  const { width, height } = useScreenSize();
   const { supply, tokenId, stopTime, description } = formValues;
   const name = `TRS-#${tokenId}-${format(stopTime * 1000, "yyyy-MM-dd")}`;
-  const imageUrl = await trpc.arweave.uploadImage.mutate({
-    name,
-    width: width.value,
-    height: height.value,
-    url: "https://google.com",
-    id: "",
-  });
 
   const hash = keccak256(
     encodePacked(
@@ -76,7 +67,7 @@ const onSubmit = handleSubmit(async (formValues) => {
   );
   const metadata = {
     name,
-    image: imageUrl,
+    image: "",
     description,
     attributes: [
       { display_type: "date", trait_type: "stop_time", value: stopTime },

@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { publicProcedure, router } from "..";
 import { ArweaveUpload } from "../modules/arweave-upload/service";
-import { Rendering } from "../modules/rendering/service";
 
 export const arweaveRouter = router({
   uplodMetadata: publicProcedure
@@ -22,23 +21,5 @@ export const arweaveRouter = router({
     .mutation(async (opts) => {
       const { input } = opts;
       return await ArweaveUpload.uploadMetadata({ uploadBody: input });
-    }),
-  uploadImage: publicProcedure
-    .input(
-      z.object({
-        name: z.string(),
-        width: z.number(),
-        height: z.number(),
-        url: z.url(),
-        id: z.string(),
-      }),
-    )
-    .mutation(async (opts) => {
-      const { input } = opts;
-      const buffer = await Rendering.snapshot(input);
-      return await ArweaveUpload.uploadImage({
-        name: input.name,
-        image: buffer,
-      });
     }),
 });
