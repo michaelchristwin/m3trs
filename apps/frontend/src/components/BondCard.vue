@@ -29,10 +29,10 @@ const status = computed(() => {
 });
 
 const { mutateAsync, data: txHash } = useWriteContract();
-const expire = async (id: number) => {
+const redeem = async (id: number) => {
   await mutateAsync({
     ...TRS,
-    functionName: "expire",
+    functionName: "redeem",
     args: [BigInt(id)],
   });
 };
@@ -161,7 +161,7 @@ useWaitForTransactionReceipt({
     </div>
     <div class="mt-auto pt-4 border-t border-outline-variant/20">
       <button
-        @click="expire(tokenId)"
+        @click="redeem(tokenId)"
         :disabled="status?.isActive"
         class="w-full py-3 bg-primary-container text-on-primary-container font-headline font-bold text-sm rounded hover:bg-primary transition-all duration-200 shadow-[0_0_15px_rgba(0,255,65,0.1)] hover:shadow-[0_0_20px_rgba(0,255,65,0.2)] disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-surface-container-highest disabled:shadow-none disabled:text-on-surface-variant"
       >

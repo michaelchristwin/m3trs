@@ -8,7 +8,7 @@ import { trpc } from "@/config/trpc-client";
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
 const { data, isLoading } = useQuery({
-  queryKey: ["getNfts", address],
+  queryKey: ["getNfts", address, collections.holdings],
   queryFn: () =>
     trpc.opensea.getNFTByAccount.query({
       owner: address,
@@ -68,22 +68,10 @@ const holdings = computed(() => {
     <!-- Skeleton Rows -->
 
     <!-- Table Body (Rows via Spacing & Surface Container Shifts) -->
-    <div
-      class="flex flex-col gap-1 mt-1"
-      v-if="holdings.length > 0"
-      v-for="{ tokenId, metadataUrl, contract, name } in holdings"
-      :key="tokenId"
-    >
-      <HoldingsListItem
-        :token-id="tokenId"
-        :metadata-url="metadataUrl"
-        :contract="contract"
-        :name="name"
-      />
-    </div>
+
     <div
       v-for="i in 5"
-      v-else-if="isLoading"
+      v-if="isLoading"
       :key="i"
       class="hidden md:grid grid-cols-12 gap-4 px-6 py-4 border-b border-outline-variant animate-pulse items-center"
     >
@@ -122,6 +110,22 @@ const holdings = computed(() => {
         <div class="h-10 w-24 rounded-lg bg-surface-container-highest"></div>
         <div class="h-10 w-24 rounded-lg bg-surface-container-highest"></div>
       </div>
+    </div>
+    <div
+      class="flex flex-col gap-1 mt-1"
+      v-else-if="holdings.length > 0"
+      v-for="{ tokenId, metadataUrl, contract, name } in holdings"
+      :key="tokenId"
+    >
+      <HoldingsListItem
+        :token-id="tokenId"
+        :metadata-url="metadataUrl"
+        :contract="contract"
+        :name="name"
+      />
+    </div>
+    <div v-else class="mt-4 text-sm text-on-surface-variant text-center p-3">
+      <p>You have no holdings yet</p>
     </div>
   </div>
   <!-- Terminal Output / Log Area (Decorative industrial element) -->

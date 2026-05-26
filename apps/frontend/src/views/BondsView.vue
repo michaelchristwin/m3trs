@@ -13,7 +13,7 @@ useHead({
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
 const { data: bonds, isLoading } = useQuery({
-  queryKey: ["getBonds"],
+  queryKey: ["getBonds", address, collections.bonds],
   queryFn: async () =>
     await trpc.opensea.getNFTByAccount.query({
       owner: address,
@@ -101,7 +101,7 @@ const { data: bonds, isLoading } = useQuery({
   </div>
   <div
     class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-    v-else-if="bonds"
+    v-else-if="bonds && bonds.nfts.length > 0"
   >
     <BondCard
       v-for="bond in bonds.nfts"
@@ -109,5 +109,8 @@ const { data: bonds, isLoading } = useQuery({
       :token-id="bond.identifier"
       :metadata-url="bond.metadataUrl"
     />
+  </div>
+  <div v-else class="flex justify-center items-center p-2">
+    <p>You have no bonds yet</p>
   </div>
 </template>

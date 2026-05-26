@@ -4,7 +4,7 @@ import { trpcServer } from "@hono/trpc-server";
 import { appRouter } from "@m3trs/trpc/router";
 
 const app = new Hono();
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: ["http://localhost:5173", "https://m3trs.pages.dev"] }));
 app.use("/trpc/*", trpcServer({ router: appRouter }));
 
 export default {
