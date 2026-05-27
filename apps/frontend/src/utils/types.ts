@@ -1,7 +1,4 @@
-import type { TransactionReceipt } from "viem";
-
-export interface MintTxStatus {
-  txHash: string;
-  receipt: TransactionReceipt | null;
-}
+export type MintTxStatus =
+  | { success: true; txHash: `0x${string}` }
+  | { success: false; error: string };
 export type ModalState = "minting" | "success" | "error";

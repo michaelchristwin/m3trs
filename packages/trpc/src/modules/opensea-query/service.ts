@@ -24,4 +24,14 @@ export abstract class OpenseaQuery {
       limit: limit || 20,
     });
   }
+  static async getNFTsByContract({
+    address,
+    limit,
+  }: OpenseaQueryModel["NFTsByContractParams"]) {
+    return await NFTEndpoint.getNftsByContract({
+      chain: "zora",
+      address: address,
+      limit: limit || 20,
+    });
+  }
 }

@@ -24,4 +24,14 @@ export const openSeaRouter = router({
     .query(async ({ input }) => {
       return await OpenseaQuery.getNFTByOwners(input);
     }),
+  getNFTsByContract: publicProcedure
+    .input(
+      z.object({
+        address: z.string(),
+        limit: z.number().positive().optional(),
+      }),
+    )
+    .query(async ({ input }) => {
+      return await OpenseaQuery.getNFTsByContract(input);
+    }),
 });

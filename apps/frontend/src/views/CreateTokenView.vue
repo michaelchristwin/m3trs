@@ -1,17 +1,18 @@
 <script lang="ts" setup>
+import { ref } from "vue";
+import { format } from "date-fns";
 import { useHead } from "@unhead/vue";
 import { useForm } from "vee-validate";
-import { useMutation, useQuery } from "@tanstack/vue-query";
+import { trpc } from "@/config/trpc-client";
+import { formSchema } from "@/utils/schemas";
 import { toTypedSchema } from "@vee-validate/zod";
+import { selectedCardClass } from "@/utils/constants";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
 import { approve, mint } from "@/smart-contracts/actions";
-import { checksumAddress, keccak256, encodePacked, type BaseError } from "viem";
 import { collections } from "@/config/opensea/collections";
-import { trpc } from "@/config/trpc-client";
-import { format } from "date-fns";
-import { ref } from "vue";
-import { formSchema } from "@/utils/schemas";
-import { selectedCardClass } from "@/utils/constants";
+import { useMutation, useQuery } from "@tanstack/vue-query";
+import { checksumAddress, keccak256, encodePacked, type BaseError } from "viem";
+import { openDialog } from "@/utils/dialog.utils";
 
 useHead({
   title: "Create Token",
@@ -19,8 +20,8 @@ useHead({
 });
 const modalState = ref<import("@/utils/types").ModalState>("minting");
 const mintTxStatus = ref<import("@/utils/types").MintTxStatus>({
-  txHash: "",
-  receipt: null,
+  success: false,
+  error: "",
 });
 const dialog = ref<HTMLDialogElement | null>(null);
 
@@ -42,46 +43,67 @@ const { handleSubmit, setFieldValue, errors, values, meta, resetForm } =
   });
 
 const onSubmit = handleSubmit(async (formValues) => {
-  dialog.value?.showModal();
-  const { supply, tokenId, stopTime, description } = formValues;
-  visibleStatus.value = "Approving M3ter for transaction...";
-  await approve([TRS.address, tokenId]);
-  visibleStatus.value = "Preparing metadata...";
-  const name = `TRS-#${tokenId}-${format(stopTime * 1000, "yyyy-MM-dd")}`;
+  openDialog(dialog.value);
+  modalState.value = "success";
 
-  const hash = keccak256(
-    encodePacked(
-      ["uint256", "uint256", "uint256"],
-      [tokenId, supply, BigInt(stopTime)],
-    ),
-  );
-  const metadata = {
-    name,
-    image: "",
-    description,
-    attributes: [
-      { display_type: "date", trait_type: "stop_time", value: stopTime },
-      { trait_type: "creator", value: checksumAddress(address) },
-      { trait_type: "token_id", value: hash },
-    ],
-  };
-  visibleStatus.value = "Uploading metadata to arweave...";
-  const url = await trpc.arweave.uplodMetadata.mutate(metadata);
-  console.log(`[metadata url]: ${url}`);
+  // try {
+  //   const { supply, tokenId, stopTime, description } = formValues;
 
-  visibleStatus.value = "Minting tokens and bond...";
-  mintTxStatus.value = await mint(
-    [BigInt(supply), tokenId, BigInt(stopTime), url],
-    checksumAddress(address),
-  );
-  if (mintTxStatus.value.receipt) {
-    if (mintTxStatus.value.receipt.status === "reverted") {
-      modalState.value = "error";
-    } else if (mintTxStatus.value.receipt.status === "success") {
-      modalState.value = "success";
-      resetForm();
-    }
-  }
+  //   visibleStatus.value = "Approving M3ter for transaction...";
+  //   const approveResult = await approve(TRS.address, tokenId);
+  //   if (!approveResult.success) {
+  //     mintTxStatus.value = approveResult;
+  //     modalState.value = "error";
+  //     return;
+  //   }
+
+  //   visibleStatus.value = "Preparing metadata...";
+  //   const name = `TRS-#${tokenId}-${format(stopTime * 1000, "yyyy-MM-dd")}`;
+  //   const hash = keccak256(
+  //     encodePacked(
+  //       ["uint256", "uint256", "uint256"],
+  //       [tokenId, supply, BigInt(stopTime)],
+  //     ),
+  //   );
+  //   const metadata = {
+  //     name,
+  //     image: "",
+  //     description,
+  //     attributes: [
+  //       { display_type: "date", trait_type: "stop_time", value: stopTime },
+  //       { trait_type: "creator", value: checksumAddress(address) },
+  //       { trait_type: "token_id", value: hash },
+  //     ],
+  //   };
+
+  //   visibleStatus.value = "Uploading metadata to arweave...";
+  //   const url = await trpc.arweave.uplodMetadata.mutate(metadata);
+
+  //   visibleStatus.value = "Minting tokens and bond...";
+  //   mintTxStatus.value = await mint(
+  //     {
+  //       supply: BigInt(supply),
+  //       m3terId: tokenId,
+  //       stopTime: BigInt(stopTime),
+  //       uri: url,
+  //     },
+  //     checksumAddress(address),
+  //   );
+
+  //   if (mintTxStatus.value.success) {
+  //     modalState.value = "success";
+  //     resetForm();
+  //   } else {
+  //     modalState.value = "error";
+  //   }
+  // } catch (err) {
+  //   mintTxStatus.value = {
+  //     success: false,
+  //     error:
+  //       err instanceof Error ? err.message : "An unexpected error occurred.",
+  //   };
+  //   modalState.value = "error";
+  // }
 });
 
 const { mutateAsync, isPending: mutationIsPending } = useMutation({
@@ -97,8 +119,6 @@ const convertToLocaleDate = (dateStr: string) => {
   const date = new Date(dateStr);
   return date.toLocaleDateString("en-US");
 };
-
-const errorMessage = ref("");
 </script>
 
 <template>
@@ -479,7 +499,6 @@ const errorMessage = ref("");
               stroke-linejoin="round"
             >
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-
               <polyline points="22 4 12 14.01 9 11.01" />
             </svg>
           </div>
@@ -491,19 +510,32 @@ const errorMessage = ref("");
           </p>
 
           <div
+            v-if="mintTxStatus.success === true"
             class="mb-8 rounded border border-white/5 bg-black/30 px-4 py-2 font-mono text-[11px] text-white/50"
           >
             TX {{ mintTxStatus.txHash }}
           </div>
 
-          <a
-            :href="`https://explorer.zora.energy/tx/${mintTxStatus.txHash}`"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="w-full rounded-lg bg-[#279b37] px-6 py-3 text-center font-semibold text-white transition-colors duration-150 hover:bg-[#34b348]"
-          >
-            View on Explorer →
-          </a>
+          <div class="flex w-full flex-col gap-3">
+            <a
+              v-if="mintTxStatus.success === true"
+              :href="`https://explorer.zora.energy/tx/${mintTxStatus.txHash}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="w-full rounded-lg bg-[#279b37] px-6 py-3 text-center font-semibold text-white transition-colors duration-150 hover:bg-[#34b348]"
+            >
+              View on Explorer →
+            </a>
+
+            <button
+              type="button"
+              commandfor="m3trs-dialog"
+              command="close"
+              class="w-full rounded-lg border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-white/70 transition-colors duration-150 hover:bg-white/10 hover:text-white"
+            >
+              Close
+            </button>
+          </div>
         </div>
 
         <!-- ERROR -->
@@ -532,8 +564,11 @@ const errorMessage = ref("");
 
           <h2 class="mb-2 text-lg font-semibold text-white">Minting Failed</h2>
 
-          <p class="mb-8 px-4 text-center text-[13px] text-white/50">
-            {{ errorMessage }}
+          <p
+            class="mb-8 px-4 text-center text-[13px] text-white/50"
+            v-if="mintTxStatus.success === false"
+          >
+            {{ mintTxStatus.error }}
           </p>
 
           <div class="flex w-full flex-col gap-3">

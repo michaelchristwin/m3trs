@@ -13,9 +13,9 @@ const router = createRouter({
       component: () => import("@/layouts/DefaultLayout.vue"),
       children: [
         {
-          path: "/dashboard",
-          name: "dashboard",
-          component: () => import("@/views/DashboardView.vue"),
+          path: "/overview",
+          name: "overview",
+          component: () => import("@/views/OverviewView.vue"),
         },
         {
           path: "/create-token",

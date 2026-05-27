@@ -8,4 +8,8 @@ export interface OpenseaQueryModel {
     identifier: string;
     limit?: number;
   };
+  NFTsByContractParams: {
+    address: string;
+    limit?: number;
+  };
 }

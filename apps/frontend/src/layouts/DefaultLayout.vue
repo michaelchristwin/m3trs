@@ -1,22 +1,22 @@
 <script lang="ts" setup>
-import { useAppKitAccount, useAppKit } from '@reown/appkit/vue'
-import { watch } from 'vue'
+import { useAppKitAccount, useAppKit } from "@reown/appkit/vue";
+import { watch } from "vue";
 
-const { open } = useAppKit()
-const eip155Account = useAppKitAccount({ namespace: 'eip155' })
+const { open } = useAppKit();
+const eip155Account = useAppKitAccount({ namespace: "eip155" });
 
 const sidebarActiveClass =
-  'opacity-80 text-primary-container border-primary-container border-r-4 bg-[#00FF41]/10'
+  "opacity-80 text-primary-container border-primary-container border-r-4 bg-[#00FF41]/10";
 
 watch(
   () => eip155Account.value.isConnected,
   (isConnected, prev) => {
     if (prev !== undefined && !isConnected) {
-      open()
+      open();
     }
   },
   { immediate: false },
-)
+);
 </script>
 
 <template>
@@ -26,18 +26,22 @@ watch(
   >
     <div class="flex items-center gap-4">
       <RouterLink
-        to="/dashboard"
+        to="/overview"
         class="text-2xl font-black text-[#00FF41] tracking-tighter font-headline uppercase"
       >
         M3TRS
       </RouterLink>
     </div>
-    <div class="flex items-center gap-6 font-headline uppercase tracking-wider text-xs">
+    <div
+      class="flex items-center gap-6 font-headline uppercase tracking-wider text-xs"
+    >
       <div class="flex items-center gap-4 border-l border-surface-variant pl-4">
         <button
           class="text-[#e5e2e1]/60 hover:text-[#00FF41] transition-colors relative flex items-center justify-center h-8 w-8 rounded hover:bg-surface-container-high"
         >
-          <span class="material-symbols-outlined text-[20px]">notifications</span>
+          <span class="material-symbols-outlined text-[20px]"
+            >notifications</span
+          >
         </button>
         <button
           class="text-[#e5e2e1]/60 hover:text-[#00FF41] transition-colors relative flex items-center justify-center h-8 w-8 rounded hover:bg-surface-container-high"
@@ -52,7 +56,9 @@ watch(
             class="w-2 h-2 rounded-[9999px] bg-primary-container shadow-[0_0_8px_rgba(0,255,65,0.8)]"
           ></div>
           <span class="font-mono-data text-[#00FF41] text-xs"
-            >{{ eip155Account.address?.slice(0, 4) }}...{{ eip155Account.address?.slice(-4) }}</span
+            >{{ eip155Account.address?.slice(0, 4) }}...{{
+              eip155Account.address?.slice(-4)
+            }}</span
           >
         </button>
       </div>
@@ -63,7 +69,7 @@ watch(
     class="fixed top-0 left-0 w-full z-50 flex md:hidden items-center justify-between px-4 h-16 bg-[#131313] shadow-[0_0_15px_rgba(0,255,65,0.05)] rounded-none mb-1 transition-all duration-300"
   >
     <RouterLink
-      :to="{ name: 'dashboard' }"
+      :to="{ name: 'overview' }"
       class="font-['Space_Grotesk'] font-bold tracking-tighter text-[#00FF41] text-xl"
       >M3TRS</RouterLink
     >
@@ -82,7 +88,9 @@ watch(
           class="w-2 h-2 rounded-[9999px] bg-primary-container shadow-[0_0_8px_rgba(0,255,65,0.8)]"
         ></div>
         <span class="font-mono-data text-[#00FF41] text-xs"
-          >{{ eip155Account.address?.slice(0, 4) }}...{{ eip155Account.address?.slice(-4) }}</span
+          >{{ eip155Account.address?.slice(0, 4) }}...{{
+            eip155Account.address?.slice(-4)
+          }}</span
         >
       </button>
     </div>
@@ -94,10 +102,10 @@ watch(
       <RouterLink
         :active-class="sidebarActiveClass"
         class="flex items-center gap-3 px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1 hover:bg-neutral-800 transition-all duration-200"
-        to="/dashboard"
+        to="/overview"
       >
         <span class="material-symbols-outlined text-[20px]">dashboard</span>
-        Dashboard
+        Overview
       </RouterLink>
       <RouterLink
         :active-class="sidebarActiveClass"
@@ -126,7 +134,9 @@ watch(
           name: 'bonds',
         }"
       >
-        <span class="material-symbols-outlined text-[20px]">confirmation_number</span>
+        <span class="material-symbols-outlined text-[20px]"
+          >confirmation_number</span
+        >
         My Bonds
       </RouterLink>
     </nav>
@@ -157,12 +167,14 @@ watch(
     <RouterLink
       active-class="text-primary-container bg-[#00FF41]/15 rounded-[9999px] px-5 py-1.5"
       :to="{
-        name: 'dashboard',
+        name: 'overview',
       }"
       class="flex flex-col items-center justify-center text-neutral-500 hover:text-[#00FF41] transition-colors duration-200 min-w-16"
     >
       <span class="material-symbols-outlined mb-1">grid_view</span>
-      <span class="font-['Space_Grotesk'] text-[10px] uppercase font-medium">Dashboard</span>
+      <span class="font-['Space_Grotesk'] text-[10px] uppercase font-medium"
+        >Overview</span
+      >
     </RouterLink>
     <!-- Create (Inactive) -->
     <RouterLink
@@ -173,7 +185,9 @@ watch(
       class="flex flex-col items-center justify-center text-neutral-500 hover:text-[#00FF41] transition-colors duration-200 min-w-16"
     >
       <span class="material-symbols-outlined mb-1">add_box</span>
-      <span class="font-['Space_Grotesk'] text-[10px] uppercase font-medium">Create</span>
+      <span class="font-['Space_Grotesk'] text-[10px] uppercase font-medium"
+        >Create</span
+      >
     </RouterLink>
     <!-- Holdings (Inactive) -->
     <RouterLink
@@ -184,7 +198,9 @@ watch(
       class="flex flex-col items-center justify-center text-neutral-500 hover:text-[#00FF41] transition-colors duration-200 min-w-16"
     >
       <span class="material-symbols-outlined mb-1">account_balance_wallet</span>
-      <span class="font-['Space_Grotesk'] text-[10px] uppercase font-medium">Holdings</span>
+      <span class="font-['Space_Grotesk'] text-[10px] uppercase font-medium"
+        >Holdings</span
+      >
     </RouterLink>
     <!-- Bonds (Active) -->
     <RouterLink
@@ -194,10 +210,14 @@ watch(
       active-class="text-primary-container bg-[#00FF41]/15 rounded-[9999px] px-5 py-1.5"
       class="flex flex-col items-center justify-center text-neutral-500 hover:text-[#00FF41] transition-colors duration-200 min-w-16"
     >
-      <span class="material-symbols-outlined mb-0.5" style="font-variation-settings: 'FILL' 1"
+      <span
+        class="material-symbols-outlined mb-0.5"
+        style="font-variation-settings: &quot;FILL&quot; 1"
         >layers</span
       >
-      <span class="font-['Space_Grotesk'] text-[10px] uppercase font-bold">Bonds</span>
+      <span class="font-['Space_Grotesk'] text-[10px] uppercase font-bold"
+        >Bonds</span
+      >
     </RouterLink>
   </nav>
   <main class="pt-24 pb-12 px-6 md:pl-72 flex-1 relative overflow-hidden">
