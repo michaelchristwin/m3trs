@@ -1,4 +1,4 @@
-import { NFTEndpoint } from "./config";
+import { NFTEndpoint, listingsEndpoint } from "./config";
 import type { OpenseaQueryModel } from "./model";
 
 export abstract class OpenseaQuery {
@@ -31,6 +31,16 @@ export abstract class OpenseaQuery {
     return await NFTEndpoint.getNftsByContract({
       chain: "zora",
       address: address,
+      limit: limit || 20,
+    });
+  }
+  static async getBestListingsCollection({
+    slug,
+    limit,
+  }: OpenseaQueryModel["ListingsBestCollectionParams"]) {
+    return await listingsEndpoint.getBestListingsCollection({
+      slug: slug,
+      includePrivateListings: false,
       limit: limit || 20,
     });
   }

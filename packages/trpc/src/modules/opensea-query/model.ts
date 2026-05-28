@@ -12,4 +12,8 @@ export interface OpenseaQueryModel {
     address: string;
     limit?: number;
   };
+  ListingsBestCollectionParams: {
+    slug: string;
+    limit?: number;
+  };
 }

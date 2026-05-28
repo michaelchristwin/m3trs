@@ -3,6 +3,7 @@ import {
   UserRejectedRequestError,
   ContractFunctionRevertedError,
   TransactionExecutionError,
+  isAddressEqual,
 } from "viem";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
 import { walletClient, publicClient } from "@/config/viem-clients";
@@ -13,19 +14,19 @@ export async function approve(
   id: bigint,
 ): Promise<{ success: true } | { success: false; error: string }> {
   try {
-    const isApproved = await publicClient.readContract({
-      ...TRS,
-      functionName: "isApprovedForAll",
-      args: [account, MyToken.address],
+    const approvedAddress = await publicClient.readContract({
+      ...MyToken,
+      functionName: "getApproved",
+      args: [id],
     });
 
-    if (isApproved) return { success: true };
-
+    if (isAddressEqual(approvedAddress, TRS.address)) return { success: true };
+    console.log("Running approval");
     const { request: approveReq } = await publicClient.simulateContract({
       ...MyToken,
       account,
       functionName: "approve",
-      args: [account, id],
+      args: [TRS.address, id],
     });
 
     const approveTxHash = await walletClient.writeContract(approveReq);

@@ -1,37 +1,28 @@
 <script lang="ts" setup>
+import ListingItem from "@/components/ListingItem.vue";
 import { collections } from "@/config/opensea/collections";
 import { trpc } from "@/config/trpc-client";
-import { useAppKitAccount } from "@reown/appkit/vue";
 import { useQuery } from "@tanstack/vue-query";
 import { useHead } from "@unhead/vue";
-import { computed } from "vue";
+import { effect } from "vue";
+
 useHead({
   title: "Overview",
   meta: [{ name: "description", content: "dashboard" }],
 });
 
-const eip155Account = useAppKitAccount({ namespace: "eip155" });
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
 const { data, isLoading } = useQuery({
-  queryKey: ["getNftsByContract", address, collections.holdings],
+  queryKey: ["getBestListingsCollection", address, collections.holdings],
   queryFn: () =>
-    trpc.opensea.getNFTsByContract.query({
-      address,
+    trpc.opensea.getBestListingsCollection.query({
+      slug: collections.holdings.toLowerCase(),
+      limit: 20,
     }),
 });
-
-const holdings = computed(() => {
-  return (
-    data.value?.nfts?.map((nft) => {
-      return {
-        name: nft.name,
-        tokenId: nft.identifier,
-        metadataUrl: nft.metadataUrl,
-        contract: nft.contract,
-      };
-    }) ?? []
-  );
+effect(() => {
+  console.log(data.value?.listings);
 });
 </script>
 <template>
@@ -54,14 +45,6 @@ const holdings = computed(() => {
       >
         System Overview
       </h1>
-      <p class="font-mono-data text-sm text-on-surface-variant">
-        Real-time aggregate data for connected node:
-        <span class="text-primary-container"
-          >{{ eip155Account.address?.slice(0, 5) }}...{{
-            eip155Account.address?.slice(-4)
-          }}</span
-        >
-      </p>
     </div>
   </div>
   <!-- Three Panel Grid -->
@@ -177,25 +160,22 @@ const holdings = computed(() => {
         <h1
           class="font-headline text-3xl font-bold tracking-tight text-on-surface"
         >
-          Listings
+          MTRS Marketplace
         </h1>
-        <p class="text-on-surface-variant text-sm mt-1 font-body">
-          ERC1155 Contract Balances &amp; Revenue Status
-        </p>
       </div>
     </div>
     <!-- High Density Data Table (No Lines, Tonal Layering) -->
     <div class="bg-surface-container-lowest rounded-lg p-1">
       <!-- Table Header -->
       <div
-        class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-surface-container-highest rounded-t font-headline text-xs uppercase tracking-widest text-on-surface-variant items-center"
+        class="hidden md:grid grid-cols-11 gap-4 px-6 py-3 bg-surface-container-highest rounded-t font-headline text-xs uppercase tracking-widest text-on-surface-variant items-center"
       >
         <div class="col-span-2">Token Name</div>
-        <div class="col-span-1 text-right">Balance</div>
-        <div class="col-span-2 text-right">Claimable USD</div>
+        <div class="col-span-1 text-right">Supply</div>
+        <div class="col-span-2 text-right">Total Accrued</div>
         <div class="col-span-2 text-right">Stop Time</div>
         <div class="col-span-2 text-center">Status</div>
-        <div class="col-span-3 text-right">Actions</div>
+        <div class="col-span-2 text-right">Actions</div>
       </div>
       <!-- Skeleton Rows -->
 
@@ -205,7 +185,7 @@ const holdings = computed(() => {
         v-for="i in 5"
         v-if="isLoading"
         :key="i"
-        class="hidden md:grid grid-cols-12 gap-4 px-6 py-4 border-b border-outline-variant animate-pulse items-center"
+        class="hidden md:grid grid-cols-11 gap-4 px-6 py-4 border-b border-outline-variant animate-pulse items-center"
       >
         <!-- Token -->
         <div class="col-span-2 flex items-center gap-3">
@@ -247,16 +227,11 @@ const holdings = computed(() => {
       </div>
       <div
         class="flex flex-col gap-1 mt-1"
-        v-else-if="holdings.length > 0"
-        v-for="{ tokenId, metadataUrl, contract, name } in holdings"
-        :key="tokenId"
+        v-else-if="data && data.listings.length > 0"
+        v-for="listing in data.listings"
+        :key="listing.orderHash"
       >
-        <HoldingsListItem
-          :token-id="tokenId"
-          :metadata-url="metadataUrl"
-          :contract="contract"
-          :name="name"
-        />
+        <ListingItem :listing="listing" />
       </div>
       <div v-else class="mt-4 text-sm text-on-surface-variant text-center p-3">
         <p>There are no listings yet</p>

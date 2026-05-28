@@ -1,4 +1,8 @@
-import { Configuration, NFTEndpointsApi } from "@m3trs/opensea-sdk";
+import {
+  Configuration,
+  NFTEndpointsApi,
+  ListingEndpointsApi,
+} from "@m3trs/opensea-sdk";
 
 const config = new Configuration({
   basePath: "https://api.opensea.io",
@@ -9,3 +13,4 @@ const config = new Configuration({
 });
 
 export const NFTEndpoint = new NFTEndpointsApi(config);
+export const listingsEndpoint = new ListingEndpointsApi(config);

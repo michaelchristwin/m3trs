@@ -7,7 +7,6 @@ import { trpc } from "@/config/trpc-client";
 import { formSchema } from "@/utils/schemas";
 import { toTypedSchema } from "@vee-validate/zod";
 import { selectedCardClass } from "@/utils/constants";
-import { TRS } from "@/config/smart-contracts/TRS/TRS";
 import { approve, mint } from "@/smart-contracts/actions";
 import { collections } from "@/config/opensea/collections";
 import { useMutation, useQuery } from "@tanstack/vue-query";
@@ -28,7 +27,7 @@ const dialog = ref<HTMLDialogElement | null>(null);
 
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
-const { data, error, isPending } = useQuery({
+const { data, error, isPending, refetch } = useQuery({
   queryKey: ["getNfts", address],
   queryFn: () =>
     trpc.opensea.getNFTByAccount.query({
@@ -45,13 +44,13 @@ const { handleSubmit, setFieldValue, errors, values, meta, resetForm } =
 
 const onSubmit = handleSubmit(async (formValues) => {
   openDialog(dialog.value);
-  modalState.value = "success";
+  modalState.value = "minting";
 
   try {
     const { supply, tokenId, stopTime, description } = formValues;
 
     visibleStatus.value = "Approving M3ter for transaction...";
-    const approveResult = await approve(TRS.address, tokenId);
+    const approveResult = await approve(address, tokenId);
     if (!approveResult.success) {
       mintTxStatus.value = approveResult;
       modalState.value = "error";
@@ -104,6 +103,7 @@ const onSubmit = handleSubmit(async (formValues) => {
     if (mintTxStatus.value.success) {
       modalState.value = "success";
       resetForm();
+      refetch();
     } else {
       modalState.value = "error";
     }

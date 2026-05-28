@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/vue-query";
 import { collections } from "@/config/opensea/collections";
 import { computed } from "vue";
 import { trpc } from "@/config/trpc-client";
+import { checksumAddress } from "viem";
 
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
@@ -11,8 +12,8 @@ const { data, isLoading } = useQuery({
   queryKey: ["getNfts", address, collections.holdings],
   queryFn: () =>
     trpc.opensea.getNFTByAccount.query({
-      owner: address,
-      collection: collections.holdings,
+      owner: checksumAddress(address),
+      collection: collections.holdings.toLowerCase(),
     }),
 });
 
