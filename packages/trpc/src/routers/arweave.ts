@@ -22,4 +22,10 @@ export const arweaveRouter = router({
       const { input } = opts;
       return await ArweaveUpload.uploadMetadata({ uploadBody: input });
     }),
+  uploadSvg: publicProcedure
+    .input(z.object({ name: z.string(), image: z.string() }))
+    .mutation(async (opts) => {
+      const { input } = opts;
+      return await ArweaveUpload.uploadSvg(input);
+    }),
 });

@@ -14,6 +14,6 @@ interface Attribute {
 }
 
 export interface UploadImage {
-  image: Buffer;
+  image: string;
   name: string;
 }

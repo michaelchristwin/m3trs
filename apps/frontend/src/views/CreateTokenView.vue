@@ -13,6 +13,7 @@ import { collections } from "@/config/opensea/collections";
 import { useMutation, useQuery } from "@tanstack/vue-query";
 import { checksumAddress, keccak256, encodePacked, type BaseError } from "viem";
 import { openDialog } from "@/utils/dialog.utils";
+import { constructSvg } from "@/utils/svg-constructor";
 
 useHead({
   title: "Create Token",
@@ -46,64 +47,74 @@ const onSubmit = handleSubmit(async (formValues) => {
   openDialog(dialog.value);
   modalState.value = "success";
 
-  // try {
-  //   const { supply, tokenId, stopTime, description } = formValues;
+  try {
+    const { supply, tokenId, stopTime, description } = formValues;
 
-  //   visibleStatus.value = "Approving M3ter for transaction...";
-  //   const approveResult = await approve(TRS.address, tokenId);
-  //   if (!approveResult.success) {
-  //     mintTxStatus.value = approveResult;
-  //     modalState.value = "error";
-  //     return;
-  //   }
+    visibleStatus.value = "Approving M3ter for transaction...";
+    const approveResult = await approve(TRS.address, tokenId);
+    if (!approveResult.success) {
+      mintTxStatus.value = approveResult;
+      modalState.value = "error";
+      return;
+    }
 
-  //   visibleStatus.value = "Preparing metadata...";
-  //   const name = `TRS-#${tokenId}-${format(stopTime * 1000, "yyyy-MM-dd")}`;
-  //   const hash = keccak256(
-  //     encodePacked(
-  //       ["uint256", "uint256", "uint256"],
-  //       [tokenId, supply, BigInt(stopTime)],
-  //     ),
-  //   );
-  //   const metadata = {
-  //     name,
-  //     image: "",
-  //     description,
-  //     attributes: [
-  //       { display_type: "date", trait_type: "stop_time", value: stopTime },
-  //       { trait_type: "creator", value: checksumAddress(address) },
-  //       { trait_type: "token_id", value: hash },
-  //     ],
-  //   };
+    visibleStatus.value = "Preparing metadata...";
+    const name = `TRS-#${tokenId}-${format(stopTime * 1000, "yyyy-MM-dd")}`;
+    const hash = keccak256(
+      encodePacked(
+        ["uint256", "uint256", "uint256"],
+        [tokenId, supply, BigInt(stopTime)],
+      ),
+    );
+    const svgString = constructSvg({
+      name,
+      meter_id: Number(tokenId),
+      stop_time: stopTime,
+    });
+    visibleStatus.value = "Uploading NFT image to arweave...";
+    const image_url = await trpc.arweave.uploadSvg.mutate({
+      name,
+      image: svgString,
+    });
+    const metadata = {
+      name,
+      image: image_url,
+      description,
+      attributes: [
+        { display_type: "date", trait_type: "stop_time", value: stopTime },
+        { trait_type: "creator", value: checksumAddress(address) },
+        { trait_type: "token_id", value: hash },
+      ],
+    };
 
-  //   visibleStatus.value = "Uploading metadata to arweave...";
-  //   const url = await trpc.arweave.uplodMetadata.mutate(metadata);
+    visibleStatus.value = "Uploading metadata to arweave...";
+    const url = await trpc.arweave.uplodMetadata.mutate(metadata);
 
-  //   visibleStatus.value = "Minting tokens and bond...";
-  //   mintTxStatus.value = await mint(
-  //     {
-  //       supply: BigInt(supply),
-  //       m3terId: tokenId,
-  //       stopTime: BigInt(stopTime),
-  //       uri: url,
-  //     },
-  //     checksumAddress(address),
-  //   );
+    visibleStatus.value = "Minting tokens and bond...";
+    mintTxStatus.value = await mint(
+      {
+        supply: BigInt(supply),
+        m3terId: tokenId,
+        stopTime: BigInt(stopTime),
+        uri: url,
+      },
+      checksumAddress(address),
+    );
 
-  //   if (mintTxStatus.value.success) {
-  //     modalState.value = "success";
-  //     resetForm();
-  //   } else {
-  //     modalState.value = "error";
-  //   }
-  // } catch (err) {
-  //   mintTxStatus.value = {
-  //     success: false,
-  //     error:
-  //       err instanceof Error ? err.message : "An unexpected error occurred.",
-  //   };
-  //   modalState.value = "error";
-  // }
+    if (mintTxStatus.value.success) {
+      modalState.value = "success";
+      resetForm();
+    } else {
+      modalState.value = "error";
+    }
+  } catch (err) {
+    mintTxStatus.value = {
+      success: false,
+      error:
+        err instanceof Error ? err.message : "An unexpected error occurred.",
+    };
+    modalState.value = "error";
+  }
 });
 
 const { mutateAsync, isPending: mutationIsPending } = useMutation({
@@ -572,11 +583,11 @@ const convertToLocaleDate = (dateStr: string) => {
           </p>
 
           <div class="flex w-full flex-col gap-3">
-            <button
+            <!-- <button
               class="w-full rounded-lg bg-[#279b37] px-6 py-3 font-semibold text-white transition-colors duration-150 hover:bg-[#34b348]"
             >
               Retry
-            </button>
+            </button> -->
 
             <button
               class="w-full rounded-lg border border-white/15 px-6 py-3 font-semibold text-white transition-colors duration-150 hover:bg-white/5"

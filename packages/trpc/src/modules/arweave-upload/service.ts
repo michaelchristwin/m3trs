@@ -25,7 +25,7 @@ export abstract class ArweaveUpload {
 
     return `https://arweave.net/${result.id}`;
   }
-  static async uploadImage({ image, name }: UploadImage) {
+  static async uploadSvg({ image, name }: UploadImage) {
     const arweave = Arweave.init({
       host: "arweave.net",
       protocol: "https",
@@ -35,10 +35,10 @@ export abstract class ArweaveUpload {
     const signer = new ArweaveSigner(key);
     const turbo = TurboFactory.authenticated({ signer });
     const result = await turbo.upload({
-      data: image,
+      data: Buffer.from(image),
       dataItemOpts: {
         tags: [
-          { name: "Content-Type", value: "image/webp" },
+          { name: "Content-Type", value: "image/svg+xml" },
           { name: "Title", value: name },
         ],
       },
