@@ -44,4 +44,14 @@ export abstract class OpenseaQuery {
       limit: limit || 20,
     });
   }
+  static async getNftMetadata({
+    contractAddress,
+    tokenId,
+  }: OpenseaQueryModel["NftMetadataParams"]) {
+    return await NFTEndpoint.getNftMetadata({
+      chain: "zora",
+      contractAddress,
+      tokenId,
+    });
+  }
 }

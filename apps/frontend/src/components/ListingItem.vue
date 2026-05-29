@@ -5,6 +5,7 @@ import { wagmiAdapter } from "@/config/wagmi";
 import { formatDistanceToNow } from "date-fns";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
 import { ListingStatusEnum } from "@m3trs/opensea-sdk";
+import { trpc } from "@/config/trpc-client";
 
 const props = defineProps<{ listing: import("@m3trs/opensea-sdk").Listing }>();
 const { listing } = props;
@@ -34,9 +35,14 @@ const { data: metadata, isLoading } = useQuery({
     }
 
     const revenue = Number(result[0].result);
-
+    const nft_metadata = await trpc.opensea.getNftMetadata.query({
+      contractAddress: TRS.address,
+      tokenId: listing.protocolData?.parameters.offer[0]
+        ?.identifierOrCriteria as string,
+    });
     return {
       revenue,
+      nft_metadata,
     };
   },
   enabled: !!listing.protocolData?.parameters.offer[0]?.identifierOrCriteria,
@@ -67,14 +73,14 @@ const statusPillClasses: Record<string, string> = {
       "
     ></div>
     <div class="md:col-span-2 text-sm text-on-surface">
-      <span class="md:hidden text-on-surface-variant">Token ID: </span>
-      <span class="font-mono-data">Name</span>
+      <span class="md:hidden text-on-surface-variant">Token Name: </span>
+      <span class="font-mono-data">{{ metadata?.nft_metadata.name }}</span>
     </div>
     <div class="col-span-1 font-mono-data text-sm text-on-surface text-right">
       {{ listing.remainingQuantity }}
     </div>
     <div class="md:col-span-2 text-sm text-primary md:text-right">
-      <span class="md:hidden text-on-surface-variant">Claimable: </span>
+      <span class="md:hidden text-on-surface-variant">Supply: </span>
       <div
         v-if="isLoading"
         class="inline-block h-4 w-20 rounded bg-surface-container-highest animate-pulse"

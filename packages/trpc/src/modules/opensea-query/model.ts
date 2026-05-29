@@ -16,4 +16,8 @@ export interface OpenseaQueryModel {
     slug: string;
     limit?: number;
   };
+  NftMetadataParams: {
+    contractAddress: string;
+    tokenId: string;
+  };
 }

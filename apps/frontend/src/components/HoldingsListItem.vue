@@ -95,7 +95,7 @@ const statusPillClasses: Record<string, string> = {
       v-if="!metadata?.status.isMoreThanAWeekAway"
     ></div>
     <div class="md:col-span-2 text-sm text-on-surface">
-      <span class="md:hidden text-on-surface-variant">Token ID: </span>
+      <span class="md:hidden text-on-surface-variant">Token Name: </span>
       <span class="font-mono-data">{{ name }}</span>
     </div>
     <div class="col-span-1 font-mono-data text-sm text-on-surface text-right">

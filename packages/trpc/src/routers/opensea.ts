@@ -41,4 +41,9 @@ export const openSeaRouter = router({
     .query(async ({ input }) => {
       return await OpenseaQuery.getBestListingsCollection(input);
     }),
+  getNftMetadata: publicProcedure
+    .input(z.object({ contractAddress: z.string(), tokenId: z.string() }))
+    .query(async ({ input }) => {
+      return await OpenseaQuery.getNftMetadata(input);
+    }),
 });
