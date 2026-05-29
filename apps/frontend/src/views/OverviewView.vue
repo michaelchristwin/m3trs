@@ -4,7 +4,7 @@ import { collections } from "@/config/opensea/collections";
 import { trpc } from "@/config/trpc-client";
 import { useQuery } from "@tanstack/vue-query";
 import { useHead } from "@unhead/vue";
-import { effect } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
 useHead({
   title: "Overview",
@@ -21,9 +21,38 @@ const { data, isLoading } = useQuery({
       limit: 20,
     }),
 });
-effect(() => {
-  console.log(data.value?.listings);
+const targetSection = ref<HTMLElement | null>(null);
+const isVisible = ref(false);
+
+let observer: IntersectionObserver | null = null;
+
+onMounted(() => {
+  observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry) {
+        isVisible.value = entry.isIntersecting;
+      }
+    },
+    {
+      threshold: 0.2,
+    },
+  );
+
+  if (targetSection.value) {
+    observer.observe(targetSection.value);
+  }
 });
+
+onUnmounted(() => {
+  observer?.disconnect();
+});
+
+function scrollToSection() {
+  targetSection.value?.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+}
 </script>
 <template>
   <div
@@ -154,7 +183,7 @@ effect(() => {
       </div>
     </div>
   </div>
-  <div class="mt-30">
+  <div class="mt-30" ref="targetSection">
     <div class="md:flex block justify-between items-end mb-8">
       <div>
         <h1
@@ -265,4 +294,24 @@ effect(() => {
       </div>
     </div>
   </div>
+  <button
+    v-if="!isVisible"
+    @click="scrollToSection"
+    class="fixed right-6 bottom-19 flex justify-center items-center bg-primary-container w-12 h-12 rounded-[100%] text-neutral-800 animate-bounce shadow-lg transition hover:scale-105"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="lucide lucide-chevron-down-icon lucide-chevron-down"
+    >
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  </button>
 </template>
