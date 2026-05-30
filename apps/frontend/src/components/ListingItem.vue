@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/vue-query";
 import { wagmiAdapter } from "@/config/wagmi";
 import { formatDistanceToNow } from "date-fns";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
-import { ListingStatusEnum } from "@m3trs/opensea-sdk";
 import { trpc } from "@/config/trpc-client";
+import { formatEther } from "viem";
 
 const props = defineProps<{ listing: import("@m3trs/opensea-sdk").Listing }>();
 const { listing } = props;
@@ -28,14 +28,28 @@ const { data: metadata, isLoading } = useQuery({
             ),
           ],
         },
+        {
+          ...TRS,
+          functionName: "token",
+          args: [
+            BigInt(
+              listing.protocolData?.parameters.offer[0]
+                ?.identifierOrCriteria as string,
+            ),
+          ],
+        },
       ],
     });
     if (result[0].error) {
       throw result[0].error;
     }
+    if (result[1].error) {
+      throw result[1].error;
+    }
 
     const revenue = Number(result[0].result);
-    const nft_metadata = await trpc.opensea.getNftMetadata.query({
+    const total_supply = result[1].result[1];
+    let nft_metadata = await trpc.opensea.getNftMetadata.query({
       contractAddress: TRS.address,
       tokenId: listing.protocolData?.parameters.offer[0]
         ?.identifierOrCriteria as string,
@@ -43,54 +57,32 @@ const { data: metadata, isLoading } = useQuery({
     return {
       revenue,
       nft_metadata,
+      total_supply,
     };
   },
   enabled: !!listing.protocolData?.parameters.offer[0]?.identifierOrCriteria,
 });
-
-const statusPillClasses: Record<string, string> = {
-  Active:
-    "text-primary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold",
-  Expiring:
-    "text-secondary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold",
-};
 </script>
 
 <template>
   <div
-    class="relative grid grid-cols-1 md:grid-cols-11 gap-3 md:gap-4 px-4 md:px-6 py-4 cursor-pointer bg-surface-container-low rounded group hover:bg-surface-container transition-colors items-center"
+    class="relative grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 px-4 md:px-6 py-4 bg-surface-container-low rounded group items-center"
   >
-    <!-- Subtle warning indicator line on the left to show severity without borders -->
-    <div
-      class="absolute left-0 top-0 bottom-0 w-1 bg-secondary-container/50"
-      v-if="
-        listing.status ===
-        (ListingStatusEnum.Cancelled ||
-          ListingStatusEnum.Expired ||
-          ListingStatusEnum.Inactive ||
-          ListingStatusEnum.Fulfilled)
-      "
-    ></div>
     <div class="md:col-span-2 text-sm text-on-surface">
       <span class="md:hidden text-on-surface-variant">Token Name: </span>
       <span class="font-mono-data">{{ metadata?.nft_metadata.name }}</span>
     </div>
-    <div
-      class="col-span-1 font-mono-data text-sm text-on-surface md:text-right"
-    >
-      <span class="md:hidden text-on-surface-variant">Supply: </span>
-      <span>{{ listing.remainingQuantity }}</span>
-    </div>
-    <div class="md:col-span-2 text-sm text-primary md:text-right">
+    <div class="md:col-span-2 text-sm text-primary md:text-center">
       <span class="md:hidden text-on-surface-variant">Total Accrued: </span>
       <div
         v-if="isLoading"
         class="inline-block h-4 w-20 rounded bg-surface-container-highest animate-pulse"
       ></div>
-      <span v-else-if="metadata != undefined">{{
-        Number(metadata.revenue)
-      }}</span>
+      <span v-else-if="metadata != undefined"
+        >${{ Number(metadata.revenue).toFixed(2) }}</span
+      >
     </div>
+
     <div class="md:col-span-2 text-sm text-on-surface md:text-right">
       <span class="md:hidden text-on-surface-variant">Stop Time: </span>
       <div
@@ -108,18 +100,18 @@ const statusPillClasses: Record<string, string> = {
         }}
       </span>
     </div>
-    <div class="md:col-span-2 md:flex md:justify-center">
+    <div
+      class="md:col-span-2 font-mono-data text-sm text-on-surface md:text-right"
+    >
+      <span class="md:hidden text-on-surface-variant">Supply: </span>
       <span
-        :class="
-          statusPillClasses[
-            listing.status === ListingStatusEnum.Active ? 'Active' : 'Expiring'
-          ]
-        "
+        >{{ listing.remainingQuantity }} of
+        {{ Number(metadata?.total_supply) }}</span
       >
-        {{
-          listing.status === ListingStatusEnum.Active ? "Active" : "Inactive"
-        }}
-      </span>
+    </div>
+    <div class="md:col-span-2 md:flex md:justify-end">
+      <span class="md:hidden text-on-surface-variant">Price: </span>
+      <span> {{ formatEther(BigInt(listing.price.current.value)) }} Ξ </span>
     </div>
     <div class="md:col-span-2 flex flex-col md:flex-row md:justify-end gap-2">
       <a

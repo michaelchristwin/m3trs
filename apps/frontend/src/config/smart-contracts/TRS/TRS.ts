@@ -6,3 +6,4 @@ const TRS = {
 } as const;
 
 export { TRS };
+//Pre-Change: Enable hexToBigint in on NFT creation

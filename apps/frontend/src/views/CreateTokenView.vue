@@ -59,12 +59,16 @@ const onSubmit = handleSubmit(async (formValues) => {
 
     visibleStatus.value = "Preparing metadata...";
     const name = `TRS-#${tokenId}-${format(stopTime * 1000, "yyyy-MM-dd")}`;
+
     const hash = keccak256(
       encodePacked(
         ["uint256", "uint256", "uint256"],
         [tokenId, supply, BigInt(stopTime)],
       ),
     );
+
+    // To-do: Add hextToBigint on new contract deployment
+    //const identifier = hexToBigInt(hash);
     const svgString = constructSvg({
       name,
       meter_id: Number(tokenId),

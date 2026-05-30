@@ -2,6 +2,7 @@
 import ListingItem from "@/components/ListingItem.vue";
 import { collections } from "@/config/opensea/collections";
 import { trpc } from "@/config/trpc-client";
+import { ListingStatusEnum } from "@m3trs/opensea-sdk";
 import { useQuery } from "@tanstack/vue-query";
 import { useHead } from "@unhead/vue";
 import { onMounted, onUnmounted, ref } from "vue";
@@ -13,13 +14,22 @@ useHead({
 
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
-const { data, isLoading } = useQuery({
+const { data: listings, isLoading } = useQuery({
   queryKey: ["getBestListingsCollection", address, collections.holdings],
-  queryFn: () =>
-    trpc.opensea.getBestListingsCollection.query({
+  queryFn: async () => {
+    const result = await trpc.opensea.getBestListingsCollection.query({
       slug: collections.holdings.toLowerCase(),
       limit: 20,
-    }),
+    });
+    const filteredResult = result.listings.filter(
+      (l) =>
+        l.status !== ListingStatusEnum.Cancelled &&
+        l.status !== ListingStatusEnum.Expired &&
+        l.status !== ListingStatusEnum.Inactive &&
+        l.status !== ListingStatusEnum.Fulfilled,
+    );
+    return filteredResult;
+  },
 });
 const targetSection = ref<HTMLElement | null>(null);
 const isVisible = ref(false);
@@ -66,13 +76,13 @@ function scrollToSection() {
   ></div>
   <!-- Dashboard Header -->
   <div
-    class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6"
+    class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6"
   >
     <div>
       <h1
         class="font-headline text-4xl font-bold tracking-tight text-on-surface mb-2"
       >
-        System Overview
+        Overview
       </h1>
     </div>
   </div>
@@ -183,7 +193,7 @@ function scrollToSection() {
       </div>
     </div>
   </div>
-  <div class="mt-30" ref="targetSection">
+  <div class="mt-17" ref="targetSection">
     <div class="md:flex block justify-between items-end mb-8">
       <div>
         <h1
@@ -197,13 +207,13 @@ function scrollToSection() {
     <div class="bg-surface-container-lowest rounded-lg p-1">
       <!-- Table Header -->
       <div
-        class="hidden md:grid grid-cols-11 gap-4 px-6 py-3 bg-surface-container-highest rounded-t font-headline text-xs uppercase tracking-widest text-on-surface-variant items-center"
+        class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-surface-container-highest rounded-t font-headline text-xs uppercase tracking-widest text-on-surface-variant items-center"
       >
         <div class="col-span-2">Token Name</div>
-        <div class="col-span-1 text-right">Supply</div>
-        <div class="col-span-2 text-right">Total Accrued</div>
+        <div class="col-span-2 text-center">Total Accrued</div>
         <div class="col-span-2 text-right">Stop Time</div>
-        <div class="col-span-2 text-center">Status</div>
+        <div class="col-span-2 text-right">Supply</div>
+        <div class="col-span-2 text-right">Price</div>
         <div class="col-span-2 text-right">Actions</div>
       </div>
       <!-- Skeleton Rows -->
@@ -214,9 +224,9 @@ function scrollToSection() {
         v-for="i in 5"
         v-if="isLoading"
         :key="i"
-        class="hidden md:grid grid-cols-11 gap-4 px-6 py-4 border-b border-outline-variant animate-pulse items-center"
+        class="hidden md:grid grid-cols-12 gap-4 px-6 py-4 border-b border-outline-variant animate-pulse items-center"
       >
-        <!-- Token -->
+        <!-- Token Name-->
         <div class="col-span-2 flex items-center gap-3">
           <div
             class="w-10 h-10 rounded-full bg-surface-container-highest"
@@ -227,37 +237,32 @@ function scrollToSection() {
             <div class="h-3 w-20 rounded bg-surface-container-highest"></div>
           </div>
         </div>
-
-        <!-- Balance -->
-        <div class="col-span-1 flex justify-end">
-          <div class="h-4 w-16 rounded bg-surface-container-highest"></div>
-        </div>
-
-        <!-- Claimable USD -->
-        <div class="col-span-2 flex justify-end">
+        <!-- Total Accrued -->
+        <div class="col-span-2 flex justify-center">
           <div class="h-4 w-24 rounded bg-surface-container-highest"></div>
         </div>
-
         <!-- Stop Time -->
         <div class="col-span-2 flex justify-end">
           <div class="h-4 w-32 rounded bg-surface-container-highest"></div>
         </div>
-
-        <!-- Status -->
-        <div class="col-span-2 flex justify-center">
+        <!-- Supply -->
+        <div class="col-span-2 flex justify-end">
+          <div class="h-4 w-16 rounded bg-surface-container-highest"></div>
+        </div>
+        <!-- Price -->
+        <div class="col-span-2 flex justify-end">
           <div class="h-8 w-24 rounded-full bg-surface-container-highest"></div>
         </div>
 
         <!-- Actions -->
-        <div class="col-span-3 flex justify-end gap-2">
-          <div class="h-10 w-24 rounded-lg bg-surface-container-highest"></div>
+        <div class="col-span-2 flex justify-end gap-2">
           <div class="h-10 w-24 rounded-lg bg-surface-container-highest"></div>
         </div>
       </div>
       <div
         class="flex flex-col gap-1 mt-1"
-        v-else-if="data && data.listings.length > 0"
-        v-for="listing in data.listings"
+        v-else-if="listings && listings.length > 0"
+        v-for="listing in listings"
         :key="listing.orderHash"
       >
         <ListingItem :listing="listing" />

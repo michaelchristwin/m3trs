@@ -42,9 +42,7 @@ const { data: bonds, isLoading } = useQuery({
     </h1>
     <p class="text-on-surface-variant font-mono text-sm max-w-2xl">
       ACTIVE_CONTRACTS:
-      <span class="text-primary-container">{{ bonds.nfts.length }}</span> |
-      TOTAL_LOCKED_VALUE:
-      <span class="text-on-surface">1,450 kWh</span>
+      <span class="text-primary-container">{{ bonds.nfts.length }}</span>
     </p>
   </header>
   <!-- Bento Grid Layout for Bonds -->
@@ -103,12 +101,7 @@ const { data: bonds, isLoading } = useQuery({
     class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
     v-else-if="bonds && bonds.nfts.length > 0"
   >
-    <BondCard
-      v-for="bond in bonds.nfts"
-      :key="bond.identifier"
-      :token-id="bond.identifier"
-      :metadata-url="bond.metadataUrl"
-    />
+    <BondCard v-for="bond in bonds.nfts" :key="bond.identifier" :bond="bond" />
   </div>
   <div v-else class="flex justify-center items-center p-2">
     <p>You have no bonds yet</p>

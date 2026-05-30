@@ -1,26 +1,41 @@
 <script lang="ts" setup>
+import { M3terBond } from "@/config/smart-contracts/M3terBond/M3terBond";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
+import { trpc } from "@/config/trpc-client";
 import { useQuery } from "@tanstack/vue-query";
 import { useWaitForTransactionReceipt, useWriteContract } from "@wagmi/vue";
 import { formatDistanceToNow } from "date-fns";
+import { hexToBigInt } from "viem";
 import { computed } from "vue";
-const props = defineProps(["tokenId", "metadataUrl"]);
-interface Metadata {
-  name: string;
-  stopTime: number;
-  description: string;
-}
-const { data: token, isLoading } = useQuery<Metadata>({
-  queryKey: ["getBond", props.tokenId],
-  queryFn: () => fetch(props.metadataUrl).then((res) => res.json()),
+
+const props = defineProps<{ bond: import("@/utils/types").Bond }>();
+const hasTokenId = computed(() =>
+  props.bond.traits.some((t) => t.displayType === "token_id"),
+);
+const { data: token, isLoading } = useQuery({
+  queryKey: ["getBond", props.bond.identifier],
+  queryFn: async () => {
+    const tokenId = props.bond.traits.find(
+      (t) => t.displayType === "token_id",
+    )?.value;
+    console.log(props.bond);
+    const result = await trpc.opensea.getNftMetadata.query({
+      contractAddress: M3terBond.address,
+      tokenId: String(hexToBigInt(tokenId!)),
+    });
+    return result;
+  },
+  enabled: hasTokenId.value,
 });
+
+const stopTime = token.value?.traits.find((r) => r.traitType === "stop_time");
 const status = computed(() => {
   if (!token.value) return null;
+  if (!stopTime) return null;
 
   const now = Math.floor(Date.now() / 1000);
   const oneWeek = 7 * 24 * 60 * 60;
-
-  const difference = token.value.stopTime - now;
+  const difference = stopTime.value - now;
 
   return {
     isActive: difference > 0,
@@ -113,7 +128,9 @@ useWaitForTransactionReceipt({
       >
         METER_ID
       </p>
-      <p class="font-mono text-xl text-on-surface">#{{ Number(tokenId) }}</p>
+      <p class="font-mono text-xl text-on-surface">
+        #{{ Number(bond.identifier) }}
+      </p>
     </div>
     <div class="grid grid-cols-2 gap-4 mb-8">
       <!-- <div>
@@ -130,8 +147,8 @@ useWaitForTransactionReceipt({
         >
           STOP_TIME
         </p>
-        <p class="font-mono text-sm text-on-surface">
-          {{ new Date(token.stopTime * 1000).toISOString().split("T")[0] }}
+        <p class="font-mono text-sm text-on-surface" v-if="stopTime">
+          {{ new Date(stopTime.value * 1000).toISOString().split("T")[0] }}
         </p>
       </div>
     </div>
@@ -149,6 +166,7 @@ useWaitForTransactionReceipt({
         REDEEMABLE
       </p>
       <p
+        v-if="stopTime"
         :class="[
           'font-mono text-2xl uppercase',
           status?.isMoreThanAWeekAway
@@ -156,12 +174,12 @@ useWaitForTransactionReceipt({
             : 'text-primary-container',
         ]"
       >
-        {{ formatDistanceToNow(token.stopTime * 1000, { addSuffix: true }) }}
+        {{ formatDistanceToNow(stopTime.value * 1000, { addSuffix: true }) }}
       </p>
     </div>
     <div class="mt-auto pt-4 border-t border-outline-variant/20">
       <button
-        @click="redeem(tokenId)"
+        @click="redeem(Number(bond.identifier))"
         :disabled="status?.isActive"
         class="w-full py-3 bg-primary-container text-on-primary-container font-headline font-bold text-sm rounded hover:bg-primary transition-all duration-200 shadow-[0_0_15px_rgba(0,255,65,0.1)] hover:shadow-[0_0_20px_rgba(0,255,65,0.2)] disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-surface-container-highest disabled:shadow-none disabled:text-on-surface-variant"
       >
