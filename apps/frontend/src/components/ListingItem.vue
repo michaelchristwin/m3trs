@@ -58,7 +58,6 @@ const statusPillClasses: Record<string, string> = {
 
 <template>
   <div
-    aria-label="Open token details"
     class="relative grid grid-cols-1 md:grid-cols-11 gap-3 md:gap-4 px-4 md:px-6 py-4 cursor-pointer bg-surface-container-low rounded group hover:bg-surface-container transition-colors items-center"
   >
     <!-- Subtle warning indicator line on the left to show severity without borders -->
@@ -76,11 +75,14 @@ const statusPillClasses: Record<string, string> = {
       <span class="md:hidden text-on-surface-variant">Token Name: </span>
       <span class="font-mono-data">{{ metadata?.nft_metadata.name }}</span>
     </div>
-    <div class="col-span-1 font-mono-data text-sm text-on-surface text-right">
-      {{ listing.remainingQuantity }}
+    <div
+      class="col-span-1 font-mono-data text-sm text-on-surface md:text-right"
+    >
+      <span class="md:hidden text-on-surface-variant">Supply: </span>
+      <span>{{ listing.remainingQuantity }}</span>
     </div>
     <div class="md:col-span-2 text-sm text-primary md:text-right">
-      <span class="md:hidden text-on-surface-variant">Supply: </span>
+      <span class="md:hidden text-on-surface-variant">Total Accrued: </span>
       <div
         v-if="isLoading"
         class="inline-block h-4 w-20 rounded bg-surface-container-highest animate-pulse"
@@ -124,9 +126,9 @@ const statusPillClasses: Record<string, string> = {
         target="_blank"
         rel="noopener noreferrer"
         :href="`https://opensea.io/item/zora/${TRS.address}/${listing.protocolData?.parameters.offer[0]?.identifierOrCriteria}`"
-        class="md:block hidden px-3 text-center py-2 rounded-[30px] bg-[#0786FF] text-on-surface transition-colors text-xs font-headline tracking-wider hover:bg-[#0786FF]/80"
+        class="block px-4 text-center py-1.5 rounded-[30px] bg-primary-container text-neutral-800 transition-colors text-xs font-headline tracking-wider hover:bg-primary-container/80"
       >
-        View on OpenSea
+        Buy
       </a>
     </div>
   </div>
