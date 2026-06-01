@@ -7,7 +7,6 @@ import { useQuery } from "@tanstack/vue-query";
 import { wagmiAdapter } from "@/config/wagmi";
 import { formatDistanceToNow } from "date-fns";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
-import { effect } from "vue";
 
 const props = defineProps(["tokenId", "metadataUrl", "contract", "name"]);
 
@@ -15,7 +14,6 @@ const router = useRouter();
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
 const openTokenDetails = (tokenName: string) => {
-  console.log(tokenName);
   router.push({
     name: "token details",
     params: {
@@ -72,9 +70,7 @@ const { data: metadata, isLoading } = useQuery({
   },
   enabled: !!props.contract && !!props.tokenId && !!props.metadataUrl,
 });
-effect(() => {
-  console.log("TokenId: ", metadata.value?.stopTime);
-});
+
 const statusPillClasses: Record<string, string> = {
   Active:
     "text-primary-container px-3 py-1 rounded-[9999px] text-[0.6875rem] font-headline uppercase tracking-wider font-bold",

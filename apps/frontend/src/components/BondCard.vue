@@ -20,7 +20,14 @@ const { data: tokenId } = useReadContract({
   functionName: "tokenByM3ter",
   args: [BigInt(props.bond.identifier)],
 });
-
+const { data: totalAccrued } = useReadContract({
+  ...TRS,
+  functionName: "accRevenuePerToken",
+  args: tokenId.value ? [tokenId.value] : undefined,
+  query: {
+    enabled: computed(() => !!tokenId.value),
+  },
+});
 const {
   data: token,
   isLoading: isTokenLoading,
@@ -143,18 +150,40 @@ const buttonText = computed(() => {
     </div>
 
     <!-- Stop Time -->
-    <div class="mb-8">
-      <p
-        class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
-      >
-        STOP_TIME
-      </p>
+    <div class="grid grid-cols-2 gap-4 mb-8">
+      <div>
+        <p
+          class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
+        >
+          STOP_TIME
+        </p>
 
-      <p v-if="stopTime" class="font-mono text-sm text-on-surface">
-        {{ new Date(stopTime * 1000).toISOString().split("T")[0] }}
-      </p>
+        <p v-if="stopTime" class="font-mono text-sm text-on-surface">
+          {{ new Date(stopTime * 1000).toISOString().split("T")[0] }}
+        </p>
 
-      <p v-else class="font-mono text-sm text-on-surface-variant">Unknown</p>
+        <p v-else class="font-mono text-sm text-on-surface-variant">Unknown</p>
+      </div>
+
+      <div>
+        <p
+          class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
+        >
+          ACCRUED
+        </p>
+
+        <p
+          v-if="totalAccrued !== undefined"
+          class="font-mono text-sm text-on-surface"
+        >
+          ${{ Number(totalAccrued).toFixed(2) }}
+        </p>
+
+        <div
+          v-else
+          class="h-5 w-20 rounded bg-surface-container-highest animate-pulse"
+        />
+      </div>
     </div>
 
     <!-- Redeem Countdown -->
