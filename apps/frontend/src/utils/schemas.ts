@@ -5,7 +5,7 @@ export const formSchema = z.object({
     error: (issue) =>
       issue.input === undefined ? "Select an NFT" : "Invalid token ID",
   }),
-  description: z.string({ error: "Required" }),
+  description: z.string().min(1, { error: "Description is required" }),
   supply: z
     .string()
     .min(1, "Required")

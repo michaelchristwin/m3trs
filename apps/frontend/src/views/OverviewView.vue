@@ -74,23 +74,12 @@ function scrollToSection() {
       background-size: 40px 40px;
     "
   ></div>
-  <!-- Dashboard Header -->
-  <div
-    class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6"
-  >
-    <div>
-      <h1
-        class="font-headline text-4xl font-bold tracking-tight text-on-surface mb-2"
-      >
-        Overview
-      </h1>
-    </div>
-  </div>
+
   <!-- Three Panel Grid -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- Panel 2: Your Holdings -->
     <div
-      class="bg-surface-container-low rounded flex flex-col h-105 relative group border border-transparent hover:border-outline-variant/30 transition-colors"
+      class="bg-surface-container-low rounded flex flex-col h-95 relative group border border-transparent hover:border-outline-variant/30 transition-colors"
     >
       <div
         class="absolute inset-0 border border-outline-variant opacity-15 rounded pointer-events-none"
@@ -140,7 +129,7 @@ function scrollToSection() {
     </div>
     <!-- Panel 3: Your Bonds -->
     <div
-      class="bg-surface-container-low rounded flex flex-col h-105 relative group border border-transparent hover:border-outline-variant/30 transition-colors"
+      class="bg-surface-container-low rounded flex flex-col h-95 relative group border border-transparent hover:border-outline-variant/30 transition-colors"
     >
       <div
         class="absolute inset-0 border border-outline-variant opacity-15 rounded pointer-events-none"

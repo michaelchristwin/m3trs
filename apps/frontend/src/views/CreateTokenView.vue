@@ -6,13 +6,14 @@ import { useForm } from "vee-validate";
 import { trpc } from "@/config/trpc-client";
 import { formSchema } from "@/utils/schemas";
 import { toTypedSchema } from "@vee-validate/zod";
-import { selectedCardClass } from "@/utils/constants";
+
 import { approve, mint } from "@/smart-contracts/actions";
 import { collections } from "@/config/opensea/collections";
 import { useMutation, useQuery } from "@tanstack/vue-query";
 import { checksumAddress, keccak256, encodePacked, type BaseError } from "viem";
 import { openDialog } from "@/utils/dialog.utils";
 import { constructSvg } from "@/utils/svg-constructor";
+import M3terCard from "@/components/M3terCard.vue";
 
 useHead({
   title: "Create Token",
@@ -27,7 +28,7 @@ const dialog = ref<HTMLDialogElement | null>(null);
 
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
-const { data, error, isPending, refetch } = useQuery({
+const { data, error, isLoading, refetch } = useQuery({
   queryKey: ["getNfts", address],
   queryFn: () =>
     trpc.opensea.getNFTByAccount.query({
@@ -40,6 +41,7 @@ const visibleStatus = ref("Preparing transaction...");
 const { handleSubmit, setFieldValue, errors, values, meta, resetForm } =
   useForm({
     validationSchema: toTypedSchema(formSchema),
+    initialValues: { description: "", supply: "" },
   });
 
 const onSubmit = handleSubmit(async (formValues) => {
@@ -145,11 +147,11 @@ const convertToLocaleDate = (dateStr: string) => {
       >
         Revenue Token Wizard
       </h1>
-      <p
+      <!-- <p
         class="text-on-surface-variant font-mono text-sm uppercase tracking-widest"
       >
         Initialization Sequence // Step 2
-      </p>
+      </p> -->
     </div>
     <!-- Wizard Layout -->
     <form
@@ -170,78 +172,28 @@ const convertToLocaleDate = (dateStr: string) => {
           <h2 class="font-headline text-xl text-on-surface mb-6 ml-4">
             Select M3TER NFT
           </h2>
-          <div
-            class="flex flex-col gap-4 max-h-[70vh] overflow-y-auto sm:flex-row sm:overflow-x-auto sm:overflow-y-hidden sm:max-h-none sm:scroll-smooth sm:snap-x sm:snap-mandatory custom-scrollbar"
-          >
-            <div v-if="isPending">
-              <p>Loading...</p>
+          <div class="gap-4 grid md:grid-cols-2 grid-cols-1">
+            <div v-if="isLoading">
+              <M3terCardSkeleton v-for="i in 6" :key="i" />
             </div>
             <div v-else-if="error">
               Error: {{ (error as BaseError).shortMessage || error.message }}
             </div>
-            <div
-              v-else
+            <M3terCard
               v-for="nft in data?.nfts"
               :key="nft.identifier"
-              @click="onSelectNFT(BigInt(nft.identifier))"
-              :class="[
-                values.tokenId === BigInt(nft.identifier)
-                  ? selectedCardClass.selected
-                  : selectedCardClass.unselected,
-              ]"
-            >
-              <!-- Selected indicator -->
-              <div
-                v-if="values.tokenId === BigInt(nft.identifier)"
-                class="absolute top-2 right-2 text-primary-container"
-              >
-                <span
-                  class="material-symbols-outlined"
-                  style="font-variation-settings: &quot;FILL&quot; 1"
-                >
-                  check_circle
-                </span>
-              </div>
-
-              <!-- Icon (static as requested) -->
-              <div
-                class="w-full h-24 bg-surface-container-lowest mb-3 rounded overflow-hidden ghost-border flex items-center justify-center"
-              >
-                <span
-                  class="material-symbols-outlined text-4xl text-outline-variant"
-                >
-                  memory
-                </span>
-              </div>
-
-              <!-- Token -->
-              <div
-                :class="[
-                  'font-mono text-lg font-bold',
-                  values.tokenId === BigInt(nft.identifier)
-                    ? 'text-primary-container'
-                    : 'text-on-surface',
-                ]"
-              >
-                #{{ Number(nft.identifier) }}
-              </div>
-
-              <!-- CAP -->
-              <div class="font-mono text-xs text-on-surface-variant mt-1">
-                CAP: 500 kWh
-              </div>
-            </div>
+              :token-id="BigInt(nft.identifier)"
+              :selected="values.tokenId === BigInt(nft.identifier)"
+              @select="onSelectNFT"
+            />
           </div>
-          <span class="text-red-500 italic text-[13px]" v-if="errors.tokenId">{{
-            errors.tokenId
-          }}</span>
         </section>
         <!-- Step 2: Configure Token -->
         <section
           class="bg-surface-container-high p-6 rounded-lg ghost-border relative shadow-[0_0_20px_rgba(0,255,65,0.05)]"
         >
           <div
-            class="absolute -left-3 -top-3 w-8 h-8 rounded-full bg-primary-container border-2 border-surface flex items-center justify-center font-mono text-sm text-on-primary-container font-bold"
+            class="absolute -left-3 -top-3 w-8 h-8 rounded-full bg-surface-container-high border border-outline flex items-center justify-center font-mono text-sm text-on-surface"
           >
             2
           </div>
@@ -257,7 +209,10 @@ const convertToLocaleDate = (dateStr: string) => {
               >
               <div class="flex items-end">
                 <input
-                  class="input-underline w-full font-mono text-2xl text-on-surface pb-2 px-0 bg-transparent focus:ring-0"
+                  :class="[
+                    'input rounded ps-1',
+                    errors.supply && 'border-red-500 ring-1 ring-red-500',
+                  ]"
                   placeholder="0"
                   type="number"
                   :value="values.supply"
@@ -300,31 +255,48 @@ const convertToLocaleDate = (dateStr: string) => {
                 />
               </div>
             </div>
-            <!-- Metadata URI Input -->
-            <div class="relative">
+
+            <div
+              class="rounded-lg border bg-surface-container-low p-4 transition-all"
+              :class="
+                errors.description
+                  ? 'border-red-500 bg-red-500/5'
+                  : 'border-outline/30 focus-within:border-primary-container'
+              "
+            >
               <label
-                class="block font-mono text-[0.6875rem] uppercase tracking-widest text-on-surface-variant mb-2"
-                >Description</label
+                class="mb-3 block font-mono text-[0.6875rem] uppercase tracking-widest"
+                :class="
+                  errors.description
+                    ? 'text-red-400'
+                    : 'text-on-surface-variant'
+                "
               >
+                Description
+              </label>
+
               <textarea
                 :value="values.description"
-                rows="3"
+                rows="4"
                 @input="
                   setFieldValue(
                     'description',
-                    ($event.target as HTMLInputElement).value,
+                    ($event.target as HTMLTextAreaElement).value,
                   )
                 "
-                class="input-underline w-full font-mono text-sm text-on-surface pb-2 px-0 bg-transparent focus:ring-0"
-                placeholder="......"
-                type="text"
+                class="w-full resize-none bg-transparent font-mono text-sm text-on-surface outline-none"
+                placeholder="Describe this revenue token..."
               />
+
+              <div
+                v-if="errors.description"
+                class="mt-3 flex items-center gap-2 text-sm text-red-400"
+              >
+                <span class="material-symbols-outlined text-base"> error </span>
+
+                <span>{{ errors.description }}</span>
+              </div>
             </div>
-            <span
-              class="text-red-500 italic text-[12px]"
-              v-if="errors.description"
-              >{{ errors.description }}</span
-            >
           </div>
         </section>
       </div>
