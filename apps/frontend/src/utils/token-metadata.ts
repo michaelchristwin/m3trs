@@ -1,7 +1,8 @@
 import { format } from "date-fns";
 import { checksumAddress, encodePacked, keccak256, type Address } from "viem";
 import { constructSvg } from "./svg-constructor";
-import { trpc } from "@/config/trpc-client";
+import { MyToken } from "@/config/smart-contracts/MyToken/MyToken";
+import { TRS } from "@/config/smart-contracts/TRS/TRS";
 
 interface Params {
   tokenId: bigint;
@@ -32,14 +33,12 @@ export async function createTokenMetadata({
     name,
     meter_id: Number(tokenId),
     stop_time: stopTime,
+    m3ter_contract: MyToken.address,
+    trs_contract: TRS.address,
   });
-  const image_url = await trpc.arweave.uploadSvg.mutate({
-    name,
-    image: svgString,
-  });
+
   const metadata = {
     name,
-    image: image_url,
     description,
     attributes: [
       { display_type: "date", trait_type: "stop_time", value: stopTime },
@@ -48,9 +47,7 @@ export async function createTokenMetadata({
     ],
   };
   return {
-    name,
-    hash,
-    svgString,
     metadata,
+    svgString,
   };
 }

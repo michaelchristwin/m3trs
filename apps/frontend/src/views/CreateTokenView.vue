@@ -6,7 +6,6 @@ import { useForm } from "vee-validate";
 import { trpc } from "@/config/trpc-client";
 import { formSchema } from "@/utils/schemas";
 import { toTypedSchema } from "@vee-validate/zod";
-
 import { approve, mint } from "@/smart-contracts/actions";
 import { collections } from "@/config/opensea/collections";
 import { useMutation, useQuery } from "@tanstack/vue-query";
@@ -14,6 +13,12 @@ import { checksumAddress, keccak256, encodePacked, type BaseError } from "viem";
 import { openDialog } from "@/utils/dialog.utils";
 import { constructSvg } from "@/utils/svg-constructor";
 import M3terCard from "@/components/M3terCard.vue";
+import { MyToken } from "@/config/smart-contracts/MyToken/MyToken";
+import { TRS } from "@/config/smart-contracts/TRS/TRS";
+import FormField from "@/components/FormField.vue";
+import FormTextarea from "@/components/FormTextarea.vue";
+import { getWalletClient } from "@wagmi/core";
+import { wagmiAdapter } from "@/config/wagmi";
 
 useHead({
   title: "Create Token",
@@ -52,7 +57,8 @@ const onSubmit = handleSubmit(async (formValues) => {
     const { supply, tokenId, stopTime, description } = formValues;
 
     visibleStatus.value = "Approving M3ter for transaction...";
-    const approveResult = await approve(address, tokenId);
+    const walletClient = await getWalletClient(wagmiAdapter.wagmiConfig);
+    const approveResult = await approve(address, tokenId, walletClient);
     if (!approveResult.success) {
       mintTxStatus.value = approveResult;
       modalState.value = "error";
@@ -75,6 +81,8 @@ const onSubmit = handleSubmit(async (formValues) => {
       name,
       meter_id: Number(tokenId),
       stop_time: stopTime,
+      m3ter_contract: MyToken.address,
+      trs_contract: TRS.address,
     });
     visibleStatus.value = "Uploading NFT image to arweave...";
     const image_url = await trpc.arweave.uploadSvg.mutate({
@@ -104,6 +112,7 @@ const onSubmit = handleSubmit(async (formValues) => {
         uri: url,
       },
       checksumAddress(address),
+      walletClient,
     );
 
     if (mintTxStatus.value.success) {
@@ -208,20 +217,11 @@ const convertToLocaleDate = (dateStr: string) => {
                 >Total Supply (Integer)</label
               >
               <div class="flex items-end">
-                <input
-                  :class="[
-                    'input rounded ps-1',
-                    errors.supply && 'border-red-500 ring-1 ring-red-500',
-                  ]"
-                  placeholder="0"
+                <FormField
+                  name="supply"
                   type="number"
-                  :value="values.supply"
-                  @input="
-                    setFieldValue(
-                      'supply',
-                      ($event.target as HTMLInputElement).value,
-                    )
-                  "
+                  class="input rounded ps-1"
+                  placeholder="0"
                 />
                 <span
                   class="font-mono text-sm text-on-surface ml-3 pb-2 border-b border-outline-variant"
@@ -242,16 +242,10 @@ const convertToLocaleDate = (dateStr: string) => {
                   class="material-symbols-outlined text-on-surface mr-3 pb-2"
                   >calendar_month</span
                 >
-                <input
-                  class="bg-transparent border-none w-full font-mono text-lg text-on-surface pb-2 px-0 focus:ring-0 scheme-dark"
+                <FormField
+                  name="stopTime"
                   type="datetime-local"
-                  :value="values.stopTime"
-                  @input="
-                    setFieldValue(
-                      'stopTime',
-                      ($event.target as HTMLInputElement).value,
-                    )
-                  "
+                  class="bg-transparent border-none w-full font-mono text-lg text-on-surface pb-2 px-0 focus:ring-0 scheme-dark"
                 />
               </div>
             </div>
@@ -275,15 +269,9 @@ const convertToLocaleDate = (dateStr: string) => {
                 Description
               </label>
 
-              <textarea
-                :value="values.description"
-                rows="4"
-                @input="
-                  setFieldValue(
-                    'description',
-                    ($event.target as HTMLTextAreaElement).value,
-                  )
-                "
+              <FormTextarea
+                name="description"
+                :rows="4"
                 class="w-full resize-none bg-transparent font-mono text-sm text-on-surface outline-none"
                 placeholder="Describe this revenue token..."
               />

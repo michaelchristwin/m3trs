@@ -4,14 +4,16 @@ import {
   ContractFunctionRevertedError,
   TransactionExecutionError,
   isAddressEqual,
+  type WalletClient,
 } from "viem";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
-import { walletClient, publicClient } from "@/config/viem-clients";
+import { publicClient } from "@/config/viem-clients";
 import { MyToken } from "@/config/smart-contracts/MyToken/MyToken";
 
 export async function approve(
   account: Address,
   id: bigint,
+  walletClient: WalletClient,
 ): Promise<{ success: true } | { success: false; error: string }> {
   try {
     const approvedAddress = await publicClient.readContract({
@@ -56,6 +58,7 @@ export async function mint(
     uri: string;
   },
   account: Address,
+  walletClient: WalletClient,
 ): Promise<
   { success: true; txHash: `0x${string}` } | { success: false; error: string }
 > {

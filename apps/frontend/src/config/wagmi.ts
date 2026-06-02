@@ -1,7 +1,7 @@
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { zora, type AppKitNetwork } from "@reown/appkit/networks";
 
-const projectId = import.meta.env.VITE_PROJECT_ID as string;
+const projectId = import.meta.env.VITE_REOWN_PROJECT_ID as string;
 export const VIEM_CHAIN = zora;
 
 const metadata = {

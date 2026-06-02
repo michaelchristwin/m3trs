@@ -6,8 +6,11 @@ import { formatDistanceToNow } from "date-fns";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
 import { trpc } from "@/config/trpc-client";
 import { formatEther } from "viem";
+import { computed } from "vue";
 
-const props = defineProps<{ listing: import("@m3trs/opensea-sdk").Listing }>();
+const props = defineProps<{
+  listing: import("@m3trs/opensea-sdk").Listing;
+}>();
 const { listing } = props;
 
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
@@ -49,6 +52,7 @@ const { data: metadata, isLoading } = useQuery({
 
     const revenue = Number(result[0].result);
     const total_supply = result[1].result[1];
+    const stopTime = result[1].result[3];
     let nft_metadata = await trpc.opensea.getNftMetadata.query({
       contractAddress: TRS.address,
       tokenId: listing.protocolData?.parameters.offer[0]
@@ -58,19 +62,24 @@ const { data: metadata, isLoading } = useQuery({
       revenue,
       nft_metadata,
       total_supply,
+      stopTime,
     };
   },
   enabled: !!listing.protocolData?.parameters.offer[0]?.identifierOrCriteria,
 });
+const isActive = computed(
+  () => Number(metadata.value?.stopTime) * 1000 > Date.now(),
+);
 </script>
 
 <template>
   <div
+    v-if="metadata && isActive"
     class="relative grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 px-4 md:px-6 py-4 bg-surface-container-low rounded group items-center"
   >
     <div class="md:col-span-2 text-sm text-on-surface">
       <span class="md:hidden text-on-surface-variant">Token Name: </span>
-      <span class="font-mono-data">{{ metadata?.nft_metadata.name }}</span>
+      <span class="font-mono-data">{{ metadata.nft_metadata.name }}</span>
     </div>
     <div class="md:col-span-2 text-sm text-primary md:text-center">
       <span class="md:hidden text-on-surface-variant">Total Accrued: </span>
@@ -91,12 +100,9 @@ const { data: metadata, isLoading } = useQuery({
       ></div>
       <span v-else-if="metadata != undefined">
         {{
-          formatDistanceToNow(
-            new Date(Number(listing.protocolData?.parameters.endTime) * 1000),
-            {
-              addSuffix: true,
-            },
-          )
+          formatDistanceToNow(new Date(Number(metadata.stopTime) * 1000), {
+            addSuffix: true,
+          })
         }}
       </span>
     </div>

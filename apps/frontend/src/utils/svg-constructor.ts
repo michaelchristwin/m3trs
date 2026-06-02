@@ -1,12 +1,21 @@
 import { format, fromUnixTime } from "date-fns";
+import type { Address } from "viem";
 
 interface SvgParams {
   name: string;
   meter_id: number;
   stop_time: number;
+  m3ter_contract: Address;
+  trs_contract: Address;
 }
 
-export function constructSvg({ name, meter_id, stop_time }: SvgParams) {
+export function constructSvg({
+  name,
+  meter_id,
+  stop_time,
+  m3ter_contract,
+  trs_contract,
+}: SvgParams) {
   const date = fromUnixTime(stop_time); // handles the * 1000 for you
   const readable = format(date, "yyyy-MM-dd HH:mm:ss");
   return `<svg width="290" height="500" viewBox="0 0 290 500" xmlns="http://www.w3.org/2000/svg"
@@ -64,28 +73,28 @@ export function constructSvg({ name, meter_id, stop_time }: SvgParams) {
     style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto">
     <textPath startOffset="-100%" xlink:href="#text-path-a"
       style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto">
-      0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE • ETH
+      ${m3ter_contract} • M3TER
       <animate additive="sum" attributeName="startOffset" from="0%" to="100%" begin="0s" dur="30s"
         repeatCount="indefinite"
         style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto" />
     </textPath>
     <textPath startOffset="0%" xlink:href="#text-path-a"
       style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto">
-      0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE • ETH
+      ${m3ter_contract} • M3TER
       <animate additive="sum" attributeName="startOffset" from="0%" to="100%" begin="0s" dur="30s"
         repeatCount="indefinite"
         style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto" />
     </textPath>
     <textPath startOffset="50%" xlink:href="#text-path-a"
       style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto">
-      0xB667951f0E9562E84D581c5Cc7f9a8e3e818a6B3 • TRS
+      ${trs_contract} • TRS
       <animate additive="sum" attributeName="startOffset" from="0%" to="100%" begin="0s" dur="30s"
         repeatCount="indefinite"
         style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto" />
     </textPath>
     <textPath startOffset="-50%" xlink:href="#text-path-a"
       style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto">
-      0xB667951f0E9562E84D581c5Cc7f9a8e3e818a6B3 • TRS
+      ${trs_contract} • TRS
       <animate additive="sum" attributeName="startOffset" from="0%" to="100%" begin="0s" dur="30s"
         repeatCount="indefinite"
         style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto" />
