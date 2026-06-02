@@ -6,7 +6,7 @@ import { formatDistanceToNow } from "date-fns";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
 import { trpc } from "@/config/trpc-client";
 import { formatEther } from "viem";
-import { computed, effect } from "vue";
+import { computed } from "vue";
 
 const props = defineProps<{
   listing: import("@m3trs/opensea-sdk").Listing;
@@ -73,9 +73,6 @@ const { data: metadata, isLoading } = useQuery({
 const isActive = computed(
   () => Number(metadata.value?.stopTime) * 1000 > Date.now(),
 );
-effect(() => {
-  console.log("Listing: ", listing);
-});
 </script>
 
 <template>
