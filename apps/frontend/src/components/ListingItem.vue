@@ -6,7 +6,7 @@ import { formatDistanceToNow } from "date-fns";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
 import { trpc } from "@/config/trpc-client";
 import { formatEther } from "viem";
-import { computed } from "vue";
+import { computed, effect } from "vue";
 
 const props = defineProps<{
   listing: import("@m3trs/opensea-sdk").Listing;
@@ -16,7 +16,10 @@ const { listing } = props;
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
 const { data: metadata, isLoading } = useQuery({
-  queryKey: ["getNftByIdentifier"],
+  queryKey: [
+    "getNftByIdentifier",
+    listing.protocolData?.parameters.offer[0]?.identifierOrCriteria,
+  ],
   queryFn: async () => {
     const result = await readContracts(wagmiAdapter.wagmiConfig, {
       contracts: [
@@ -70,6 +73,9 @@ const { data: metadata, isLoading } = useQuery({
 const isActive = computed(
   () => Number(metadata.value?.stopTime) * 1000 > Date.now(),
 );
+effect(() => {
+  console.log("Listing: ", listing);
+});
 </script>
 
 <template>
