@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import ListingItem from "@/components/ListingItem.vue";
+import ListingsSkeleton from "@/components/ListingsSkeleton.vue";
 import { collections } from "@/config/opensea/collections";
 import { trpc } from "@/config/trpc-client";
 import { ListingStatusEnum } from "@m3trs/opensea-sdk";
@@ -196,9 +197,9 @@ function scrollToSection() {
     <div class="bg-surface-container-lowest rounded-lg p-1">
       <!-- Table Header -->
       <div
-        class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-surface-container-highest rounded-t font-headline text-xs uppercase tracking-widest text-on-surface-variant items-center"
+        class="hidden md:grid grid-cols-13 gap-4 px-6 py-3 bg-surface-container-highest rounded-t font-headline text-xs uppercase tracking-widest text-on-surface-variant items-center"
       >
-        <div class="col-span-2">Token Name</div>
+        <div class="col-span-3">Token Name</div>
         <div class="col-span-2 text-center">Total Accrued</div>
         <div class="col-span-2 text-right">Stop Time</div>
         <div class="col-span-2 text-right">Supply</div>
@@ -206,48 +207,9 @@ function scrollToSection() {
         <div class="col-span-2 text-right">Actions</div>
       </div>
       <!-- Skeleton Rows -->
-
+      <ListingsSkeleton v-for="i in 5" v-if="isLoading" :key="i" />
       <!-- Table Body (Rows via Spacing & Surface Container Shifts) -->
 
-      <div
-        v-for="i in 5"
-        v-if="isLoading"
-        :key="i"
-        class="hidden md:grid grid-cols-12 gap-4 px-6 py-4 border-b border-outline-variant animate-pulse items-center"
-      >
-        <!-- Token Name-->
-        <div class="col-span-2 flex items-center gap-3">
-          <div
-            class="w-10 h-10 rounded-full bg-surface-container-highest"
-          ></div>
-
-          <div class="space-y-2">
-            <div class="h-4 w-28 rounded bg-surface-container-highest"></div>
-            <div class="h-3 w-20 rounded bg-surface-container-highest"></div>
-          </div>
-        </div>
-        <!-- Total Accrued -->
-        <div class="col-span-2 flex justify-center">
-          <div class="h-4 w-24 rounded bg-surface-container-highest"></div>
-        </div>
-        <!-- Stop Time -->
-        <div class="col-span-2 flex justify-end">
-          <div class="h-4 w-32 rounded bg-surface-container-highest"></div>
-        </div>
-        <!-- Supply -->
-        <div class="col-span-2 flex justify-end">
-          <div class="h-4 w-16 rounded bg-surface-container-highest"></div>
-        </div>
-        <!-- Price -->
-        <div class="col-span-2 flex justify-end">
-          <div class="h-8 w-24 rounded-full bg-surface-container-highest"></div>
-        </div>
-
-        <!-- Actions -->
-        <div class="col-span-2 flex justify-end gap-2">
-          <div class="h-10 w-24 rounded-lg bg-surface-container-highest"></div>
-        </div>
-      </div>
       <div
         class="flex flex-col gap-1 mt-1"
         v-else-if="listings && listings.length > 0"

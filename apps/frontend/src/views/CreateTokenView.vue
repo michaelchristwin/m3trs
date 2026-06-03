@@ -181,15 +181,29 @@ const convertToLocaleDate = (dateStr: string) => {
           <h2 class="font-headline text-xl text-on-surface mb-6 ml-4">
             Select M3TER NFT
           </h2>
-          <div class="gap-4 grid md:grid-cols-2 grid-cols-1">
-            <div v-if="isLoading">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <template v-if="isLoading">
               <M3terCardSkeleton v-for="i in 6" :key="i" />
+            </template>
+
+            <div
+              v-else-if="error"
+              class="col-span-full rounded-lg border border-error/20 bg-error-container/10 p-4 text-sm text-error"
+            >
+              Error:
+              {{ (error as BaseError).shortMessage || error.message }}
             </div>
-            <div v-else-if="error">
-              Error: {{ (error as BaseError).shortMessage || error.message }}
+
+            <div
+              v-else-if="!data?.nfts?.length"
+              class="col-span-full rounded-lg border border-outline-variant p-6 text-center text-on-surface-variant"
+            >
+              You have no M3ters.
             </div>
+
             <M3terCard
-              v-for="nft in data?.nfts"
+              v-else
+              v-for="nft in data.nfts"
               :key="nft.identifier"
               :token-id="BigInt(nft.identifier)"
               :selected="values.tokenId === BigInt(nft.identifier)"

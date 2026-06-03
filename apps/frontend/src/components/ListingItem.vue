@@ -78,10 +78,17 @@ const isActive = computed(
 <template>
   <div
     v-if="metadata && isActive"
-    class="relative grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 px-4 md:px-6 py-4 bg-surface-container-low rounded group items-center"
+    class="relative grid grid-cols-1 md:grid-cols-13 gap-3 md:gap-4 px-4 md:px-6 py-4 bg-surface-container-low rounded group items-center"
   >
-    <div class="md:col-span-2 text-sm text-on-surface">
+    <div
+      class="md:col-span-3 text-sm text-on-surface md:flex md:items-center md:space-x-1"
+    >
       <span class="md:hidden text-on-surface-variant">Token Name: </span>
+      <img
+        :src="metadata.nft_metadata.image"
+        class="w-6 h-6"
+        :alt="metadata.nft_metadata.name"
+      />
       <span class="font-mono-data">{{ metadata.nft_metadata.name }}</span>
     </div>
     <div class="md:col-span-2 text-sm text-primary md:text-center">
