@@ -17,6 +17,7 @@ const { value, meta, errors, setValue } = useField(() => props.name);
     :type="props.type"
     :class="[
       props.class,
+      'min-w-0',
       errors && meta.touched && 'border-red-500 ring-1 ring-red-500',
     ]"
     :value="value"
