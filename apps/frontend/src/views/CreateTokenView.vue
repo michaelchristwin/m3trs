@@ -19,6 +19,7 @@ import FormField from "@/components/FormField.vue";
 import FormTextarea from "@/components/FormTextarea.vue";
 import { getWalletClient } from "@wagmi/core";
 import { wagmiAdapter } from "@/config/wagmi";
+import M3terCardSkeleton from "@/components/M3terCardSkeleton.vue";
 
 useHead({
   title: "Create Token",
