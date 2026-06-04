@@ -195,28 +195,16 @@ function scrollToSection() {
     </div>
     <!-- High Density Data Table (No Lines, Tonal Layering) -->
     <div class="bg-surface-container-lowest rounded-lg p-1">
-      <!-- Table Header -->
-      <div
-        class="hidden md:grid grid-cols-13 gap-4 px-6 py-3 bg-surface-container-highest rounded-t font-headline text-xs uppercase tracking-widest text-on-surface-variant items-center"
-      >
-        <div class="col-span-3">Token Name</div>
-        <div class="col-span-2 text-center">Total Accrued</div>
-        <div class="col-span-2 text-right">Stop Time</div>
-        <div class="col-span-2 text-right">Supply</div>
-        <div class="col-span-2 text-right">Price</div>
-        <div class="col-span-2 text-right">Actions</div>
+      <div class="space-y-4" v-if="isLoading">
+        <ListingsSkeleton v-for="i in 5" :key="i" />
       </div>
-      <!-- Skeleton Rows -->
-      <ListingsSkeleton v-for="i in 5" v-if="isLoading" :key="i" />
-      <!-- Table Body (Rows via Spacing & Surface Container Shifts) -->
 
-      <div
-        class="flex flex-col gap-1 mt-1"
-        v-else-if="listings && listings.length > 0"
-        v-for="listing in listings"
-        :key="listing.orderHash"
-      >
-        <ListingItem :listing="listing" />
+      <div class="space-y-4" v-else-if="listings && listings.length > 0">
+        <ListingItem
+          v-for="listing in listings"
+          :key="listing.orderHash"
+          :listing="listing"
+        />
       </div>
       <div v-else class="mt-4 text-sm text-on-surface-variant text-center p-3">
         <p>There are no listings yet</p>

@@ -15,7 +15,7 @@ const { listing } = props;
 
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
-const { data: metadata, isLoading } = useQuery({
+const { data: metadata } = useQuery({
   queryKey: [
     "getNftByIdentifier",
     listing.protocolData?.parameters.offer[0]?.identifierOrCriteria,
@@ -73,71 +73,85 @@ const { data: metadata, isLoading } = useQuery({
 const isActive = computed(
   () => Number(metadata.value?.stopTime) * 1000 > Date.now(),
 );
+const openseaUrl = computed(() => {
+  const tokenId =
+    listing?.protocolData?.parameters.offer?.[0]?.identifierOrCriteria;
+
+  return tokenId
+    ? `https://opensea.io/item/zora/${TRS.address}/${tokenId}`
+    : "#";
+});
 </script>
 
 <template>
   <div
     v-if="metadata && isActive"
-    class="relative grid grid-cols-1 md:grid-cols-13 gap-3 md:gap-4 px-4 md:px-6 py-4 bg-surface-container-low rounded group items-center"
+    class="bg-surface-container-low rounded-xl p-4 flex flex-col gap-4"
   >
-    <div
-      class="md:col-span-3 text-sm text-on-surface md:flex md:items-center md:space-x-1"
-    >
-      <span class="md:hidden text-on-surface-variant">Token Name: </span>
+    <!-- Header -->
+    <div class="flex gap-3">
       <img
         :src="metadata.nft_metadata.image"
-        class="w-6 h-6"
         :alt="metadata.nft_metadata.name"
+        class="w-16 h-27 object-cover shrink-0"
       />
-      <span class="font-mono-data">{{ metadata.nft_metadata.name }}</span>
-    </div>
-    <div class="md:col-span-2 text-sm text-primary md:text-center">
-      <span class="md:hidden text-on-surface-variant">Total Accrued: </span>
-      <div
-        v-if="isLoading"
-        class="inline-block h-4 w-20 rounded bg-surface-container-highest animate-pulse"
-      ></div>
-      <span v-else-if="metadata != undefined"
-        >${{ Number(metadata.revenue).toFixed(2) }}</span
-      >
-    </div>
 
-    <div class="md:col-span-2 text-sm text-on-surface md:text-right">
-      <span class="md:hidden text-on-surface-variant">Stop Time: </span>
-      <div
-        v-if="isLoading"
-        class="inline-block h-4 w-20 rounded bg-surface-container-highest animate-pulse"
-      ></div>
-      <span v-else-if="metadata != undefined">
-        {{
-          formatDistanceToNow(new Date(Number(metadata.stopTime) * 1000), {
-            addSuffix: true,
-          })
-        }}
-      </span>
-    </div>
-    <div
-      class="md:col-span-2 font-mono-data text-sm text-on-surface md:text-right"
-    >
-      <span class="md:hidden text-on-surface-variant">Supply: </span>
-      <span
-        >{{ listing.remainingQuantity }} of
-        {{ Number(metadata?.total_supply) }}</span
-      >
-    </div>
-    <div class="md:col-span-2 md:flex md:justify-end">
-      <span class="md:hidden text-on-surface-variant">Price: </span>
-      <span> {{ formatEther(BigInt(listing.price.current.value)) }} Ξ </span>
-    </div>
-    <div class="md:col-span-2 flex flex-col md:flex-row md:justify-end gap-2">
+      <div class="flex-1 min-w-0">
+        <h3 class="font-mono-data text-on-surface truncate">
+          {{ metadata.nft_metadata.name }}
+        </h3>
+
+        <p class="text-sm text-on-surface-variant">
+          {{ listing.remainingQuantity }}
+          of
+          {{ Number(metadata?.total_supply) }}
+        </p>
+      </div>
+
       <a
         target="_blank"
         rel="noopener noreferrer"
-        :href="`https://opensea.io/item/zora/${TRS.address}/${listing.protocolData?.parameters.offer[0]?.identifierOrCriteria}`"
-        class="block px-4 text-center py-1.5 rounded-[30px] bg-primary-container text-neutral-800 transition-colors text-xs font-headline tracking-wider hover:bg-primary-container/80"
+        :href="openseaUrl"
+        class="hidden md:inline-flex items-center justify-center px-9 py-2 h-10 rounded-full bg-primary-container text-neutral-800 text-[14px] font-medium leading-none whitespace-nowrap hover:bg-primary-container/80 transition-colors"
       >
         Buy
       </a>
     </div>
+
+    <!-- Metrics -->
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div>
+        <div class="text-xs text-on-surface-variant uppercase">Accrued</div>
+        <div class="text-primary">
+          ${{ Number(metadata.revenue).toFixed(2) }}
+        </div>
+      </div>
+
+      <div>
+        <div class="text-xs text-on-surface-variant uppercase">Stop Time</div>
+        <div>
+          {{
+            formatDistanceToNow(new Date(Number(metadata.stopTime) * 1000), {
+              addSuffix: true,
+            })
+          }}
+        </div>
+      </div>
+
+      <div>
+        <div class="text-xs text-on-surface-variant uppercase">Price</div>
+        <div>{{ formatEther(BigInt(listing.price.current.value)) }} Ξ</div>
+      </div>
+    </div>
+
+    <!-- Mobile button -->
+    <a
+      target="_blank"
+      rel="noopener noreferrer"
+      :href="openseaUrl"
+      class="md:hidden text-center px-4 py-2 rounded-full bg-primary-container text-neutral-800"
+    >
+      Buy
+    </a>
   </div>
 </template>
