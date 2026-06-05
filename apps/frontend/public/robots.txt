@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://m3trs.pages.dev/sitemap.xml 
