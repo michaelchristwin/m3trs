@@ -235,7 +235,7 @@ const convertToLocaleDate = (dateStr: string) => {
                 <FormField
                   name="supply"
                   type="number"
-                  class="input rounded ps-1"
+                  class="input rounded ps-1 w-full"
                   placeholder="0"
                 />
                 <span
