@@ -1,25 +1,34 @@
 <script lang="ts" setup>
-import { ref } from "vue";
-import { format } from "date-fns";
 import { useHead } from "@unhead/vue";
 import { useForm } from "vee-validate";
 import { trpc } from "@/config/trpc-client";
 import { formSchema } from "@/utils/schemas";
+import { getWalletClient } from "@wagmi/core";
+import { wagmiAdapter } from "@/config/wagmi";
+import { defineAsyncComponent, ref } from "vue";
+import { openDialog } from "@/utils/dialog.utils";
 import { toTypedSchema } from "@vee-validate/zod";
+import { checksumAddress, type BaseError } from "viem";
 import { approve, mint } from "@/smart-contracts/actions";
 import { collections } from "@/config/opensea/collections";
 import { useMutation, useQuery } from "@tanstack/vue-query";
-import { checksumAddress, keccak256, encodePacked, type BaseError } from "viem";
-import { openDialog } from "@/utils/dialog.utils";
-import { constructSvg } from "@/utils/svg-constructor";
-import M3terCard from "@/components/M3terCard.vue";
-import { MyToken } from "@/config/smart-contracts/MyToken/MyToken";
-import { TRS } from "@/config/smart-contracts/TRS/TRS";
-import FormField from "@/components/FormField.vue";
-import FormTextarea from "@/components/FormTextarea.vue";
-import { getWalletClient } from "@wagmi/core";
-import { wagmiAdapter } from "@/config/wagmi";
-import M3terCardSkeleton from "@/components/M3terCardSkeleton.vue";
+import { createTokenMetadata } from "@/utils/token-metadata";
+
+const FormField = defineAsyncComponent(
+  () => import("@/components/FormField.vue"),
+);
+const FormTextarea = defineAsyncComponent(
+  () => import("@/components/FormTextarea.vue"),
+);
+const M3terCard = defineAsyncComponent(
+  () => import("@/components/M3terCard.vue"),
+);
+const M3terCardSkeleton = defineAsyncComponent(
+  () => import("@/components/M3terCardSkeleton.vue"),
+);
+const MintingDialog = defineAsyncComponent(
+  () => import("@/components/MintingDialog.vue"),
+);
 
 useHead({
   title: "Create Token",
@@ -33,8 +42,7 @@ const mintTxStatus = ref<import("@/utils/types").MintTxStatus>({
 const dialog = ref<HTMLDialogElement | null>(null);
 
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
-const m3terImageUrl =
-  "https://nouns.build/api/renderer/stack-images?contractAddress=0x00a38a13bc21012663843f71bc472ca429e9d02e&tokenId=0&images=ipfs%3a%2f%2fbafybeid4n57vjp3ctowfsvmsz7deps5ob4k6qwat6u3dg5hwlj6anfoet4%2f0-backgrounds%2fbg-17.svg&images=ipfs%3a%2f%2fbafybeid4n57vjp3ctowfsvmsz7deps5ob4k6qwat6u3dg5hwlj6anfoet4%2f1-eyes%2feyes-frame2.svg&images=ipfs%3a%2f%2fbafybeid4n57vjp3ctowfsvmsz7deps5ob4k6qwat6u3dg5hwlj6anfoet4%2f2-mouths%2fmouth-square2.svg";
+
 const { data, error, isLoading, refetch } = useQuery({
   queryKey: ["getNfts", address],
   queryFn: () =>
@@ -45,6 +53,7 @@ const { data, error, isLoading, refetch } = useQuery({
 });
 
 const visibleStatus = ref("Preparing transaction...");
+
 const { handleSubmit, setFieldValue, errors, values, meta, resetForm } =
   useForm({
     validationSchema: toTypedSchema(formSchema),
@@ -56,7 +65,7 @@ const onSubmit = handleSubmit(async (formValues) => {
   modalState.value = "minting";
 
   try {
-    const { supply, tokenId, stopTime, description } = formValues;
+    const { supply, tokenId, stopTime } = formValues;
 
     visibleStatus.value = "Approving M3ter for transaction...";
     const walletClient = await getWalletClient(wagmiAdapter.wagmiConfig);
@@ -68,39 +77,18 @@ const onSubmit = handleSubmit(async (formValues) => {
     }
 
     visibleStatus.value = "Preparing metadata...";
-    const name = `TRS-#${tokenId}-${format(stopTime * 1000, "yyyy-MM-dd")}`;
-
-    const hash = keccak256(
-      encodePacked(
-        ["uint256", "uint256", "uint256"],
-        [tokenId, supply, BigInt(stopTime)],
-      ),
-    );
-
-    // To-do: Add hextToBigint on new contract deployment
-    //const identifier = hexToBigInt(hash);
-    const svgString = constructSvg({
-      name,
-      meter_id: Number(tokenId),
-      stop_time: stopTime,
-      m3ter_contract: MyToken.address,
-      trs_contract: TRS.address,
-      image_url: m3terImageUrl,
+    const { svgString, metadataPart } = createTokenMetadata({
+      creator: address,
+      ...formValues,
     });
     visibleStatus.value = "Uploading NFT image to arweave...";
     const image_url = await trpc.arweave.uploadSvg.mutate({
-      name,
+      name: metadataPart.name,
       image: svgString,
     });
     const metadata = {
-      name,
+      ...metadataPart,
       image: image_url,
-      description,
-      attributes: [
-        { display_type: "date", trait_type: "stop_time", value: stopTime },
-        { trait_type: "creator", value: checksumAddress(address) },
-        { trait_type: "token_id", value: hash },
-      ],
     };
 
     visibleStatus.value = "Uploading metadata to arweave...";
@@ -120,8 +108,8 @@ const onSubmit = handleSubmit(async (formValues) => {
 
     if (mintTxStatus.value.success) {
       modalState.value = "success";
+      await refetch();
       resetForm();
-      refetch();
     } else {
       modalState.value = "error";
     }
@@ -162,6 +150,7 @@ const convertToLocaleDate = (dateStr: string) => {
     </div>
     <!-- Wizard Layout -->
     <form
+      novalidate
       class="grid grid-cols-1 lg:grid-cols-12 gap-8"
       @submit.prevent="mutateAsync"
     >
@@ -394,235 +383,10 @@ const convertToLocaleDate = (dateStr: string) => {
         </div>
       </div>
     </form>
-    <dialog ref="dialog" class="m3trs-dialog" id="m3trs-dialog">
-      <div
-        class="relative flex min-h-70 w-[calc(100vw-40px)] max-w-[320px] flex-col items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-[#1c1c1e] p-10 md:min-h-85 md:max-w-110 lg:min-h-90 lg:max-w-130"
-      >
-        <!-- MINTING -->
-        <div
-          v-if="modalState === 'minting'"
-          class="flex w-full flex-col items-center animate-[fade-in_.35s_ease-out_forwards]"
-        >
-          <svg
-            class="mb-12 -rotate-45"
-            width="180"
-            height="180"
-            viewBox="0 0 180 180"
-            fill="none"
-          >
-            <!-- Center dot -->
-            <circle
-              cx="90"
-              cy="90"
-              r="20"
-              fill="#279b37"
-              class="animate-[radar-fade_1.96s_linear_infinite]"
-            />
-            <!-- Inner arc (quarter circle, top-right) -->
-            <path
-              d="M 90,40 A 50,50 0 0,1 140,90"
-              stroke="#279b37"
-              stroke-width="8"
-              stroke-linecap="butt"
-              class="animate-[radar-fade_1.96s_linear_infinite_.196s]"
-            />
-            <!-- Outer arc -->
-            <path
-              d="M 90,10 A 80,80 0 0,1 170,90"
-              stroke="#279b37"
-              stroke-width="8"
-              stroke-linecap="butt"
-              class="animate-[radar-fade_1.96s_linear_infinite_.392s]"
-            />
-          </svg>
-
-          <div
-            class="flex items-center gap-3 text-sm italic text-[#279b37] transition-opacity duration-300 opacity-100"
-          >
-            <svg
-              class="h-4 w-4 animate-spin"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                class="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="4"
-              />
-
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 
-              0 0 5.373 0 12h4zm2 
-              5.291A7.962 7.962 0 014 
-              12H0c0 3.042 1.135 5.824 
-              3 7.938l3-2.647z"
-              />
-            </svg>
-
-            <span>{{ visibleStatus }}</span>
-          </div>
-        </div>
-
-        <!-- SUCCESS -->
-        <div
-          v-else-if="modalState === 'success'"
-          class="flex w-full flex-col items-center animate-[fade-in_.35s_ease-out_forwards]"
-        >
-          <div class="mb-6 animate-[scale-up_.35s_ease-out_forwards]">
-            <svg
-              width="72"
-              height="72"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#279b37"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-              <polyline points="22 4 12 14.01 9 11.01" />
-            </svg>
-          </div>
-
-          <h2 class="mb-2 text-lg font-semibold text-white">Position Minted</h2>
-
-          <p class="mb-6 px-4 text-center text-[13px] text-white/50">
-            Your M3TRS revenue position has been successfully minted on-chain.
-          </p>
-
-          <div
-            v-if="mintTxStatus.success === true"
-            class="mb-8 rounded border border-white/5 bg-black/30 px-4 py-2 font-mono text-[11px] text-white/50"
-          >
-            TX {{ mintTxStatus.txHash }}
-          </div>
-
-          <div class="flex w-full flex-col gap-3">
-            <a
-              v-if="mintTxStatus.success === true"
-              :href="`https://explorer.zora.energy/tx/${mintTxStatus.txHash}`"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="w-full rounded-lg bg-[#279b37] px-6 py-3 text-center font-semibold text-white transition-colors duration-150 hover:bg-[#34b348]"
-            >
-              View on Explorer →
-            </a>
-
-            <button
-              type="button"
-              commandfor="m3trs-dialog"
-              command="close"
-              class="w-full rounded-lg border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-white/70 transition-colors duration-150 hover:bg-white/10 hover:text-white"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-
-        <!-- ERROR -->
-        <div
-          v-else-if="modalState === 'error'"
-          class="flex w-full flex-col items-center animate-[fade-in_.35s_ease-out_forwards]"
-        >
-          <div class="mb-6 animate-[scale-up_.35s_ease-out_forwards]">
-            <svg
-              width="72"
-              height="72"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#e53935"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <circle cx="12" cy="12" r="10" />
-
-              <line x1="15" y1="9" x2="9" y2="15" />
-
-              <line x1="9" y1="9" x2="15" y2="15" />
-            </svg>
-          </div>
-
-          <h2 class="mb-2 text-lg font-semibold text-white">Minting Failed</h2>
-
-          <p
-            class="mb-8 px-4 text-center text-[13px] text-white/50"
-            v-if="mintTxStatus.success === false"
-          >
-            {{ mintTxStatus.error }}
-          </p>
-
-          <div class="flex w-full flex-col gap-3">
-            <!-- <button
-              class="w-full rounded-lg bg-[#279b37] px-6 py-3 font-semibold text-white transition-colors duration-150 hover:bg-[#34b348]"
-            >
-              Retry
-            </button> -->
-
-            <button
-              class="w-full rounded-lg border border-white/15 px-6 py-3 font-semibold text-white transition-colors duration-150 hover:bg-white/5"
-              commandfor="m3trs-dialog"
-              command="close"
-            >
-              Dismiss
-            </button>
-          </div>
-        </div>
-      </div>
-    </dialog>
+    <MintingDialog
+      :mint-tx-status="mintTxStatus"
+      :modal-state="modalState"
+      :visible-status="visibleStatus"
+    />
   </div>
 </template>
-
-<style scoped>
-.m3trs-dialog {
-  padding: 0;
-  border: none;
-  background: transparent;
-  overflow: visible;
-}
-
-.m3trs-dialog::backdrop {
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-}
-</style>
-
-<style>
-@keyframes radar-fade {
-  0%,
-  100% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes scale-up {
-  from {
-    opacity: 0;
-    transform: scale(0.6);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-</style>

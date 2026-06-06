@@ -3,22 +3,22 @@ import type { Address } from "viem";
 
 interface SvgParams {
   name: string;
-  meter_id: number;
-  stop_time: number;
-  m3ter_contract: Address;
-  trs_contract: Address;
-  image_url: string;
+  meterId: number;
+  stopTime: number;
+  m3terContract: Address;
+  trsContract: Address;
+  imageUrl: string;
 }
 
 export function constructSvg({
   name,
-  meter_id,
-  stop_time,
-  m3ter_contract,
-  trs_contract,
-  image_url,
+  meterId,
+  stopTime,
+  m3terContract,
+  trsContract,
+  imageUrl,
 }: SvgParams) {
-  const date = fromUnixTime(stop_time); // handles the * 1000 for you
+  const date = fromUnixTime(stopTime); // handles the * 1000 for you
   const readable = format(date, "yyyy-MM-dd HH:mm:ss");
   return `<svg width="290" height="500" viewBox="0 0 290 500" xmlns="http://www.w3.org/2000/svg"
   xmlns:xlink="http://www.w3.org/1999/xlink" style="">
@@ -70,35 +70,35 @@ export function constructSvg({
     </g>
   </g>
   <image
-    href=${image_url}
+    href=${imageUrl}
     x="-30" y="150" width="500" height="250" transform="rotate(-33 180 270)" />
   <!-- Animated Border Text -->
   <text text-rendering="optimizeSpeed" fill="white" font-family="'Courier New', monospace" font-size="10px"
     style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto">
     <textPath startOffset="-100%" xlink:href="#text-path-a"
       style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto">
-      ${m3ter_contract} • M3TER
+      ${m3terContract} • M3TER
       <animate additive="sum" attributeName="startOffset" from="0%" to="100%" begin="0s" dur="30s"
         repeatCount="indefinite"
         style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto" />
     </textPath>
     <textPath startOffset="0%" xlink:href="#text-path-a"
       style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto">
-      ${m3ter_contract} • M3TER
+      ${m3terContract} • M3TER
       <animate additive="sum" attributeName="startOffset" from="0%" to="100%" begin="0s" dur="30s"
         repeatCount="indefinite"
         style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto" />
     </textPath>
     <textPath startOffset="50%" xlink:href="#text-path-a"
       style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto">
-      ${trs_contract} • TRS
+      ${trsContract} • TRS
       <animate additive="sum" attributeName="startOffset" from="0%" to="100%" begin="0s" dur="30s"
         repeatCount="indefinite"
         style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto" />
     </textPath>
     <textPath startOffset="-50%" xlink:href="#text-path-a"
       style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto">
-      ${trs_contract} • TRS
+      ${trsContract} • TRS
       <animate additive="sum" attributeName="startOffset" from="0%" to="100%" begin="0s" dur="30s"
         repeatCount="indefinite"
         style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto" />
@@ -132,7 +132,7 @@ export function constructSvg({
         style="text-transform: uppercase;;fill:rgba(255, 255, 255, 0.5);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:system-ui, sans-serif;font-size:9px;font-weight:700;text-anchor:start;dominant-baseline:auto">Meter
         ID</text>
       <text y="22" fill="white" font-family="'Courier New', monospace" font-size="18" font-weight="bold"
-        style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:18px;font-weight:700;text-anchor:start;dominant-baseline:auto">#${meter_id}</text>
+        style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:18px;font-weight:700;text-anchor:start;dominant-baseline:auto">#${meterId}</text>
       <g transform="translate(0, 50)"
         style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
         <text fill="rgba(255,255,255,0.5)" font-family="system-ui, sans-serif" font-size="9" font-weight="700"

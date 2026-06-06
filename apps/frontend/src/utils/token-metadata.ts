@@ -4,6 +4,13 @@ import { constructSvg } from "./svg-constructor";
 import { MyToken } from "@/config/smart-contracts/MyToken/MyToken";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
 
+const m3terImageUrl = `https://nouns.build/api/renderer/stack-images?contractAddress=
+          0x00a38a13bc21012663843f71bc472ca429e9d02e&tokenId=0&images=ipfs%3a%2f%2fbafybeid4n57
+          vjp3ctowfsvmsz7deps5ob4k6qwat6u3dg5hwlj6anfoet4%2f0-backgrounds%2fbg-17.svg&images=ip
+          fs%3a%2f%2fbafybeid4n57vjp3ctowfsvmsz7deps5ob4k6qwat6u3dg5hwlj6anfoet4%2f1-eyes%2feye
+          s-frame2.svg&images=ipfs%3a%2f%2fbafybeid4n57vjp3ctowfsvmsz7deps5ob4k6qwat6u3dg5hwlj6
+          anfoet4%2f2-mouths%2fmouth-square2.svg`;
+
 interface Params {
   tokenId: bigint;
   supply: bigint;
@@ -11,7 +18,8 @@ interface Params {
   description: string;
   creator: Address;
 }
-export async function createTokenMetadata({
+
+export function createTokenMetadata({
   tokenId,
   supply,
   stopTime,
@@ -27,17 +35,18 @@ export async function createTokenMetadata({
     ),
   );
 
-  // To-do: Add hextToBigint on new contract deployment
-  //const identifier = hexToBigInt(hash);
   const svgString = constructSvg({
     name,
-    meter_id: Number(tokenId),
-    stop_time: stopTime,
-    m3ter_contract: MyToken.address,
-    trs_contract: TRS.address,
+    meterId: Number(tokenId),
+    stopTime: stopTime,
+    m3terContract: MyToken.address,
+    trsContract: TRS.address,
+    imageUrl: m3terImageUrl,
   });
 
-  const metadata = {
+  // To-do: Add hextToBigint on new contract deployment
+  //const identifier = hexToBigInt(hash);
+  const metadataPart = {
     name,
     description,
     attributes: [
@@ -47,7 +56,7 @@ export async function createTokenMetadata({
     ],
   };
   return {
-    metadata,
+    metadataPart,
     svgString,
   };
 }
