@@ -94,8 +94,11 @@ const statusPillClasses: Record<string, string> = {
       <span class="md:hidden text-on-surface-variant">Token Name: </span>
       <span class="font-mono-data">{{ name }}</span>
     </div>
-    <div class="col-span-1 font-mono-data text-sm text-on-surface text-right">
-      {{ metadata?.supply }}
+    <div
+      class="col-span-1 font-mono-data text-sm text-on-surface md:text-right"
+    >
+      <span class="md:hidden text-on-surface-variant">Balance: </span>
+      <span class="font-mono-data"> {{ metadata?.supply }}</span>
     </div>
     <div class="md:col-span-2 text-sm text-primary md:text-right">
       <span class="md:hidden text-on-surface-variant">Claimable: </span>

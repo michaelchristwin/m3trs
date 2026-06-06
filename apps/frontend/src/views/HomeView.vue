@@ -35,11 +35,6 @@ const launchApp = () => {
     <div class="flex items-center gap-6">
       <a
         class="font-label text-sm text-on-surface/70 hover:text-primary-container transition-colors tracking-wide uppercase hidden md:block"
-        href="#features"
-        >Architecture</a
-      >
-      <a
-        class="font-label text-sm text-on-surface/70 hover:text-primary-container transition-colors tracking-wide uppercase hidden md:block"
         href="#"
         >Docs</a
       >
@@ -95,239 +90,49 @@ const launchApp = () => {
             <span class="material-symbols-outlined">rocket_launch</span>
           </button>
           <button
-            class="w-full sm:w-auto px-8 py-4 bg-transparent border border-outline-variant text-primary-container font-headline font-bold text-lg rounded tracking-wider uppercase hover:bg-surface-container-high transition-all duration-300 flex items-center justify-center gap-2"
+            class="w-full sm:w-auto px-4 py-4 bg-transparent border border-outline-variant text-primary-container font-headline font-medium text-lg rounded tracking-wider uppercase hover:bg-surface-container-high transition-all duration-300 flex items-center justify-center gap-2"
           >
-            View Documentation
+            View Docs
             <span class="material-symbols-outlined">arrow_forward</span>
           </button>
         </div>
         <!-- Technical Micro-Data -->
         <div
-          class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-3xl border-t border-surface-container-high pt-8"
+          class="mt-16 grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-3xl border-t border-surface-container-high pt-8"
         >
           <div class="flex flex-col items-center gap-1">
             <span
               class="font-label text-xs text-on-surface/50 tracking-widest uppercase"
-              >Total Value Locked</span
+              >Total Volume</span
             >
             <span class="font-mono text-xl text-on-surface font-bold"
-              >$24.5M</span
+              >24.5M</span
             >
           </div>
           <div class="flex flex-col items-center gap-1">
             <span
               class="font-label text-xs text-on-surface/50 tracking-widest uppercase"
-              >Active Nodes</span
+              >Total Accrued</span
             >
             <span class="font-mono text-xl text-on-surface font-bold"
-              >1,204</span
+              >$10.5M</span
             >
           </div>
+
           <div class="flex flex-col items-center gap-1">
             <span
               class="font-label text-xs text-on-surface/50 tracking-widest uppercase"
-              >Network Uptime</span
-            >
-            <span class="font-mono text-xl text-primary-container font-bold"
-              >99.99%</span
-            >
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <span
-              class="font-label text-xs text-on-surface/50 tracking-widest uppercase"
-              >Block Time</span
+              >Total Mints</span
             >
             <span class="font-mono text-xl text-on-surface font-bold"
-              >2.1s</span
+              >200,000</span
             >
           </div>
         </div>
       </div>
     </section>
     <!-- Features Bento Grid -->
-    <section class="py-24 px-6 bg-surface-container-lowest" id="features">
-      <div class="max-w-7xl mx-auto">
-        <div class="flex flex-col items-start gap-4 mb-16">
-          <h2
-            class="font-headline text-3xl md:text-5xl font-bold uppercase tracking-tight"
-          >
-            System Architecture
-          </h2>
-          <p class="font-body text-on-surface/60 max-w-xl">
-            Core operational modules for interacting with decentralized energy
-            revenue streams.
-          </p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-min">
-          <!-- Feature 1: Dashboard (Large) -->
-          <div
-            class="md:col-span-2 md:row-span-2 bg-surface-container-low rounded-lg p-8 relative overflow-hidden group border border-outline-variant/10 hover:border-primary-container/30 transition-colors duration-500"
-          >
-            <div
-              class="absolute inset-0 bg-linear-to-br from-primary-container/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-            ></div>
-            <div class="relative z-10 h-full flex flex-col justify-between">
-              <div>
-                <div
-                  class="w-12 h-12 rounded bg-surface-container-high flex items-center justify-center mb-6 border border-outline-variant/20"
-                >
-                  <span
-                    class="material-symbols-outlined text-primary-container text-2xl"
-                    style="font-variation-settings: &quot;FILL&quot; 1"
-                    >dashboard</span
-                  >
-                </div>
-                <h3 class="font-headline text-2xl font-bold uppercase mb-4">
-                  Dashboard
-                </h3>
-                <p
-                  class="font-body text-on-surface/70 leading-relaxed max-w-md"
-                >
-                  Aggregated telemetry and financial metrics. Monitor total
-                  yield, active bonds, and real-time metering data across all
-                  verified nodes in a high-density, centralized view.
-                </p>
-              </div>
-              <!-- Mock UI Element -->
-              <div
-                class="mt-8 bg-surface p-4 rounded border border-surface-container-high flex flex-col gap-3"
-              >
-                <div
-                  class="flex justify-between items-center pb-2 border-b border-surface-container-highest"
-                >
-                  <span class="font-label text-xs text-on-surface/50 uppercase"
-                    >Network Hashrate</span
-                  >
-                  <span class="font-mono text-primary-container text-sm"
-                    >ACTIVE</span
-                  >
-                </div>
-                <div
-                  class="h-2 w-full bg-surface-container-high rounded overflow-hidden"
-                >
-                  <div class="h-full bg-primary-container w-[78%] relative">
-                    <div
-                      class="absolute inset-0 bg-white/20 animate-pulse"
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Feature 2: Create Token -->
-          <div
-            class="bg-surface-container-low rounded-lg p-8 relative overflow-hidden group border border-outline-variant/10 hover:border-primary-container/30 transition-colors duration-500"
-          >
-            <div class="relative z-10">
-              <div
-                class="w-12 h-12 rounded bg-surface-container-high flex items-center justify-center mb-6 border border-outline-variant/20"
-              >
-                <span
-                  class="material-symbols-outlined text-primary-container text-2xl"
-                  style="font-variation-settings: &quot;FILL&quot; 1"
-                  >add_box</span
-                >
-              </div>
-              <h3 class="font-headline text-xl font-bold uppercase mb-3">
-                Create Token
-              </h3>
-              <p class="font-body text-sm text-on-surface/70 leading-relaxed">
-                Initialize new revenue streams. Bind physical metering hardware
-                to smart contracts to mint asset-backed energy tokens.
-              </p>
-            </div>
-          </div>
-          <!-- Feature 3: Token Detail -->
-          <div
-            class="bg-surface-container-low rounded-lg p-8 relative overflow-hidden group border border-outline-variant/10 hover:border-primary-container/30 transition-colors duration-500"
-          >
-            <div class="relative z-10">
-              <div
-                class="w-12 h-12 rounded bg-surface-container-high flex items-center justify-center mb-6 border border-outline-variant/20"
-              >
-                <span
-                  class="material-symbols-outlined text-secondary-container text-2xl"
-                  style="font-variation-settings: &quot;FILL&quot; 1"
-                  >data_object</span
-                >
-              </div>
-              <h3 class="font-headline text-xl font-bold uppercase mb-3">
-                Token Detail
-              </h3>
-              <p class="font-body text-sm text-on-surface/70 leading-relaxed">
-                Granular asset inspection. View lifecycle data, historical
-                yield, and immutable contract parameters for individual tokens.
-              </p>
-            </div>
-          </div>
-          <!-- Feature 4: My Holdings -->
-          <div
-            class="md:col-span-2 bg-surface-container-low rounded-lg p-8 relative overflow-hidden group border border-outline-variant/10 hover:border-primary-container/30 transition-colors duration-500 flex flex-col md:flex-row gap-8 items-center"
-          >
-            <div class="flex-1 relative z-10">
-              <div
-                class="w-12 h-12 rounded bg-surface-container-high flex items-center justify-center mb-6 border border-outline-variant/20"
-              >
-                <span
-                  class="material-symbols-outlined text-primary-container text-2xl"
-                  style="font-variation-settings: &quot;FILL&quot; 1"
-                  >inventory_2</span
-                >
-              </div>
-              <h3 class="font-headline text-xl font-bold uppercase mb-3">
-                My Holdings
-              </h3>
-              <p class="font-body text-sm text-on-surface/70 leading-relaxed">
-                Manage your portfolio of tokenized energy assets. Track
-                accumulative value, claim rewards, and execute transfers within
-                a secure environment.
-              </p>
-            </div>
-            <div
-              class="w-full md:w-1/3 flex flex-col gap-2 font-mono text-xs text-on-surface/50 border border-surface-container-high p-4 rounded bg-surface"
-            >
-              <div class="flex justify-between">
-                <span>ASSET_01</span
-                ><span class="text-on-surface">1,402 kWh</span>
-              </div>
-              <div class="flex justify-between">
-                <span>ASSET_02</span
-                ><span class="text-on-surface">890 kWh</span>
-              </div>
-              <div
-                class="flex justify-between border-t border-surface-container-highest pt-2 mt-1"
-              >
-                <span>TOTAL</span
-                ><span class="text-primary-container font-bold">2,292 kWh</span>
-              </div>
-            </div>
-          </div>
-          <!-- Feature 5: My Bonds -->
-          <div
-            class="bg-surface-container-low rounded-lg p-8 relative overflow-hidden group border border-outline-variant/10 hover:border-primary-container/30 transition-colors duration-500"
-          >
-            <div class="relative z-10">
-              <div
-                class="w-12 h-12 rounded bg-surface-container-high flex items-center justify-center mb-6 border border-outline-variant/20"
-              >
-                <span
-                  class="material-symbols-outlined text-secondary-container text-2xl"
-                  style="font-variation-settings: &quot;FILL&quot; 1"
-                  >confirmation_number</span
-                >
-              </div>
-              <h3 class="font-headline text-xl font-bold uppercase mb-3">
-                My Bonds
-              </h3>
-              <p class="font-body text-sm text-on-surface/70 leading-relaxed">
-                Access fixed-yield financial instruments derived from underlying
-                energy assets. Monitor maturity dates and accrued interest.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <section class="py-24 px-6 bg-surface-container-lowest"></section>
   </main>
   <!-- Footer -->
   <footer
@@ -348,9 +153,6 @@ const launchApp = () => {
     >
       <p>© 2024 M3TRS Interface. All rights reserved.</p>
       <div class="flex gap-6">
-        <a class="hover:text-primary-container transition-colors" href="#"
-          >SYS_STATUS</a
-        >
         <a class="hover:text-primary-container transition-colors" href="#"
           >TERMS</a
         >

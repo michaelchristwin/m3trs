@@ -1,12 +1,20 @@
 <script lang="ts" setup>
 import { useAppKitAccount, useAppKit } from "@reown/appkit/vue";
 import { watch } from "vue";
+import { defineAsyncComponent } from "vue";
+const HeaderMd = defineAsyncComponent(
+  () => import("@/components/headers/HeaderMd.vue"),
+);
+const HeaderMobile = defineAsyncComponent(
+  () => import("@/components/headers/HeaderMobile.vue"),
+);
+const NavMobile = defineAsyncComponent(
+  () => import("@/components/navs/NavMobile.vue"),
+);
+const Sidebar = defineAsyncComponent(() => import("@/components/Sidebar.vue"));
 
 const { open } = useAppKit();
 const eip155Account = useAppKitAccount({ namespace: "eip155" });
-
-const sidebarActiveClass =
-  "opacity-80 text-primary-container border-primary-container border-r-4 bg-[#00FF41]/10";
 
 watch(
   () => eip155Account.value.isConnected,
@@ -21,205 +29,11 @@ watch(
 
 <template>
   <!-- Header for larger screens -->
-  <header
-    class="fixed hidden top-0 w-full z-50 md:flex justify-between items-center px-6 h-16 bg-[#131313] backdrop-blur-md"
-  >
-    <div class="flex items-center gap-4">
-      <RouterLink
-        to="/overview"
-        class="text-2xl font-black text-[#00FF41] tracking-tighter font-headline uppercase"
-      >
-        M3TRS
-      </RouterLink>
-    </div>
-    <div
-      class="flex items-center gap-6 font-headline uppercase tracking-wider text-xs"
-    >
-      <div class="flex items-center gap-4 border-l border-surface-variant pl-4">
-        <button
-          class="text-[#e5e2e1]/60 hover:text-[#00FF41] transition-colors relative flex items-center justify-center h-8 w-8 rounded hover:bg-surface-container-high"
-        >
-          <span class="material-symbols-outlined text-[20px]"
-            >notifications</span
-          >
-        </button>
-        <button
-          class="text-[#e5e2e1]/60 hover:text-[#00FF41] transition-colors relative flex items-center justify-center h-8 w-8 rounded hover:bg-surface-container-high"
-        >
-          <span class="material-symbols-outlined text-[20px]">settings</span>
-        </button>
-        <button
-          @click="open({ view: 'Account' })"
-          class="flex cursor-pointer items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded box-glow border border-primary/20"
-        >
-          <div
-            class="w-2 h-2 rounded-[9999px] bg-primary-container shadow-[0_0_8px_rgba(0,255,65,0.8)]"
-          ></div>
-          <span class="font-mono-data text-[#00FF41] text-xs"
-            >{{ eip155Account.address?.slice(0, 4) }}...{{
-              eip155Account.address?.slice(-4)
-            }}</span
-          >
-        </button>
-      </div>
-    </div>
-  </header>
+  <HeaderMd />
   <!-- Header for mobile -->
-  <header
-    class="fixed top-0 left-0 w-full z-50 flex md:hidden items-center justify-between px-4 h-16 bg-[#131313] shadow-[0_0_15px_rgba(0,255,65,0.05)] rounded-none mb-1 transition-all duration-300"
-  >
-    <RouterLink
-      :to="{ name: 'overview' }"
-      class="font-['Space_Grotesk'] font-bold tracking-tighter text-[#00FF41] text-xl"
-      >M3TRS</RouterLink
-    >
-    <!-- Trailing Icon -->
-    <div class="space-x-2 flex items-center">
-      <button
-        class="text-neutral-500 hover:bg-[#00FF41]/10 transition-all duration-300 active:scale-95 w-10 h-10 flex items-center justify-center rounded-full"
-      >
-        <span class="material-symbols-outlined">notifications</span>
-      </button>
-      <button
-        @click="open({ view: 'Account' })"
-        class="flex cursor-pointer items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded box-glow border border-primary/20"
-      >
-        <div
-          class="w-2 h-2 rounded-[9999px] bg-primary-container shadow-[0_0_8px_rgba(0,255,65,0.8)]"
-        ></div>
-        <span class="font-mono-data text-[#00FF41] text-xs"
-          >{{ eip155Account.address?.slice(0, 4) }}...{{
-            eip155Account.address?.slice(-4)
-          }}</span
-        >
-      </button>
-    </div>
-  </header>
-  <aside
-    class="hidden md:flex fixed left-0 top-16 h-[calc(100vh-64px)] w-64 border-r border-[#00FF41]/10 bg-[#131313] flex-col justify-between py-4 z-40"
-  >
-    <nav class="flex-1 font-['Space_Grotesk'] font-medium text-sm">
-      <RouterLink
-        :active-class="sidebarActiveClass"
-        class="flex items-center gap-3 px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1 hover:bg-neutral-800 transition-all duration-200"
-        to="/overview"
-      >
-        <span class="material-symbols-outlined text-[20px]">dashboard</span>
-        Overview
-      </RouterLink>
-      <RouterLink
-        :active-class="sidebarActiveClass"
-        class="flex items-center gap-3 px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200"
-        :to="{
-          name: 'create token',
-        }"
-      >
-        <span class="material-symbols-outlined text-[20px]">add_box</span>
-        Create
-      </RouterLink>
-      <RouterLink
-        :active-class="sidebarActiveClass"
-        class="flex items-center gap-3 px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200"
-        :to="{
-          name: 'holdings',
-        }"
-      >
-        <span class="material-symbols-outlined text-[20px]">inventory_2</span>
-        My Holdings
-      </RouterLink>
-      <RouterLink
-        :active-class="sidebarActiveClass"
-        class="flex items-center gap-3 px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200"
-        :to="{
-          name: 'bonds',
-        }"
-      >
-        <span class="material-symbols-outlined text-[20px]"
-          >confirmation_number</span
-        >
-        My Bonds
-      </RouterLink>
-    </nav>
-
-    <div
-      class="px-4 font-['Space_Grotesk'] font-medium text-sm border-t border-surface-variant pt-4 space-y-1"
-    >
-      <a
-        class="flex items-center gap-3 px-4 py-2 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200 rounded"
-        href="#"
-      >
-        <span class="material-symbols-outlined text-[18px]">description</span>
-        Docs
-      </a>
-      <a
-        class="flex items-center gap-3 px-4 py-2 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200 rounded"
-        href="#"
-      >
-        <span class="material-symbols-outlined text-[18px]">help_outline</span>
-        Support
-      </a>
-    </div>
-  </aside>
-  <nav
-    class="fixed bottom-0 left-0 w-full z-50 flex md:hidden justify-around items-center h-20 px-2 bg-[#131313] pb-safe border-t border-[#00FF41]/10"
-  >
-    <!-- Dashboard (Inactive) -->
-    <RouterLink
-      active-class="text-primary-container bg-[#00FF41]/15 rounded-[9999px] px-5 py-1.5"
-      :to="{
-        name: 'overview',
-      }"
-      class="flex flex-col items-center justify-center text-neutral-500 hover:text-[#00FF41] transition-colors duration-200 min-w-16"
-    >
-      <span class="material-symbols-outlined mb-1">grid_view</span>
-      <span class="font-['Space_Grotesk'] text-[10px] uppercase font-medium"
-        >Overview</span
-      >
-    </RouterLink>
-    <!-- Create (Inactive) -->
-    <RouterLink
-      active-class="text-primary-container bg-[#00FF41]/15 rounded-[9999px] px-5 py-1.5"
-      :to="{
-        name: 'create token',
-      }"
-      class="flex flex-col items-center justify-center text-neutral-500 hover:text-[#00FF41] transition-colors duration-200 min-w-16"
-    >
-      <span class="material-symbols-outlined mb-1">add_box</span>
-      <span class="font-['Space_Grotesk'] text-[10px] uppercase font-medium"
-        >Create</span
-      >
-    </RouterLink>
-    <!-- Holdings (Inactive) -->
-    <RouterLink
-      active-class="text-primary-container bg-[#00FF41]/15 rounded-[9999px] px-5 py-1.5"
-      :to="{
-        name: 'holdings',
-      }"
-      class="flex flex-col items-center justify-center text-neutral-500 hover:text-[#00FF41] transition-colors duration-200 min-w-16"
-    >
-      <span class="material-symbols-outlined mb-1">account_balance_wallet</span>
-      <span class="font-['Space_Grotesk'] text-[10px] uppercase font-medium"
-        >Holdings</span
-      >
-    </RouterLink>
-    <!-- Bonds (Active) -->
-    <RouterLink
-      :to="{
-        name: 'bonds',
-      }"
-      active-class="text-primary-container bg-[#00FF41]/15 rounded-[9999px] px-5 py-1.5"
-      class="flex flex-col items-center justify-center text-neutral-500 hover:text-[#00FF41] transition-colors duration-200 min-w-16"
-    >
-      <span
-        class="material-symbols-outlined mb-0.5"
-        style="font-variation-settings: &quot;FILL&quot; 1"
-        >layers</span
-      >
-      <span class="font-['Space_Grotesk'] text-[10px] uppercase font-bold"
-        >Bonds</span
-      >
-    </RouterLink>
-  </nav>
+  <HeaderMobile />
+  <Sidebar />
+  <NavMobile />
   <main class="pt-24 pb-12 px-6 md:pl-72 flex-1 relative overflow-hidden">
     <RouterView />
   </main>
