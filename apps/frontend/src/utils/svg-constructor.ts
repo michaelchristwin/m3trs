@@ -7,6 +7,7 @@ interface SvgParams {
   stop_time: number;
   m3ter_contract: Address;
   trs_contract: Address;
+  image_url: string;
 }
 
 export function constructSvg({
@@ -15,6 +16,7 @@ export function constructSvg({
   stop_time,
   m3ter_contract,
   trs_contract,
+  image_url,
 }: SvgParams) {
   const date = fromUnixTime(stop_time); // handles the * 1000 for you
   const readable = format(date, "yyyy-MM-dd HH:mm:ss");
@@ -67,7 +69,9 @@ export function constructSvg({
         style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.85;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto" />
     </g>
   </g>
-
+  <image
+    href=${image_url}
+    x="-30" y="150" width="500" height="250" transform="rotate(-33 180 270)" />
   <!-- Animated Border Text -->
   <text text-rendering="optimizeSpeed" fill="white" font-family="'Courier New', monospace" font-size="10px"
     style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto">
@@ -116,6 +120,7 @@ export function constructSvg({
       font-size="10" font-weight="500" letter-spacing="1"
       style="text-transform: uppercase;;fill:rgba(255, 255, 255, 0.6);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:system-ui, sans-serif;font-size:10px;font-weight:500;text-anchor:middle;dominant-baseline:auto">Revenue
       Position</text>
+      
     <line x1="0" y1="90" x2="230" y2="90" stroke="rgba(255,255,255,0.15)" stroke-width="1"
       mask="url(#imagine-text-gaps-hna66e)"
       style="fill:rgb(0, 0, 0);stroke:rgba(255, 255, 255, 0.15);color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto" />

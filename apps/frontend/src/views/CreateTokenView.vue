@@ -33,7 +33,8 @@ const mintTxStatus = ref<import("@/utils/types").MintTxStatus>({
 const dialog = ref<HTMLDialogElement | null>(null);
 
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
-
+const m3terImageUrl =
+  "https://nouns.build/api/renderer/stack-images?contractAddress=0x00a38a13bc21012663843f71bc472ca429e9d02e&tokenId=0&images=ipfs%3a%2f%2fbafybeid4n57vjp3ctowfsvmsz7deps5ob4k6qwat6u3dg5hwlj6anfoet4%2f0-backgrounds%2fbg-17.svg&images=ipfs%3a%2f%2fbafybeid4n57vjp3ctowfsvmsz7deps5ob4k6qwat6u3dg5hwlj6anfoet4%2f1-eyes%2feyes-frame2.svg&images=ipfs%3a%2f%2fbafybeid4n57vjp3ctowfsvmsz7deps5ob4k6qwat6u3dg5hwlj6anfoet4%2f2-mouths%2fmouth-square2.svg";
 const { data, error, isLoading, refetch } = useQuery({
   queryKey: ["getNfts", address],
   queryFn: () =>
@@ -84,6 +85,7 @@ const onSubmit = handleSubmit(async (formValues) => {
       stop_time: stopTime,
       m3ter_contract: MyToken.address,
       trs_contract: TRS.address,
+      image_url: m3terImageUrl,
     });
     visibleStatus.value = "Uploading NFT image to arweave...";
     const image_url = await trpc.arweave.uploadSvg.mutate({
@@ -157,11 +159,6 @@ const convertToLocaleDate = (dateStr: string) => {
       >
         Revenue Token Wizard
       </h1>
-      <!-- <p
-        class="text-on-surface-variant font-mono text-sm uppercase tracking-widest"
-      >
-        Initialization Sequence // Step 2
-      </p> -->
     </div>
     <!-- Wizard Layout -->
     <form
