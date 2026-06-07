@@ -3,13 +3,7 @@ import { checksumAddress, encodePacked, keccak256, type Address } from "viem";
 import { constructSvg } from "./svg-constructor";
 import { MyToken } from "@/config/smart-contracts/MyToken/MyToken";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
-
-const m3terImageUrl = `https://nouns.build/api/renderer/stack-images?contractAddress=
-          0x00a38a13bc21012663843f71bc472ca429e9d02e&tokenId=0&images=ipfs%3a%2f%2fbafybeid4n57
-          vjp3ctowfsvmsz7deps5ob4k6qwat6u3dg5hwlj6anfoet4%2f0-backgrounds%2fbg-17.svg&images=ip
-          fs%3a%2f%2fbafybeid4n57vjp3ctowfsvmsz7deps5ob4k6qwat6u3dg5hwlj6anfoet4%2f1-eyes%2feye
-          s-frame2.svg&images=ipfs%3a%2f%2fbafybeid4n57vjp3ctowfsvmsz7deps5ob4k6qwat6u3dg5hwlj6
-          anfoet4%2f2-mouths%2fmouth-square2.svg`;
+import { m3terImageUrl } from "./constants";
 
 interface Params {
   tokenId: bigint;

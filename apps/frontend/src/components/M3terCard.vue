@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { selectedCardClass } from "@/utils/constants";
+import { m3terImageUrl, selectedCardClass } from "@/utils/constants";
 
-defineProps<{
+const props = defineProps<{
   tokenId: bigint;
   selected: boolean;
 }>();
+
 const emit = defineEmits<{
   select: [bigint];
 }>();
+
+const alt = `M3terHead #${Number(props.tokenId)}`;
 </script>
 <template>
   <div
@@ -20,10 +23,9 @@ const emit = defineEmits<{
       <span class="material-symbols-outlined">check_circle</span>
     </div>
 
-    <div
-      class="w-full h-24 rounded bg-surface-container-lowest flex justify-center items-center"
-    >
-      <span class="material-symbols-outlined text-4xl"> memory </span>
+    <div class="w-full h-32 p-2 rounded flex justify-center items-center">
+      <!-- <span class="material-symbols-outlined text-4xl"> memory </span> -->
+      <img :src="m3terImageUrl" :alt="alt" class="inset-0 object-cover" />
     </div>
 
     <div :class="selected ? 'text-primary-container' : 'text-on-surface'">
