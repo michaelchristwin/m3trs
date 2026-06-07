@@ -1,6 +1,4 @@
-export type MintTxStatus =
-  | { success: true; txHash: `0x${string}` }
-  | { success: false; error: string };
+import type { Address } from "viem";
 
 export type ModalState = "minting" | "success" | "error";
 
@@ -28,3 +26,17 @@ export type Bond = {
   originalImageUrl?: string | undefined;
   originalAnimationUrl?: string | undefined;
 };
+
+export type MintTxStatus =
+  | { status: "idle" }
+  | { status: "pending" }
+  | { status: "success"; txHash: `0x${string}` }
+  | { status: "error"; error: string };
+
+export interface MintTokensParams {
+  supply: bigint;
+  tokenId: bigint;
+  stopTime: number;
+  description: string;
+  walletAddress: Address;
+}

@@ -5,12 +5,13 @@ interface DialogParams {
   modalState: ModalState;
   visibleStatus: string;
   mintTxStatus: MintTxStatus;
+  isOpen: boolean;
 }
 defineProps<DialogParams>();
 </script>
 
 <template>
-  <dialog ref="dialog" class="m3trs-dialog" id="m3trs-dialog">
+  <dialog ref="dialog" class="m3trs-dialog" id="m3trs-dialog" :open="isOpen">
     <div
       class="relative flex min-h-70 w-[calc(100vw-40px)] max-w-[320px] flex-col items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-[#1c1c1e] p-10 md:min-h-85 md:max-w-110 lg:min-h-90 lg:max-w-130"
     >
@@ -113,7 +114,7 @@ defineProps<DialogParams>();
         </p>
 
         <div
-          v-if="mintTxStatus.success === true"
+          v-if="mintTxStatus.status === 'success'"
           class="mb-8 rounded border border-white/5 bg-black/30 px-4 py-2 font-mono text-[11px] text-white/50"
         >
           TX {{ mintTxStatus.txHash }}
@@ -121,7 +122,7 @@ defineProps<DialogParams>();
 
         <div class="flex w-full flex-col gap-3">
           <a
-            v-if="mintTxStatus.success === true"
+            v-if="mintTxStatus.status === 'success'"
             :href="`https://explorer.zora.energy/tx/${mintTxStatus.txHash}`"
             target="_blank"
             rel="noopener noreferrer"
@@ -169,7 +170,7 @@ defineProps<DialogParams>();
 
         <p
           class="mb-8 px-4 text-center text-[13px] text-white/50"
-          v-if="mintTxStatus.success === false"
+          v-if="mintTxStatus.status === 'error'"
         >
           {{ mintTxStatus.error }}
         </p>
