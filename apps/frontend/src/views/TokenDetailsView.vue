@@ -175,17 +175,6 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
           Contract Details &amp; Revenue Hub
         </p>
       </div>
-      <div
-        class="flex items-center bg-primary-container/15 px-4 py-1.5 rounded-pill ghost-border-primary self-start md:self-auto"
-      >
-        <span
-          class="w-2 h-2 rounded-full bg-primary-container mr-2 animate-pulse"
-        ></span>
-        <span
-          class="font-headline font-bold text-sm text-primary-container uppercase tracking-wider"
-          >{{ data.token[1] }}</span
-        >
-      </div>
     </div>
   </div>
   <!-- Bento Grid Layout -->

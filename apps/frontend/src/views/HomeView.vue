@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { MyToken } from "@/config/smart-contracts/MyToken/MyToken";
-import { TRS } from "@/config/smart-contracts/TRS/TRS";
-import { trpc } from "@/config/trpc-client";
-import { m3terImageUrl } from "@/utils/constants";
-import { constructSvg } from "@/utils/svg-constructor";
-import { useAppKit } from "@reown/appkit/vue";
-import { useConnection } from "@wagmi/vue";
 import { format } from "date-fns";
-import { computed, onMounted, ref, watch, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
+
+import { useConnection } from "@wagmi/vue";
+import { trpc } from "@/config/trpc-client";
+import { useAppKit } from "@reown/appkit/vue";
+import { m3terImageUrl } from "@/utils/constants";
+import { TRS } from "@/config/smart-contracts/TRS/TRS";
+import { constructSvg } from "@/utils/svg-constructor";
+import { MyToken } from "@/config/smart-contracts/MyToken/MyToken";
+import { computed, onMounted, ref, watch, onUnmounted } from "vue";
+import AnimatedNumbers from "@/components/AnimatedNumbers.vue";
+
 const { open } = useAppKit();
 const { isConnected } = useConnection();
 const router = useRouter();
@@ -186,12 +189,6 @@ onMounted(() => {
       <div
         class="relative z-10 max-w-4xl mx-auto flex flex-col items-center gap-8"
       >
-        <div
-          class="inline-flex items-center gap-2 px-4 py-1.5 rounded-pill bg-surface-container-high border border-outline-variant/30 text-xs font-mono text-primary-container mb-4"
-        >
-          <span class="material-symbols-outlined text-[14px]">sensors</span>
-          <span>PROTOCOL_V2_ACTIVE</span>
-        </div>
         <h1
           class="font-headline font-black text-5xl md:text-7xl lg:text-8xl tracking-tighter text-on-surface uppercase leading-[0.9]"
         >
@@ -229,18 +226,22 @@ onMounted(() => {
               class="font-label text-xs text-on-surface/50 tracking-widest uppercase"
               >Total Volume</span
             >
-            <span class="font-mono text-xl text-on-surface font-bold"
-              >24.5M</span
-            >
+            <AnimatedNumbers
+              prefix="$"
+              :value="24000000"
+              class-name="font-mono text-xl md:text-[30px] text-on-surface font-bold"
+            />
           </div>
           <div class="flex flex-col items-center gap-1">
             <span
               class="font-label text-xs text-on-surface/50 tracking-widest uppercase"
               >Total Accrued</span
             >
-            <span class="font-mono text-xl text-on-surface font-bold"
-              >$10.5M</span
-            >
+            <AnimatedNumbers
+              prefix="$"
+              :value="10500000"
+              class-name="font-mono text-xl md:text-[30px] text-on-surface font-bold"
+            />
           </div>
 
           <div class="flex flex-col items-center gap-1">
@@ -248,9 +249,10 @@ onMounted(() => {
               class="font-label text-xs text-on-surface/50 tracking-widest uppercase"
               >Total Mints</span
             >
-            <span class="font-mono text-xl text-on-surface font-bold"
-              >200,000</span
-            >
+            <AnimatedNumbers
+              :value="200000"
+              class-name="font-mono text-xl md:text-[30px] text-on-surface font-bold"
+            />
           </div>
         </div>
       </div>
@@ -258,17 +260,6 @@ onMounted(() => {
     <!-- Features Bento Grid -->
     <section class="py-24 px-6 bg-surface-container-lowest">
       <div class="max-w-7xl mx-auto flex flex-col items-center text-center">
-        <div class="flex flex-col items-center gap-4 mb-16">
-          <h2
-            class="font-headline text-3xl md:text-5xl font-bold uppercase tracking-tight"
-          >
-            Protocol Mechanic
-          </h2>
-          <p class="font-body text-on-surface/60 max-w-xl">
-            Tokenize and convert physical energy assets into tradeable yield
-            instruments.
-          </p>
-        </div>
         <div class="conversion-banner">
           <canvas ref="canvasRef" class="conversion-canvas" />
 
@@ -281,16 +272,7 @@ onMounted(() => {
 
             <div class="flow-dots">
               <span
-                v-for="i in 3"
-                :key="i"
-                class="flow-dot"
-                :style="{ animationDelay: `${i * 0.2}s` }"
-              />
-            </div>
-
-            <div class="flow-dots flow-dots--reverse">
-              <span
-                v-for="i in 3"
+                v-for="i in 5"
                 :key="i"
                 class="flow-dot"
                 :style="{ animationDelay: `${i * 0.2}s` }"
@@ -299,6 +281,13 @@ onMounted(() => {
 
             <img v-if="imgUrl" :src="imgUrl" alt="TRS" class="conversion-img" />
           </div>
+        </div>
+        <div class="flex flex-col items-center gap-4 mb-16">
+          <h2
+            class="font-headline text-3xl md:text-5xl font-bold uppercase tracking-tight"
+          >
+            Protocol Mechanic
+          </h2>
         </div>
       </div>
     </section>
@@ -341,7 +330,6 @@ onMounted(() => {
   overflow: hidden;
   background: #0d0d0d;
   border-radius: var(--radius-xl);
-  /* border: 1px solid var(--color-outline-variant); */
 }
 
 .conversion-canvas {
@@ -360,16 +348,15 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5rem;
+  gap: 6rem;
   padding: 2rem;
 }
 
 .conversion-img {
-  width: auto;
-  height: 300px;
+  width: 250px;
+  height: auto;
   object-fit: cover;
   border-radius: var(--radius-xl);
-  /* border: 1px solid var(--color-outline-variant); */
 }
 
 .flow-dots {

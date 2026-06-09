@@ -27,7 +27,7 @@ const { mintTokens, currentStep, mintTxStatus } = useMint();
       <h1
         class="text-3xl md:text-5xl font-bold font-headline text-on-surface mb-2 tracking-tight"
       >
-        Revenue Token Wizard
+        Tokenize In 3 Steps
       </h1>
     </div>
     <!-- Wizard Layout -->

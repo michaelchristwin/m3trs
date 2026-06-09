@@ -42,29 +42,19 @@ const holdings = computed(() => {
         ERC1155 Contract Balances &amp; Revenue Status
       </p>
     </div>
-    <button
-      class="bg-primary-container md:w-auto w-full text-on-primary-container px-6 py-2.5 rounded hover:bg-primary-fixed-dim transition-all glow-primary font-headline text-sm font-bold tracking-wider uppercase flex items-center justify-center gap-2"
-    >
-      <span
-        class="material-symbols-outlined text-[18px]"
-        data-icon="account_balance_wallet"
-        >account_balance_wallet</span
-      >
-      Collect All Revenue
-    </button>
   </div>
   <!-- High Density Data Table (No Lines, Tonal Layering) -->
   <div class="bg-surface-container-lowest rounded-lg p-1">
     <!-- Table Header -->
     <div
-      class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-surface-container-highest rounded-t font-headline text-xs uppercase tracking-widest text-on-surface-variant items-center"
+      class="hidden md:grid grid-cols-11 gap-4 px-6 py-3 bg-surface-container-highest rounded-t font-headline text-xs uppercase tracking-widest text-on-surface-variant items-center"
     >
       <div class="col-span-2">Token Name</div>
       <div class="col-span-1 text-right">Balance</div>
       <div class="col-span-2 text-right">Claimable USD</div>
       <div class="col-span-2 text-right">Stop Time</div>
       <div class="col-span-2 text-center">Status</div>
-      <div class="col-span-3 text-right">Actions</div>
+      <div class="col-span-2 text-right">Actions</div>
     </div>
     <!-- Skeleton Rows -->
 
@@ -107,7 +97,7 @@ const holdings = computed(() => {
       </div>
 
       <!-- Actions -->
-      <div class="col-span-3 flex justify-end gap-2">
+      <div class="col-span-2 flex justify-end gap-2">
         <div class="h-10 w-24 rounded-lg bg-surface-container-highest"></div>
         <div class="h-10 w-24 rounded-lg bg-surface-container-highest"></div>
       </div>
@@ -130,7 +120,7 @@ const holdings = computed(() => {
     </div>
   </div>
   <!-- Terminal Output / Log Area (Decorative industrial element) -->
-  <div class="mt-8 pt-6">
+  <!-- <div class="mt-8 pt-6">
     <div class="flex items-center gap-2 mb-3">
       <span
         class="material-symbols-outlined text-on-surface-variant text-[14px]"
@@ -153,5 +143,5 @@ const holdings = computed(() => {
         &gt;[OK] Balances retrieved successfully. 0ms latency.
       </div>
     </div>
-  </div>
+  </div> -->
 </template>

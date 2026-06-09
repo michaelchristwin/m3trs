@@ -83,7 +83,7 @@ const statusPillClasses: Record<string, string> = {
   <div
     @click="openTokenDetails(props.name)"
     aria-label="Open token details"
-    class="relative grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 px-4 md:px-6 py-4 cursor-pointer bg-surface-container-low rounded group hover:bg-surface-container transition-colors items-center"
+    class="relative grid grid-cols-1 md:grid-cols-11 gap-3 md:gap-4 px-4 md:px-6 py-4 cursor-pointer bg-surface-container-low rounded group hover:bg-surface-container transition-colors items-center"
   >
     <!-- Subtle warning indicator line on the left to show severity without borders -->
     <div
@@ -106,9 +106,9 @@ const statusPillClasses: Record<string, string> = {
         v-if="isLoading"
         class="inline-block h-4 w-20 rounded bg-surface-container-highest animate-pulse"
       ></div>
-      <span v-else-if="metadata != undefined">{{
-        Number(metadata.revenue)
-      }}</span>
+      <span v-else-if="metadata != undefined"
+        >${{ Number(metadata.revenue).toFixed(2) }}</span
+      >
     </div>
     <div class="md:col-span-2 text-sm text-on-surface md:text-right">
       <span class="md:hidden text-on-surface-variant">Stop Time: </span>
@@ -133,7 +133,7 @@ const statusPillClasses: Record<string, string> = {
         {{ metadata?.status.isActive ? "Active" : "Expiring" }}
       </span>
     </div>
-    <div class="md:col-span-3 flex flex-col md:flex-row md:justify-end gap-2">
+    <div class="md:col-span-2 flex flex-col md:flex-row md:justify-end gap-2">
       <AccrueButton
         inner-text="Accrue"
         :token-id="tokenId"
@@ -144,16 +144,6 @@ const statusPillClasses: Record<string, string> = {
         :token-id="tokenId"
         class="md:block hidden px-3 py-1.5 rounded-[30px] border border-primary/50 text-on-surface transition-colors text-xs font-headline uppercase tracking-wider hover:bg-emerald-500/10 hover:border-emerald-500 hover:text-emerald-400"
       />
-      <button
-        @click.prevent
-        class="md:block hidden px-3 py-1.5 rounded bg-transparent text-on-surface-variant hover:text-on-surface transition-colors items-center justify-center"
-      >
-        <span
-          class="material-symbols-outlined text-[18px]"
-          data-icon="more_horiz"
-          >more_horiz</span
-        >
-      </button>
     </div>
   </div>
 </template>

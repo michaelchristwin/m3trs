@@ -222,7 +222,7 @@ function scrollToSection() {
       </div>
     </div>
     <!-- Terminal Output / Log Area (Decorative industrial element) -->
-    <div class="mt-8 pt-6">
+    <!-- <div class="mt-8 pt-6">
       <div class="flex items-center gap-2 mb-3">
         <span
           class="material-symbols-outlined text-on-surface-variant text-[14px]"
@@ -247,7 +247,7 @@ function scrollToSection() {
           &gt;[OK] Balances retrieved successfully. 0ms latency.
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
   <button
     v-if="!isVisible"
