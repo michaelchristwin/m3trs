@@ -2,7 +2,6 @@ import { trpc } from "@/config/trpc-client";
 import { wagmiAdapter } from "@/config/wagmi";
 import { approve, mint } from "@/smart-contracts/actions";
 import { m3terImageUrl } from "@/utils/constants";
-import { urlToBase64 } from "@/utils/svg-constructor";
 import { createTokenMetadata } from "@/utils/token-metadata";
 import type { MintTokensParams, MintTxStatus } from "@/utils/types";
 import { getWalletClient } from "@wagmi/core";
@@ -30,7 +29,9 @@ export function useMint() {
       }
 
       currentStep.value = "Preparing metadata...";
-      const imageBase64Url = await urlToBase64(m3terImageUrl);
+      const imageBase64Url = await trpc.getNounsBase64URL.query({
+        imageUrl: m3terImageUrl,
+      });
       const { svgString, metadataPart } = createTokenMetadata({
         creator: walletAddress,
         description,

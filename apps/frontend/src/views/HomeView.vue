@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { MyToken } from "@/config/smart-contracts/MyToken/MyToken";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
+import { trpc } from "@/config/trpc-client";
 import { m3terImageUrl } from "@/utils/constants";
-import { constructSvg, urlToBase64 } from "@/utils/svg-constructor";
+import { constructSvg } from "@/utils/svg-constructor";
 import { useAppKit } from "@reown/appkit/vue";
 import { useConnection } from "@wagmi/vue";
 import { format } from "date-fns";
@@ -28,7 +29,11 @@ const launchApp = () => {
 };
 const imageBase64 = ref<string | null>(null);
 onMounted(async () => {
-  imageBase64.value = await urlToBase64(m3terImageUrl);
+  const result = await trpc.getNounsBase64URL.query({
+    imageUrl: m3terImageUrl,
+  });
+  console.log(result);
+  imageBase64.value = result;
 });
 const imgUrl = computed(() => {
   if (!imageBase64.value) return null;
@@ -283,27 +288,6 @@ onMounted(() => {
               />
             </div>
 
-            <div class="conversion-badge animate-bou">
-              <div class="badge-ring">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="28"
-                  height="28"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M7 16V4m0 0L3 8m4-4 4 4" />
-                  <path d="M17 8v12m0 0 4-4m-4 4-4-4" />
-                </svg>
-              </div>
-              <!-- <span class="badge-label">Convert</span>
-              <span class="badge-sub">Seamless format conversion</span> -->
-            </div>
-
             <div class="flow-dots flow-dots--reverse">
               <span
                 v-for="i in 3"
@@ -382,7 +366,7 @@ onMounted(() => {
 
 .conversion-img {
   width: auto;
-  height: 200px;
+  height: 300px;
   object-fit: cover;
   border-radius: var(--radius-xl);
   /* border: 1px solid var(--color-outline-variant); */
@@ -418,13 +402,6 @@ onMounted(() => {
     opacity: 1;
     transform: scale(1.2);
   }
-}
-
-.conversion-badge {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
 }
 
 .badge-ring {
