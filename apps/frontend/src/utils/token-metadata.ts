@@ -3,7 +3,6 @@ import { checksumAddress, encodePacked, keccak256, type Address } from "viem";
 import { constructSvg } from "./svg-constructor";
 import { MyToken } from "@/config/smart-contracts/MyToken/MyToken";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
-import { m3terImageUrl } from "./constants";
 
 interface Params {
   tokenId: bigint;
@@ -11,6 +10,7 @@ interface Params {
   stopTime: number;
   description: string;
   creator: Address;
+  imageUrl: string;
 }
 
 export function createTokenMetadata({
@@ -19,6 +19,7 @@ export function createTokenMetadata({
   stopTime,
   description,
   creator,
+  imageUrl,
 }: Params) {
   const name = `TRS-#${Number(tokenId)}-${format(stopTime * 1000, "yyyy-MM-dd")}`;
 
@@ -35,7 +36,7 @@ export function createTokenMetadata({
     stopTime: stopTime,
     m3terContract: MyToken.address,
     trsContract: TRS.address,
-    imageUrl: m3terImageUrl,
+    imageUrl,
   });
 
   // To-do: Add hextToBigint on new contract deployment

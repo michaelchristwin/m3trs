@@ -12,4 +12,14 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+  server: {
+    proxy: {
+      "/stack-images": {
+        target: "https://nouns.build",
+        changeOrigin: true,
+        rewrite: (path) =>
+          path.replace(/^\/stack-images/, "/api/renderer/stack-images"),
+      },
+    },
+  },
 });

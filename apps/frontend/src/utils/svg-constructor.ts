@@ -20,6 +20,7 @@ export function constructSvg({
 }: SvgParams) {
   const date = fromUnixTime(stopTime); // handles the * 1000 for you
   const readable = format(date, "yyyy-MM-dd HH:mm:ss");
+
   return `<svg width="290" height="500" viewBox="0 0 290 500" xmlns="http://www.w3.org/2000/svg"
   xmlns:xlink="http://www.w3.org/1999/xlink" style="">
   <defs>
@@ -53,7 +54,7 @@ export function constructSvg({
     </mask>
   </defs>
 
-  <!-- Base Shell (clipped) -->
+
   <g clip-path="url(#corners)"
     style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
     <rect fill="#1f9840" x="0" y="0" width="290" height="500"
@@ -70,9 +71,14 @@ export function constructSvg({
     </g>
   </g>
   <image
-    href=${imageUrl}
-    x="-30" y="150" width="500" height="250" transform="rotate(-33 180 270)" />
-  <!-- Animated Border Text -->
+    x="-30"
+    y="150" 
+    width="500" 
+    height="250" 
+    href="${imageUrl}"
+    transform="rotate(-33 180 270)" 
+    />
+
   <text text-rendering="optimizeSpeed" fill="white" font-family="'Courier New', monospace" font-size="10px"
     style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Courier New&quot;, monospace;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto">
     <textPath startOffset="-100%" xlink:href="#text-path-a"
@@ -105,12 +111,12 @@ export function constructSvg({
     </textPath>
   </text>
 
-  <!-- Inner Border (outside clip, inset — matching SVG #2 pattern) -->
+
   <rect x="16" y="16" width="258" height="468" rx="26" ry="26" fill="rgba(0,0,0,0)" stroke="rgba(255,255,255,0.2)"
     stroke-width="1"
     style="fill:rgba(0, 0, 0, 0);stroke:rgba(255, 255, 255, 0.2);color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto" />
 
-  <!-- Content Area -->
+ 
   <g transform="translate(30, 60)"
     style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
     <text x="115" y="40" text-anchor="middle" fill="white" font-family="system-ui, sans-serif" font-weight="900"
@@ -151,4 +157,16 @@ export function constructSvg({
     </g>
   </g>
 </svg>`;
+}
+
+export async function urlToBase64(url: string): Promise<string> {
+  const res = await fetch(url);
+  const blob = await res.blob();
+
+  return await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
 }
