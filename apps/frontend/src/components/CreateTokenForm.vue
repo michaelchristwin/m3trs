@@ -112,7 +112,7 @@ const convertToLocaleDate = (dateStr: string) => {
         </h2>
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <template v-if="isLoading">
-            <M3terCardSkeleton v-for="i in 6" :key="i" />
+            <M3terCardSkeleton v-for="i in 2" :key="i" />
           </template>
 
           <div

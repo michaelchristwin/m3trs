@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { format } from "date-fns";
 import { useRouter } from "vue-router";
-
 import { useConnection } from "@wagmi/vue";
 import { trpc } from "@/config/trpc-client";
 import { useAppKit } from "@reown/appkit/vue";
@@ -11,6 +10,8 @@ import { constructSvg } from "@/utils/svg-constructor";
 import { MyToken } from "@/config/smart-contracts/MyToken/MyToken";
 import { computed, onMounted, ref, watch, onUnmounted } from "vue";
 import AnimatedNumbers from "@/components/AnimatedNumbers.vue";
+import FlipText from "@/components/FlipText.vue";
+import CardsCarousel from "@/components/CardsCarousel.vue";
 
 const { open } = useAppKit();
 const { isConnected } = useConnection();
@@ -35,7 +36,7 @@ onMounted(async () => {
   const result = await trpc.getNounsBase64URL.query({
     imageUrl: m3terImageUrl,
   });
-  console.log(result);
+  //console.log(result);
   imageBase64.value = result;
 });
 const imgUrl = computed(() => {
@@ -189,19 +190,18 @@ onMounted(() => {
       <div
         class="relative z-10 max-w-4xl mx-auto flex flex-col items-center gap-8"
       >
-        <h1
-          class="font-headline font-black text-5xl md:text-7xl lg:text-8xl tracking-tighter text-on-surface uppercase leading-[0.9]"
-        >
-          M3TRS Revenue <br class="hidden md:block" />
-          <span class="text-primary-container">Interface</span>
-        </h1>
-        <p
-          class="font-body text-lg md:text-xl text-on-surface/70 max-w-2xl leading-relaxed"
-        >
-          M3TRS lets energy asset owners tokenize revenue streams, create
-          on-chain bonds, and manage holdings — all powered by decentralized
-          metering infrastructure.
-        </p>
+        <div>
+          <FlipText
+            pretext="Energy has a Return;"
+            :words="['Tokenize', 'Swap', 'Hodl', 'Earn']"
+          />
+
+          <p
+            class="font-body text-lg md:text-xl text-on-surface/70 max-w-2xl leading-relaxed"
+          >
+            Derive real yield from energy infra on the m3tering protocol
+          </p>
+        </div>
         <div class="flex flex-col sm:flex-row gap-4 mt-8 w-full sm:w-auto">
           <button
             @click="launchApp"
@@ -217,47 +217,51 @@ onMounted(() => {
             <span class="material-symbols-outlined">arrow_forward</span>
           </button>
         </div>
-        <!-- Technical Micro-Data -->
-        <div
-          class="mt-16 grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-3xl border-t border-surface-container-high pt-8"
-        >
-          <div class="flex flex-col items-center gap-1">
-            <span
-              class="font-label text-xs text-on-surface/50 tracking-widest uppercase"
-              >Total Volume</span
-            >
-            <AnimatedNumbers
-              prefix="$"
-              :value="24000000"
-              class-name="font-mono text-xl md:text-[30px] text-on-surface font-bold"
-            />
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <span
-              class="font-label text-xs text-on-surface/50 tracking-widest uppercase"
-              >Total Accrued</span
-            >
-            <AnimatedNumbers
-              prefix="$"
-              :value="10500000"
-              class-name="font-mono text-xl md:text-[30px] text-on-surface font-bold"
-            />
-          </div>
+      </div>
+    </section>
+    <section
+      class="relative z-10 max-w-4xl mx-auto flex flex-col items-center gap-8 my-10"
+    >
+      <!-- Technical Micro-Data -->
+      <div
+        class="mt-16 grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-3xl border-t border-surface-container-high pt-8"
+      >
+        <div class="flex flex-col items-center gap-1">
+          <span
+            class="font-label text-xs text-on-surface/50 tracking-widest uppercase"
+            >Total Volume</span
+          >
+          <AnimatedNumbers
+            prefix="$"
+            :value="24000000"
+            class-name="font-mono text-xl md:text-[30px] text-on-surface font-bold"
+          />
+        </div>
+        <div class="flex flex-col items-center gap-1">
+          <span
+            class="font-label text-xs text-on-surface/50 tracking-widest uppercase"
+            >Total Accrued</span
+          >
+          <AnimatedNumbers
+            prefix="$"
+            :value="10500000"
+            class-name="font-mono text-xl md:text-[30px] text-on-surface font-bold"
+          />
+        </div>
 
-          <div class="flex flex-col items-center gap-1">
-            <span
-              class="font-label text-xs text-on-surface/50 tracking-widest uppercase"
-              >Total Mints</span
-            >
-            <AnimatedNumbers
-              :value="200000"
-              class-name="font-mono text-xl md:text-[30px] text-on-surface font-bold"
-            />
-          </div>
+        <div class="flex flex-col items-center gap-1">
+          <span
+            class="font-label text-xs text-on-surface/50 tracking-widest uppercase"
+            >Total Mints</span
+          >
+          <AnimatedNumbers
+            :value="200000"
+            class-name="font-mono text-xl md:text-[30px] text-on-surface font-bold"
+          />
         </div>
       </div>
     </section>
-    <!-- Features Bento Grid -->
+
     <section class="py-24 px-6 bg-surface-container-lowest">
       <div class="max-w-7xl mx-auto flex flex-col items-center text-center">
         <div class="conversion-banner">
@@ -284,13 +288,15 @@ onMounted(() => {
         </div>
         <div class="flex flex-col items-center gap-4 mb-16">
           <h2
-            class="font-headline text-3xl md:text-5xl font-bold uppercase tracking-tight"
+            class="font-headline text-3xl md:text-4xl font-semibold tracking-tight uppercase"
           >
-            Protocol Mechanic
+            Tokenize <span class="text-primary-container">yield</span> from
+            <span class="text-primary-container">M3ters</span>
           </h2>
         </div>
       </div>
     </section>
+    <CardsCarousel />
   </main>
   <!-- Footer -->
   <footer
@@ -309,7 +315,7 @@ onMounted(() => {
     <div
       class="w-full max-w-7xl flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-on-surface/40 pt-8 border-t border-surface-container-high/50"
     >
-      <p>© 2024 M3TRS Interface. All rights reserved.</p>
+      <p>© 2026 M3TRS Interface. All rights reserved.</p>
       <div class="flex gap-6">
         <a class="hover:text-primary-container transition-colors" href="#"
           >TERMS</a
@@ -418,5 +424,20 @@ onMounted(() => {
   text-align: center;
   max-width: 130px;
   line-height: 1.5;
+}
+</style>
+<style>
+@keyframes moveForward {
+  0% {
+    transform: translateZ(-1000px) scale(0.2);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateZ(500px) scale(1.5);
+    opacity: 0;
+  }
 }
 </style>
