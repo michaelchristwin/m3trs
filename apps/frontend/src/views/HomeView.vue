@@ -1,18 +1,12 @@
 <script setup lang="ts">
-import { format } from "date-fns";
 import { useRouter } from "vue-router";
 import { useConnection } from "@wagmi/vue";
-import { trpc } from "@/config/trpc-client";
 import { useAppKit } from "@reown/appkit/vue";
-import { m3terImageUrl } from "@/utils/constants";
-import { TRS } from "@/config/smart-contracts/TRS/TRS";
-import { constructSvg } from "@/utils/svg-constructor";
-import { MyToken } from "@/config/smart-contracts/MyToken/MyToken";
-import { computed, onMounted, ref, watch, onUnmounted } from "vue";
+import { onMounted, ref, watch, onUnmounted, defineAsyncComponent } from "vue";
 import AnimatedNumbers from "@/components/AnimatedNumbers.vue";
-import FlipText from "@/components/FlipText.vue";
-import CardsCarousel from "@/components/CardsCarousel.vue";
-
+const Hero = defineAsyncComponent(() => import("@/components/Hero.vue"));
+import M3terHead from "@/assets/image.webp";
+import TRS_SVG from "@/assets/trs.svg";
 const { open } = useAppKit();
 const { isConnected } = useConnection();
 const router = useRouter();
@@ -31,27 +25,6 @@ const launchApp = () => {
     }
   });
 };
-const imageBase64 = ref<string | null>(null);
-onMounted(async () => {
-  const result = await trpc.getNounsBase64URL.query({
-    imageUrl: m3terImageUrl,
-  });
-  //console.log(result);
-  imageBase64.value = result;
-});
-const imgUrl = computed(() => {
-  if (!imageBase64.value) return null;
-  const svgString = constructSvg({
-    name: `TRS-#0-${format(Math.floor(Date.now()), "yyyy-MM-dd")}`,
-    imageUrl: imageBase64.value,
-    m3terContract: MyToken.address,
-    meterId: 0,
-    stopTime: Math.floor(Date.now() / 1000),
-    trsContract: TRS.address,
-  });
-  const blob = new Blob([svgString], { type: "image/svg+xml" });
-  return URL.createObjectURL(blob);
-});
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 
@@ -177,48 +150,7 @@ onMounted(() => {
   <!-- Main Content -->
   <main class="grow pt-24">
     <!-- Hero Section -->
-    <section
-      class="relative min-h-204.75 flex flex-col justify-center items-center px-6 text-center overflow-hidden"
-    >
-      <!-- Background Elements -->
-      <div
-        class="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(ellipse_at_center,var(--tw-gradient-stops))] from-surface-container-high via-background to-background"
-      ></div>
-      <div
-        class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-container/5 rounded-full blur-[120px] z-0"
-      ></div>
-      <div
-        class="relative z-10 max-w-4xl mx-auto flex flex-col items-center gap-8"
-      >
-        <div>
-          <FlipText
-            pretext="Energy has a Return;"
-            :words="['Tokenize', 'Swap', 'Hodl', 'Earn']"
-          />
-
-          <p
-            class="font-body text-lg md:text-xl text-on-surface/70 max-w-2xl leading-relaxed"
-          >
-            Derive real yield from energy infra on the m3tering protocol
-          </p>
-        </div>
-        <div class="flex flex-col sm:flex-row gap-4 mt-8 w-full sm:w-auto">
-          <button
-            @click="launchApp"
-            class="w-full sm:w-auto px-8 py-4 bg-primary-container text-on-primary-container font-headline font-bold text-lg rounded tracking-wider uppercase glow-primary glow-primary-hover transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
-          >
-            Launch App
-            <span class="material-symbols-outlined">rocket_launch</span>
-          </button>
-          <button
-            class="w-full sm:w-auto px-4 py-4 bg-transparent border border-outline-variant text-primary-container font-headline font-medium text-lg rounded tracking-wider uppercase hover:bg-surface-container-high transition-all duration-300 flex items-center justify-center gap-2"
-          >
-            View Docs
-            <span class="material-symbols-outlined">arrow_forward</span>
-          </button>
-        </div>
-      </div>
-    </section>
+    <Hero />
     <section
       class="relative z-10 max-w-4xl mx-auto flex flex-col items-center gap-8 my-10"
     >
@@ -263,15 +195,15 @@ onMounted(() => {
     </section>
 
     <section class="py-24 px-6 bg-surface-container-lowest">
-      <div class="max-w-7xl mx-auto flex flex-col items-center text-center">
+      <div class="w-full mx-auto flex flex-col items-center text-center">
         <div class="conversion-banner">
           <canvas ref="canvasRef" class="conversion-canvas" />
 
           <div class="conversion-content">
             <img
-              :src="m3terImageUrl"
+              :src="M3terHead"
               alt="M3terHead #0"
-              class="conversion-img"
+              class="h-70 w-auto object-cover mr-15"
             />
 
             <div class="flow-dots">
@@ -283,7 +215,11 @@ onMounted(() => {
               />
             </div>
 
-            <img v-if="imgUrl" :src="imgUrl" alt="TRS" class="conversion-img" />
+            <img
+              :src="TRS_SVG"
+              alt="TRS"
+              class="h-64 w-auto object-cover ml-24"
+            />
           </div>
         </div>
         <div class="flex flex-col items-center gap-4 mb-16">
@@ -296,7 +232,6 @@ onMounted(() => {
         </div>
       </div>
     </section>
-    <CardsCarousel />
   </main>
   <!-- Footer -->
   <footer
@@ -349,20 +284,13 @@ onMounted(() => {
   position: relative;
   z-index: 1;
   width: 100%;
-  height: 100%;
+  height: fit-content;
   min-height: 220px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6rem;
-  padding: 2rem;
-}
 
-.conversion-img {
-  width: 250px;
-  height: auto;
-  object-fit: cover;
-  border-radius: var(--radius-xl);
+  padding: 2rem;
 }
 
 .flow-dots {
@@ -424,20 +352,5 @@ onMounted(() => {
   text-align: center;
   max-width: 130px;
   line-height: 1.5;
-}
-</style>
-<style>
-@keyframes moveForward {
-  0% {
-    transform: translateZ(-1000px) scale(0.2);
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateZ(500px) scale(1.5);
-    opacity: 0;
-  }
 }
 </style>
