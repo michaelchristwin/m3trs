@@ -7,9 +7,10 @@
     {
       "path": "./tsconfig.app.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
 }
-
-// "paths": {
-//       "@m3trs/contracts": ["../../packages/contracts/src/index.ts"]
-//     },

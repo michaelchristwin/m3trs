@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
+import TRS_SVG from "@/assets/trs.svg";
+import Hero from "@/components/Hero.vue";
 import { useConnection } from "@wagmi/vue";
+import M3terHead from "@/assets/image.webp";
 import { useAppKit } from "@reown/appkit/vue";
 import { onMounted, ref, watch, onUnmounted, defineAsyncComponent } from "vue";
-import AnimatedNumbers from "@/components/AnimatedNumbers.vue";
-const Hero = defineAsyncComponent(() => import("@/components/Hero.vue"));
-import M3terHead from "@/assets/image.webp";
-import TRS_SVG from "@/assets/trs.svg";
+const AnimatedNumbers = defineAsyncComponent(
+  () => import("@/components/AnimatedNumbers.vue"),
+);
 const { open } = useAppKit();
 const { isConnected } = useConnection();
 const router = useRouter();
