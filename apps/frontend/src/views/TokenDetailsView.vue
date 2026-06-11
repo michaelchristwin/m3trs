@@ -19,6 +19,7 @@ import { useWaitForTransactionReceipt, useWriteContract } from "@wagmi/vue";
 import { formatDistanceToNow } from "date-fns";
 import { useQuery } from "@tanstack/vue-query";
 import { wagmiAdapter } from "@/config/wagmi";
+import { trpc } from "@/config/trpc-client";
 const route = useRoute();
 const router = useRouter();
 
@@ -66,6 +67,11 @@ const { data, isLoading } = useQuery({
         },
       ],
     });
+    const metadata = await trpc.opensea.getNftMetadata.query({
+      contractAddress: TRS.address,
+      tokenId: route.query.tokenId as string,
+    });
+
     if (result[0].error) {
       throw result[0].error;
     }
@@ -79,6 +85,7 @@ const { data, isLoading } = useQuery({
       token: result[0].result,
       accRevenuePerToken: Number(result[1].result * result[0].result[1]) / 1e18,
       revenue: Number(result[1].result),
+      ...metadata,
     };
   },
 });
@@ -198,6 +205,7 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
 
         <!-- Content -->
         <div class="p-6 flex flex-col gap-6">
+          <div class="w-45 h-[310.33px] mx-auto rounded bg-surface-container" />
           <!-- URI -->
           <div>
             <div class="h-3 w-12 rounded bg-surface-container mb-2"></div>
@@ -260,17 +268,15 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
           >
         </div>
         <div class="p-6 flex flex-col gap-6">
+          <img :src="data.image" alt="TRS image" class="w-45 h-auto mx-auto" />
           <div>
-            <label
+            <span
               class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-1"
-              >URI</label
+              >Description</span
             >
-            <a
-              :href="data.token[4]"
-              target="_blank"
-              class="font-mono text-sm text-primary hover:underline break-all truncate block"
-              >{{ data.token[4] }}</a
-            >
+            <span class="font-mono text-sm text-primary block">{{
+              data.description
+            }}</span>
           </div>
           <div class="w-full h-px bg-surface-container"></div>
           <div class="grid grid-cols-2 gap-4">

@@ -7,9 +7,13 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "@wagmi/vue";
-
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
 import { trpc } from "@/config/trpc-client";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 
 const props = defineProps<{
   bond: import("@/utils/types").Bond;
@@ -220,7 +224,28 @@ const buttonText = computed(() => {
 
     <!-- Action -->
     <div class="mt-auto pt-4 border-t border-outline-variant/20">
+      <HoverCard v-if="!status?.isActive">
+        <HoverCardTrigger>
+          <button
+            @click="redeem(Number(bond.identifier))"
+            :disabled="status?.isActive || isBusy"
+            class="w-full py-3 bg-primary-container text-on-primary-container font-headline font-bold text-sm rounded transition-all duration-200 hover:bg-primary disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-surface-container-highest disabled:text-on-surface-variant"
+          >
+            {{ buttonText }}
+          </button>
+        </HoverCardTrigger>
+        <HoverCardContent>
+          <p class="font-mono text-sm text-on-surface/80">
+            Stop time has passed. Manual redeem execution required to finalize
+            state.
+          </p>
+          <p class="font-mono text-xs text-error/80 mt-1">
+            Warning: This action is irreversible and halts all revenue accrual.
+          </p>
+        </HoverCardContent>
+      </HoverCard>
       <button
+        v-else
         @click="redeem(Number(bond.identifier))"
         :disabled="status?.isActive || isBusy"
         class="w-full py-3 bg-primary-container text-on-primary-container font-headline font-bold text-sm rounded transition-all duration-200 hover:bg-primary disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-surface-container-highest disabled:text-on-surface-variant"
