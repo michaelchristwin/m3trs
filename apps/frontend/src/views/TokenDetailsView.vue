@@ -6,6 +6,7 @@ import { useForm } from "vee-validate";
 import { useRouter, useRoute } from "vue-router";
 import { toTypedSchema } from "@vee-validate/zod";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
+import { Image, Brackets } from "@lucide/vue";
 import {
   type Address,
   isAddress,
@@ -140,29 +141,25 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
         Back
       </button>
     </div>
+
     <div
       class="flex flex-col md:flex-row md:items-end justify-between gap-6 animate-pulse"
       v-if="isLoading"
     >
       <div>
-        <!-- Title -->
         <div
           class="h-10 md:h-14 w-72 md:w-96 rounded bg-surface-container-highest"
         ></div>
-
-        <!-- Subtitle -->
         <div class="h-4 w-56 mt-3 rounded bg-surface-container-highest"></div>
       </div>
-
-      <!-- Status pill -->
       <div
         class="flex items-center px-4 py-2 rounded-full bg-surface-container-highest self-start md:self-auto"
       >
         <div class="w-2 h-2 rounded-full bg-surface-container-high mr-2"></div>
-
         <div class="h-4 w-20 rounded bg-surface-container-high"></div>
       </div>
     </div>
+
     <div
       class="flex flex-col md:flex-row md:items-end justify-between gap-6"
       v-else-if="data"
@@ -184,9 +181,10 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
       </div>
     </div>
   </div>
+
   <!-- Bento Grid Layout -->
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-    <!-- Left Column (Metadata) -->
+    <!-- Left Column (Image) -->
     <div
       class="lg:col-span-4 flex flex-col gap-6 animate-pulse"
       v-if="isLoading"
@@ -194,64 +192,25 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
       <div
         class="bg-surface-container-low rounded-lg ghost-border-outline overflow-hidden flex flex-col"
       >
-        <!-- Header -->
         <div
           class="bg-surface-container-highest px-6 py-4 flex items-center justify-between"
         >
           <div class="h-4 w-24 rounded bg-surface-container"></div>
-
           <div class="h-5 w-5 rounded bg-surface-container"></div>
         </div>
-
-        <!-- Content -->
         <div class="p-6 flex flex-col gap-6">
           <div class="w-45 h-[310.33px] mx-auto rounded bg-surface-container" />
-          <!-- URI -->
-          <div>
-            <div class="h-3 w-12 rounded bg-surface-container mb-2"></div>
-
-            <div class="h-4 w-full rounded bg-surface-container"></div>
-          </div>
-
-          <!-- Divider -->
-          <div class="w-full h-px bg-surface-container"></div>
-
-          <!-- Supply + Meter ID -->
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <div class="h-3 w-16 rounded bg-surface-container mb-2"></div>
-
-              <div class="h-6 w-20 rounded bg-surface-container"></div>
-            </div>
-
-            <div>
-              <div class="h-3 w-20 rounded bg-surface-container mb-2"></div>
-
-              <div class="h-6 w-16 rounded bg-surface-container"></div>
-            </div>
-          </div>
-
-          <!-- Divider -->
-          <div class="w-full h-px bg-surface-container"></div>
-
-          <!-- Stop Time -->
-          <div>
-            <div class="h-3 w-20 rounded bg-surface-container mb-2"></div>
-
-            <div class="h-4 w-32 rounded bg-surface-container mb-2"></div>
-
-            <div class="h-6 w-40 rounded bg-surface-container"></div>
-          </div>
         </div>
       </div>
     </div>
+
     <div
       class="lg:col-span-4 flex flex-col gap-6"
       v-else-if="data !== undefined"
     >
-      <!-- Metadata Card -->
+      <!-- Image Card -->
       <div
-        class="bg-surface-container-low rounded-lg ghost-border-outline overflow-hidden flex flex-col"
+        class="bg-surface-container-low rounded-xl ghost-border-outline overflow-hidden flex flex-col"
       >
         <div
           class="bg-surface-container-highest px-6 py-4 flex items-center justify-between"
@@ -259,74 +218,119 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
           <h3
             class="font-headline font-bold text-on-surface text-sm uppercase tracking-wider"
           >
+            Image
+          </h3>
+          <Image :size="18" class="text-on-surface/50" />
+        </div>
+        <div class="p-6">
+          <img :src="data.image" alt="TRS image" class="w-auto h-150 mx-auto" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column (Metadata, Revenue, Transfer) -->
+    <div class="lg:col-span-8 flex flex-col gap-6">
+      <!-- Metadata Panel -->
+      <div
+        class="bg-surface-container-low rounded-xl ghost-border-outline overflow-hidden relative"
+      >
+        <div
+          class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"
+        ></div>
+        <div
+          class="bg-surface-container-highest px-6 py-4 flex items-center justify-between relative z-10"
+        >
+          <h3
+            class="font-headline font-bold text-on-surface text-sm uppercase tracking-wider flex items-center gap-2"
+          >
+            <Brackets class="text-primary" :size="18" />
             Metadata
           </h3>
-          <span
-            class="material-symbols-outlined text-on-surface/50 text-lg"
-            data-icon="data_object"
-            >data_object</span
-          >
         </div>
-        <div class="p-6 flex flex-col gap-6">
-          <img :src="data.image" alt="TRS image" class="w-45 h-auto mx-auto" />
-          <div>
-            <span
-              class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-1"
-              >Description</span
-            >
-            <span class="font-mono text-sm text-primary block">{{
-              data.description
-            }}</span>
+        <div class="p-6 md:p-8 flex flex-col md:flex-row gap-8 relative z-10">
+          <!-- Description + M3ter ID -->
+          <div
+            class="font-mono text-[3.5rem] leading-none font-light tracking-tight mb-2 animate-pulse"
+            v-if="isLoading"
+          >
+            <div class="h-12 w-48 rounded bg-surface-container-highest"></div>
           </div>
-          <div class="w-full h-px bg-surface-container"></div>
-          <div class="grid grid-cols-2 gap-4">
+          <div
+            class="flex-1 flex flex-col justify-start gap-6"
+            v-else-if="data"
+          >
             <div>
               <label
                 class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-1"
-                >Supply</label
               >
-              <div class="font-mono text-lg text-on-surface">
-                {{ data.token[1] }}
-              </div>
+                Description
+              </label>
+              <p
+                class="font-mono text-sm text-primary block tracking-wider mb-1"
+              >
+                {{ data.description }}
+              </p>
             </div>
             <div>
               <label
                 class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-1"
-                >M3TER ID</label
               >
-              <div class="font-mono text-lg text-secondary">
+                M3TER ID
+              </label>
+              <div class="font-mono text-2xl text-secondary">
                 #{{ data.token[2] }}
               </div>
             </div>
           </div>
-          <div class="w-full h-px bg-surface-container"></div>
-          <div>
-            <label
-              class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-1"
-              >Stop Time</label
-            >
-            <div class="font-mono text-sm text-on-surface mb-1">
-              {{
-                new Date(Number(data.token[3]) * 1000)
-                  .toISOString()
-                  .split("T")[0]
-              }}
+
+          <div class="w-px bg-surface-container hidden md:block"></div>
+          <div class="w-full h-px bg-surface-container md:hidden"></div>
+
+          <!-- Supply + Stop Time -->
+          <div class="flex-1 flex flex-col justify-center gap-6">
+            <div class="font-mono text-3xl animate-pulse" v-if="isLoading">
+              <div class="h-8 w-40 rounded bg-surface-container-highest"></div>
             </div>
-            <div
-              class="font-mono text-xs text-secondary-container bg-secondary-container/10 inline-block px-2 py-0.5 rounded"
-            >
-              Expires in
-              {{ formatDistanceToNow(new Date(Number(data.token[3]) * 1000)) }}
+            <div v-else-if="data">
+              <label
+                class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-1"
+              >
+                Supply
+              </label>
+              <div class="font-mono text-3xl text-on-surface">
+                {{ data.token[1] }}
+              </div>
+            </div>
+
+            <div v-if="data">
+              <label
+                class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-1"
+              >
+                Stop Time
+              </label>
+              <div class="font-mono text-sm text-on-surface mb-1">
+                {{
+                  new Date(Number(data.token[3]) * 1000)
+                    .toISOString()
+                    .split("T")[0]
+                }}
+              </div>
+              <div
+                class="font-mono text-xs text-secondary-container bg-secondary-container/10 inline-block px-2 py-0.5 rounded"
+              >
+                Expires in
+                {{
+                  formatDistanceToNow(new Date(Number(data.token[3]) * 1000))
+                }}
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <!-- Right Column (Actions & Revenue) -->
-    <div class="lg:col-span-8 flex flex-col gap-6">
-      <!-- Revenue Panel -->
+
+      <!-- Revenue Hub Panel -->
       <div
-        class="bg-surface-container-low rounded-lg ghost-border-outline overflow-hidden relative"
+        class="bg-surface-container-low rounded-xl ghost-border-outline overflow-hidden relative"
       >
         <div
           class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"
@@ -346,11 +350,13 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
           </h3>
         </div>
         <div class="p-6 md:p-8 flex flex-col md:flex-row gap-8 relative z-10">
+          <!-- Total Accrued -->
           <div class="flex-1 flex flex-col justify-center">
             <label
               class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2"
-              >Total Accrued</label
             >
+              Total Accrued
+            </label>
             <div
               class="font-mono text-[3.5rem] leading-none font-light tracking-tight mb-2 animate-pulse"
               v-if="isLoading"
@@ -372,13 +378,17 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
               <span class="font-mono text-xs">+12.4% this epoch</span>
             </div>
           </div>
+
           <div class="w-px bg-surface-container hidden md:block"></div>
           <div class="w-full h-px bg-surface-container md:hidden"></div>
+
+          <!-- Your Claimable + Actions -->
           <div class="flex-1 flex flex-col justify-center">
             <label
               class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2"
-              >Your Claimable</label
             >
+              Your Claimable
+            </label>
             <div class="font-mono text-3xl mb-6 animate-pulse" v-if="isLoading">
               <div class="h-8 w-40 rounded bg-surface-container-highest"></div>
             </div>
@@ -400,122 +410,82 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
           </div>
         </div>
       </div>
-      <!-- Transfer Panel -->
-      <div
-        class="bg-surface-container-low rounded-lg ghost-border-outline overflow-hidden"
-      >
-        <div
-          class="bg-surface-container-highest px-6 py-4 flex items-center justify-between"
-        >
-          <h3
-            class="font-headline font-bold text-on-surface text-sm uppercase tracking-wider flex items-center gap-2"
-          >
-            <span
-              class="material-symbols-outlined text-on-surface/50 text-lg"
-              data-icon="swap_horiz"
-              >swap_horiz</span
-            >
-            Transfer Operations
-          </h3>
-        </div>
-        <div class="p-6 md:p-8">
-          <form
-            class="flex flex-col md:flex-row gap-6 items-end"
-            @submit.prevent="onSubmit"
-          >
-            <div class="flex-1 w-full">
-              <label
-                class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2"
-                >Recipient Address</label
-              >
-              <div class="relative">
-                <span
-                  class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-on-surface/40 pb-2"
-                  data-icon="wallet"
-                  >wallet</span
-                >
-                <input
-                  class="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-mono text-sm focus:ring-0 focus:border-primary focus:shadow-[0_1px_0_0_rgba(0,255,65,1)] transition-all pl-8 pb-2 pt-2 placeholder:text-on-surface/20"
-                  placeholder="0x..."
-                  type="text"
-                  :value="values.recipientAddress"
-                  @input="
-                    setFieldValue(
-                      'recipientAddress',
-                      ($event.target as HTMLInputElement).value,
-                    )
-                  "
-                />
-              </div>
-            </div>
-            <div class="w-full md:w-1/3">
-              <label
-                class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2"
-                >Amount</label
-              >
-              <input
-                class="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-mono text-sm focus:ring-0 focus:border-primary focus:shadow-[0_1px_0_0_rgba(0,255,65,1)] transition-all pb-2 pt-2 placeholder:text-on-surface/20 text-right"
-                placeholder="0.00"
-                type="number"
-                :value="values.amount"
-                @input="
-                  setFieldValue(
-                    'amount',
-                    ($event.target as HTMLInputElement).value,
-                  )
-                "
-              />
-            </div>
-            <button
-              type="submit"
-              :disabled="!meta.valid || isPending || isConfirming"
-              @click.prevent
-              class="w-full md:w-auto bg-transparent ghost-border-primary text-primary font-headline font-bold text-sm py-2.5 px-8 rounded hover:bg-primary/5 transition-all whitespace-nowrap self-stretch md:self-auto mb-1"
-            >
-              Execute Transfer
-            </button>
-          </form>
-        </div>
-      </div>
     </div>
   </div>
-  <!-- Conditional Expiry Panel (Mocked state for demonstration, usually hidden if active) -->
-  <!-- Note: Displaying here to fulfill prompt requirements, conceptually this would only show if stop time passed -->
+
+  <!-- Transfer Operations Panel -->
   <div
-    class="mt-8 bg-surface-container-low rounded-lg border border-error-container/30 overflow-hidden opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+    class="bg-surface-container-low rounded-lg ghost-border-outline overflow-hidden mt-30 opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500"
   >
     <div
-      class="bg-error-container/10 px-6 py-4 flex items-center justify-between border-b border-error-container/20"
+      class="bg-surface-container-highest px-6 py-4 flex items-center justify-between"
     >
       <h3
-        class="font-headline font-bold text-error text-sm uppercase tracking-wider flex items-center gap-2"
+        class="font-headline font-bold text-on-surface text-sm uppercase tracking-wider flex items-center gap-2"
       >
         <span
-          class="material-symbols-outlined text-error text-lg"
-          data-icon="warning"
-          >warning</span
+          class="material-symbols-outlined text-on-surface/50 text-lg"
+          data-icon="swap_horiz"
+          >swap_horiz</span
         >
-        Contract Expiry
+        Transfer Operations
       </h3>
-      <span class="font-mono text-xs text-error/60">CONDITIONAL STATE</span>
     </div>
-    <div
-      class="p-6 flex flex-col md:flex-row items-center justify-between gap-6 bg-surface-container-lowest/50"
-    >
-      <div>
-        <p class="font-mono text-sm text-on-surface/80">
-          Stop time has passed. Manual expiry execution required to finalize
-          state.
-        </p>
-        <p class="font-mono text-xs text-error/80 mt-1">
-          Warning: This action is irreversible and halts all revenue accrual.
-        </p>
-      </div>
-      <button
-        class="bg-error-container text-on-error-container font-headline font-bold text-sm py-2 px-6 rounded hover:brightness-110 transition-all whitespace-nowrap border border-error/20"
+    <div class="p-6 md:p-8">
+      <form
+        class="flex flex-col md:flex-row gap-6 items-end"
+        @submit.prevent="onSubmit"
       >
-        Force Expire
-      </button>
+        <div class="flex-1 w-full">
+          <label
+            class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2"
+          >
+            Recipient Address
+          </label>
+          <div class="relative">
+            <span
+              class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-on-surface/40 pb-2"
+              data-icon="wallet"
+              >wallet</span
+            >
+            <input
+              class="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-mono text-sm focus:ring-0 focus:border-primary focus:shadow-[0_1px_0_0_rgba(0,255,65,1)] transition-all pl-8 pb-2 pt-2 placeholder:text-on-surface/20"
+              placeholder="0x..."
+              type="text"
+              :value="values.recipientAddress"
+              @input="
+                setFieldValue(
+                  'recipientAddress',
+                  ($event.target as HTMLInputElement).value,
+                )
+              "
+            />
+          </div>
+        </div>
+        <div class="w-full md:w-1/3">
+          <label
+            class="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2"
+          >
+            Amount
+          </label>
+          <input
+            class="w-full bg-transparent border-0 border-b border-outline-variant text-on-surface font-mono text-sm focus:ring-0 focus:border-primary focus:shadow-[0_1px_0_0_rgba(0,255,65,1)] transition-all pb-2 pt-2 placeholder:text-on-surface/20 text-right"
+            placeholder="0.00"
+            type="number"
+            :value="values.amount"
+            @input="
+              setFieldValue('amount', ($event.target as HTMLInputElement).value)
+            "
+          />
+        </div>
+        <button
+          type="submit"
+          :disabled="!meta.valid || isPending || isConfirming"
+          class="w-full md:w-auto bg-transparent ghost-border-primary text-primary font-headline font-bold text-sm py-2.5 px-8 rounded hover:bg-primary/5 transition-all whitespace-nowrap self-stretch md:self-auto mb-1"
+        >
+          Execute Transfer
+        </button>
+      </form>
     </div>
   </div>
 </template>
