@@ -1,12 +1,8 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { formatDistanceToNow } from "date-fns";
-import { useQuery } from "@tanstack/vue-query";
-import {
-  useReadContract,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from "@wagmi/vue";
+import { useMutation, useQuery } from "@tanstack/vue-query";
+import { useReadContract } from "@wagmi/vue";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
 import { trpc } from "@/config/trpc-client";
 import {
@@ -14,6 +10,10 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { hexToBigInt } from "viem";
+import { getWalletClient } from "@wagmi/core";
+import { wagmiAdapter } from "@/config/wagmi";
+import { publicClient } from "@/config/viem-clients";
 
 const props = defineProps<{
   bond: import("@/utils/types").Bond;
@@ -36,6 +36,7 @@ const {
   data: token,
   isLoading: isTokenLoading,
   isError,
+  refetch,
 } = useQuery({
   queryKey: ["getBond", props.bond.identifier],
   queryFn: () =>
@@ -64,34 +65,42 @@ const status = computed(() => {
   };
 });
 
-const {
-  mutateAsync: writeContract,
-  data: txHash,
-  isPending: isSubmitting,
-} = useWriteContract();
-
-const { isLoading: isConfirming } = useWaitForTransactionReceipt({
-  hash: txHash,
-});
-
-const isBusy = computed(() => isSubmitting.value || isConfirming.value);
-
 const isMetadataLoading = computed(
   () => !tokenId.value || isTokenLoading.value,
 );
+const tokenIdHash = computed(() => {
+  if (token.value) {
+    return token.value.traits.find((t) => t.traitType === "token_id");
+  }
+});
 
-const redeem = async (id: number) => {
-  await writeContract({
-    ...TRS,
-    functionName: "redeem",
-    args: [BigInt(id)],
-  });
+const redeem = async (id?: bigint) => {
+  if (!id) return;
+  try {
+    const walletClient = await getWalletClient(wagmiAdapter.wagmiConfig);
+    const hash = await walletClient.writeContract({
+      ...TRS,
+      functionName: "redeem",
+      args: [BigInt(id)],
+    });
+    const reciept = await publicClient.waitForTransactionReceipt({ hash });
+    if (reciept.status === "reverted") {
+      throw Error("Transaction reverted");
+    }
+    await refetch();
+  } catch (err) {
+    console.error(err);
+  }
 };
-
+const { mutateAsync, isPending } = useMutation({
+  mutationKey: ["redeem"],
+  mutationFn: redeem,
+});
 const buttonText = computed(() => {
-  if (isSubmitting.value) return "[SUBMITTING...]";
-  if (isConfirming.value) return "[CONFIRMING...]";
-  return "[REDEEM]";
+  if (isPending.value) return "[SUBMITTING...]";
+  else {
+    return "[REDEEM]";
+  }
 });
 </script>
 
@@ -227,8 +236,8 @@ const buttonText = computed(() => {
       <HoverCard v-if="!status?.isActive">
         <HoverCardTrigger>
           <button
-            @click="redeem(Number(bond.identifier))"
-            :disabled="status?.isActive || isBusy"
+            @click="mutateAsync(hexToBigInt(tokenIdHash?.value))"
+            :disabled="status?.isActive || isPending"
             class="w-full py-3 bg-primary-container text-on-primary-container font-headline font-bold text-sm rounded transition-all duration-200 hover:bg-primary disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-surface-container-highest disabled:text-on-surface-variant"
           >
             {{ buttonText }}
@@ -246,8 +255,8 @@ const buttonText = computed(() => {
       </HoverCard>
       <button
         v-else
-        @click="redeem(Number(bond.identifier))"
-        :disabled="status?.isActive || isBusy"
+        @click="mutateAsync(hexToBigInt(tokenIdHash?.value))"
+        :disabled="status?.isActive || isPending"
         class="w-full py-3 bg-primary-container text-on-primary-container font-headline font-bold text-sm rounded transition-all duration-200 hover:bg-primary disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-surface-container-highest disabled:text-on-surface-variant"
       >
         {{ buttonText }}

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted, ref } from "vue";
+import { Rocket } from "@lucide/vue";
 import FlipText from "./FlipText.vue";
 
 const TOTAL = 51;
@@ -117,12 +118,13 @@ onUnmounted(() => clearInterval(interval));
           Derive real yield from energy infra on the m3tering protocol
         </p>
         <div class="flex flex-col sm:flex-row gap-4 mt-8 w-full sm:w-auto">
-          <button
+          <RouterLink
+            to="/discover"
             class="w-full sm:w-auto px-8 py-4 bg-primary-container text-on-primary-container font-headline font-bold text-lg rounded tracking-wider uppercase glow-primary glow-primary-hover transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
           >
-            Launch App
-            <span class="material-symbols-outlined">rocket_launch</span>
-          </button>
+            <span>Launch App</span>
+            <Rocket />
+          </RouterLink>
         </div>
       </div>
     </div>

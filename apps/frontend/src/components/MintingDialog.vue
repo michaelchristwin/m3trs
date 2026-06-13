@@ -11,7 +11,12 @@ defineProps<DialogParams>();
 </script>
 
 <template>
-  <dialog ref="dialog" class="m3trs-dialog" id="m3trs-dialog" :open="isOpen">
+  <dialog
+    ref="dialog"
+    class="p-0 border-none bg-transparent overflow-visible"
+    id="m3trs-dialog"
+    :open="isOpen"
+  >
     <div
       class="relative flex min-h-70 w-[calc(100vw-40px)] max-w-[320px] flex-col items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-[#1c1c1e] p-10 md:min-h-85 md:max-w-110 lg:min-h-90 lg:max-w-130"
     >
@@ -196,13 +201,6 @@ defineProps<DialogParams>();
 </template>
 
 <style scoped>
-.m3trs-dialog {
-  padding: 0;
-  border: none;
-  background: transparent;
-  overflow: visible;
-}
-
 .m3trs-dialog::backdrop {
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);

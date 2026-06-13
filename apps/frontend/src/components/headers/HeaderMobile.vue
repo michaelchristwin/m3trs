@@ -10,7 +10,7 @@ const eip155Account = useAppKitAccount({ namespace: "eip155" });
     class="fixed top-0 left-0 w-full z-50 flex md:hidden items-center justify-between px-4 h-16 bg-[#131313] shadow-[0_0_15px_rgba(0,255,65,0.05)] rounded-none mb-1 transition-all duration-300"
   >
     <RouterLink
-      :to="{ name: 'overview' }"
+      to="/discover"
       class="font-['Space_Grotesk'] font-bold tracking-tighter text-[#00FF41] text-xl"
       >M3TRS</RouterLink
     >

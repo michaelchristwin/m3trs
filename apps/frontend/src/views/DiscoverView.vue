@@ -9,7 +9,7 @@ import { useHead } from "@unhead/vue";
 import { onMounted, onUnmounted, ref } from "vue";
 
 useHead({
-  title: "Overview",
+  title: "Discover",
   meta: [{ name: "description", content: "dashboard" }],
 });
 

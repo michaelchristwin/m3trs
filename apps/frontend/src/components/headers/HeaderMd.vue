@@ -11,7 +11,7 @@ const eip155Account = useAppKitAccount({ namespace: "eip155" });
   >
     <div class="flex items-center gap-4">
       <RouterLink
-        to="/overview"
+        to="/discover"
         class="text-2xl font-black text-[#00FF41] tracking-tighter font-headline uppercase"
       >
         M3TRS

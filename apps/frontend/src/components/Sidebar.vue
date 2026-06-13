@@ -1,5 +1,13 @@
 <script lang="ts" setup>
 import { ref } from "vue";
+import {
+  Telescope,
+  SquarePlus,
+  Archive,
+  Scroll,
+  FileText,
+  CircleQuestionMark,
+} from "@lucide/vue";
 
 const collapsed = ref(false);
 
@@ -21,14 +29,10 @@ const sidebarActiveClass =
           'flex items-center px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200',
           collapsed ? 'justify-center gap-0' : 'gap-3',
         ]"
-        to="/overview"
+        to="/discover"
       >
-        <span
-          class="material-symbols-outlined text-[20px] shrink-0"
-          :title="collapsed ? 'Overview' : undefined"
-          >dashboard</span
-        >
-        <span v-if="!collapsed">Overview</span>
+        <Telescope :size="20" class="shrink-0" />
+        <span v-if="!collapsed">Discover</span>
       </RouterLink>
 
       <RouterLink
@@ -37,13 +41,9 @@ const sidebarActiveClass =
           'flex items-center px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200',
           collapsed ? 'justify-center gap-0' : 'gap-3',
         ]"
-        :to="{ name: 'create token' }"
+        to="/create-token"
       >
-        <span
-          class="material-symbols-outlined text-[20px] shrink-0"
-          :title="collapsed ? 'Create' : undefined"
-          >add_box</span
-        >
+        <SquarePlus :size="20" class="shrink-0" />
         <span v-if="!collapsed">Create</span>
       </RouterLink>
 
@@ -53,13 +53,9 @@ const sidebarActiveClass =
           'flex items-center px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200',
           collapsed ? 'justify-center gap-0' : 'gap-3',
         ]"
-        :to="{ name: 'holdings' }"
+        to="/holdings"
       >
-        <span
-          class="material-symbols-outlined text-[20px] shrink-0"
-          :title="collapsed ? 'My Holdings' : undefined"
-          >inventory_2</span
-        >
+        <Archive :size="20" class="shrink-0" />
         <span v-if="!collapsed">My Holdings</span>
       </RouterLink>
 
@@ -69,13 +65,9 @@ const sidebarActiveClass =
           'flex items-center px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200',
           collapsed ? 'justify-center gap-0' : 'gap-3',
         ]"
-        :to="{ name: 'bonds' }"
+        to="/bonds"
       >
-        <span
-          class="material-symbols-outlined text-[20px] shrink-0"
-          :title="collapsed ? 'My Bonds' : undefined"
-          >confirmation_number</span
-        >
+        <Scroll :size="20" class="shrink-0" />
         <span v-if="!collapsed">My Bonds</span>
       </RouterLink>
     </nav>
@@ -93,11 +85,7 @@ const sidebarActiveClass =
         ]"
         href="#"
       >
-        <span
-          class="material-symbols-outlined text-[18px] shrink-0"
-          :title="collapsed ? 'Docs' : undefined"
-          >description</span
-        >
+        <FileText :size="20" class="shrink-0" />
         <span v-if="!collapsed">Docs</span>
       </a>
 
@@ -108,11 +96,7 @@ const sidebarActiveClass =
         ]"
         href="#"
       >
-        <span
-          class="material-symbols-outlined text-[18px] shrink-0"
-          :title="collapsed ? 'Support' : undefined"
-          >help_outline</span
-        >
+        <CircleQuestionMark :size="20" class="shrink-0" />
         <span v-if="!collapsed">Support</span>
       </a>
 
