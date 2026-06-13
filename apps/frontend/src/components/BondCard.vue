@@ -10,7 +10,6 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { hexToBigInt } from "viem";
 import { getWalletClient } from "@wagmi/core";
 import { wagmiAdapter } from "@/config/wagmi";
 import { publicClient } from "@/config/viem-clients";
@@ -27,10 +26,7 @@ const { data: tokenId } = useReadContract({
 const { data: totalAccrued } = useReadContract({
   ...TRS,
   functionName: "accRevenuePerToken",
-  args: tokenId.value ? [tokenId.value] : undefined,
-  query: {
-    enabled: computed(() => !!tokenId.value),
-  },
+  args: [BigInt(props.bond.identifier)],
 });
 const {
   data: token,
@@ -68,14 +64,8 @@ const status = computed(() => {
 const isMetadataLoading = computed(
   () => !tokenId.value || isTokenLoading.value,
 );
-const tokenIdHash = computed(() => {
-  if (token.value) {
-    return token.value.traits.find((t) => t.traitType === "token_id");
-  }
-});
 
-const redeem = async (id?: bigint) => {
-  if (!id) return;
+const redeem = async (id: number) => {
   try {
     const walletClient = await getWalletClient(wagmiAdapter.wagmiConfig);
     const hash = await walletClient.writeContract({
@@ -236,7 +226,7 @@ const buttonText = computed(() => {
       <HoverCard v-if="!status?.isActive">
         <HoverCardTrigger>
           <button
-            @click="mutateAsync(hexToBigInt(tokenIdHash?.value))"
+            @click="mutateAsync(Number(bond.identifier))"
             :disabled="status?.isActive || isPending"
             class="w-full py-3 bg-primary-container text-on-primary-container font-headline font-bold text-sm rounded transition-all duration-200 hover:bg-primary disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-surface-container-highest disabled:text-on-surface-variant"
           >
@@ -255,7 +245,7 @@ const buttonText = computed(() => {
       </HoverCard>
       <button
         v-else
-        @click="mutateAsync(hexToBigInt(tokenIdHash?.value))"
+        @click="mutateAsync(Number(bond.identifier))"
         :disabled="status?.isActive || isPending"
         class="w-full py-3 bg-primary-container text-on-primary-container font-headline font-bold text-sm rounded transition-all duration-200 hover:bg-primary disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-surface-container-highest disabled:text-on-surface-variant"
       >
