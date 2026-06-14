@@ -88,6 +88,30 @@ const convertToLocaleDate = (dateStr: string) => {
   const date = new Date(dateStr);
   return date.toLocaleDateString("en-US");
 };
+// const svgUrl = computed(async () => {
+//   const imgUrl = await trpc.getNounsBase64URL.query({
+//     imageUrl: m3terImageUrl,
+//   });
+//   const tokenId = Number(values.tokenId ?? 0);
+//   const stopTime = Number(values.stopTime ?? Math.floor(Date.now() / 1000));
+
+//   const svgString = constructSvg({
+//     name:
+//       values.tokenId && values.stopTime
+//         ? `TRS-#${tokenId}-${format(stopTime * 1000, "yyyy-MM-dd")}`
+//         : "",
+//     meterId: tokenId,
+//     m3terContract: MyToken.address,
+//     stopTime,
+//     trsContract: TRS.address,
+//     imageUrl: imgUrl,
+//   });
+//   console.log(svgString);
+//   const blob = new Blob([svgString], { type: "image/svg+xml" });
+
+//   return URL.createObjectURL(blob);
+// });
+// effect(() => console.log(svgUrl.value));
 </script>
 
 <template>
@@ -273,6 +297,7 @@ const convertToLocaleDate = (dateStr: string) => {
                 values.stopTime ? convertToLocaleDate(values.stopTime) : ""
               }}</span>
             </div>
+            <!-- <img :src="svgUrl" alt="TRS Preview" class="w-full h-auto" /> -->
           </div>
           <!-- Warning Box -->
           <div
