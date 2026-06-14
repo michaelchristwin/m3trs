@@ -5,6 +5,7 @@ import { m3terImageUrl } from "@/utils/constants";
 import { createTokenMetadata } from "@/utils/token-metadata";
 import type { MintTokensParams, MintTxStatus } from "@/utils/types";
 import { getWalletClient } from "@wagmi/core";
+import { keccak256, encodePacked, hexToBigInt } from "viem";
 import { ref } from "vue";
 
 export function useMint() {
@@ -12,6 +13,8 @@ export function useMint() {
   const mintTxStatus = ref<MintTxStatus>({
     status: "idle",
   });
+  const amount = ref(0);
+  const externalTokenId = ref<bigint>(0n);
   const mintTokens = async ({
     supply,
     tokenId,
@@ -20,6 +23,14 @@ export function useMint() {
     walletAddress,
   }: MintTokensParams) => {
     try {
+      amount.value = Number(supply);
+      const hash = keccak256(
+        encodePacked(
+          ["uint256", "uint256", "uint256"],
+          [tokenId, supply, BigInt(stopTime)],
+        ),
+      );
+      externalTokenId.value = hexToBigInt(hash);
       currentStep.value = "Approving M3ter for transaction...";
       const walletClient = await getWalletClient(wagmiAdapter.wagmiConfig);
       const approveResult = await approve(walletAddress, tokenId, walletClient);
@@ -84,5 +95,7 @@ export function useMint() {
     mintTokens,
     currentStep,
     mintTxStatus,
+    amount,
+    externalTokenId,
   };
 }

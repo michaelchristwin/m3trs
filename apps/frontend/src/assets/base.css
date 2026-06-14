@@ -64,6 +64,129 @@
   --radius-full: 0.75rem;
 }
 
+@theme inline {
+  --font-heading: var(--font-mono); /* JetBrains Mono */
+
+  /* Sidebar */
+  --color-sidebar-ring: var(--color-outline);
+  --color-sidebar-border: var(--color-outline-variant);
+  --color-sidebar-accent-foreground: var(--color-on-surface);
+  --color-sidebar-accent: var(--color-surface-container-high);
+  --color-sidebar-primary-foreground: var(--color-on-primary);
+  --color-sidebar-primary: var(--color-primary);
+  --color-sidebar-foreground: var(--color-on-surface);
+  --color-sidebar: var(--color-background);
+
+  /* Charts */
+  --color-chart-5: var(--color-tertiary);
+  --color-chart-4: var(--color-tertiary-container);
+  --color-chart-3: var(--color-secondary);
+  --color-chart-2: var(--color-secondary-container);
+  --color-chart-1: var(--color-primary-fixed-dim);
+
+  /* Core UI */
+  --color-ring: var(--color-outline);
+  --color-input: var(--color-outline-variant);
+  --color-border: var(--color-outline-variant);
+  --color-destructive: var(--color-error);
+
+  /* Accent */
+  --color-accent-foreground: var(--color-on-surface);
+  --color-accent: var(--color-surface-container-high);
+
+  /* Muted */
+  --color-muted-foreground: var(--color-on-surface-variant);
+  --color-muted: var(--color-surface-container);
+
+  /* Secondary */
+  --color-secondary-foreground: var(--color-on-secondary);
+  --color-secondary: var(--color-secondary);
+
+  /* Primary */
+  --color-primary-foreground: var(--color-on-primary);
+  --color-primary: var(--color-primary);
+
+  /* Popover */
+  --color-popover-foreground: var(--color-on-surface);
+  --color-popover: var(--color-surface-container);
+
+  /* Card */
+  --color-card-foreground: var(--color-on-surface);
+  --color-card: var(--color-surface-container-low);
+
+  /* Base */
+  --color-foreground: var(--color-on-background);
+  --color-background: var(--color-background);
+
+  /* Radius */
+  --radius-sm: var(--radius-default);
+  --radius-md: var(--radius-lg);
+  --radius-lg: var(--radius-xl);
+  --radius-xl: var(--radius-full);
+}
+
+:root {
+  --color-on-surface: #e5e2e1;
+  --color-background: #131313;
+  --color-error: #ffb4ab;
+  --color-on-tertiary-fixed-variant: #891d00;
+  --color-on-primary: #003907;
+  --color-on-primary-fixed-variant: #00530e;
+  --color-on-secondary: #432c00;
+  --color-primary: #ebffe2;
+  --color-on-error: #690005;
+  --color-tertiary-container: #ffd3c8;
+  --color-secondary-fixed: #ffddaf;
+  --color-on-tertiary: #611200;
+  --color-outline-variant: #3b4b37;
+  --color-primary-fixed: #72ff70;
+  --color-inverse-primary: #006e16;
+  --color-on-secondary-container: #694600;
+  --color-secondary: #ffd393;
+  --color-secondary-fixed-dim: #ffba43;
+  --color-on-primary-fixed: #002203;
+  --color-on-surface-variant: #b9ccb2;
+  --color-error-container: #93000a;
+  --color-secondary-container: #fdaf00;
+  --color-on-secondary-fixed: #281800;
+  --color-inverse-surface: #e5e2e1;
+  --color-tertiary-fixed: #ffdad2;
+  --color-on-tertiary-fixed: #3c0700;
+  --color-on-background: #e5e2e1;
+  --color-surface-container-low: #1c1b1b;
+  --color-surface-variant: #353534;
+  --color-surface-container-highest: #353534;
+  --color-surface-tint: #00e639;
+  --color-primary-fixed-dim: #00e639;
+  --color-primary-container: #00ff41;
+  --color-surface-bright: #3a3939;
+  --color-on-primary-container: #007117;
+  --color-tertiary: #fff8f6;
+  --color-surface-container-high: #2a2a2a;
+  --color-surface: #131313;
+  --color-inverse-on-surface: #313030;
+  --color-on-secondary-fixed-variant: #614000;
+  --color-surface-dim: #131313;
+  --color-outline: #84967e;
+  --color-on-error-container: #ffdad6;
+  --color-tertiary-fixed-dim: #ffb4a2;
+  --color-surface-container: #201f1f;
+  --color-on-tertiary-container: #b82a00;
+  --color-surface-container-lowest: #0e0e0e;
+
+  /* Fonts */
+  --font-headline: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Border radius */
+  --radius-default: 0.125rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-full: 0.75rem;
+}
+
 body {
   background-color: var(--color-background);
   color: var(--color-on-surface);

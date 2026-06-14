@@ -6,8 +6,8 @@ import { useMint } from "@/composables/useMint";
 const CreateTokenForm = defineAsyncComponent(
   () => import("@/components/CreateTokenForm.vue"),
 );
-const MintingDialog = defineAsyncComponent(
-  () => import("@/components/MintingDialog.vue"),
+const MintingModal = defineAsyncComponent(
+  () => import("@/components/MintingModal.vue"),
 );
 
 useHead({
@@ -17,7 +17,8 @@ useHead({
 
 const modalState = ref<import("@/utils/types").ModalState>("minting");
 const isModalOpen = ref(false);
-const { mintTokens, currentStep, mintTxStatus } = useMint();
+const { mintTokens, currentStep, mintTxStatus, amount, externalTokenId } =
+  useMint();
 </script>
 
 <template>
@@ -36,11 +37,14 @@ const { mintTokens, currentStep, mintTxStatus } = useMint();
       v-model:is-modal-open="isModalOpen"
       :mint-tokens="mintTokens"
     />
-    <MintingDialog
+    <MintingModal
       :is-open="isModalOpen"
       :mint-tx-status="mintTxStatus"
       :modal-state="modalState"
       :visible-status="currentStep"
+      @close="isModalOpen = false"
+      :supply="amount"
+      :token-id="externalTokenId"
     />
   </div>
 </template>

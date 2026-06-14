@@ -1,26 +1,52 @@
-<script lang="ts" setup>
+<script setup lang="ts">
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { X } from "@lucide/vue";
 import type { MintTxStatus, ModalState } from "@/utils/types";
+import { TRS } from "@/config/smart-contracts/TRS/TRS";
 
 interface DialogParams {
   modalState: ModalState;
   visibleStatus: string;
   mintTxStatus: MintTxStatus;
   isOpen: boolean;
+  supply: number;
+  tokenId: bigint;
 }
+
 defineProps<DialogParams>();
+
+const emit = defineEmits<{
+  (e: "close"): void;
+}>();
 </script>
 
 <template>
-  <Teleport to="body">
-    <dialog
-      ref="dialog"
-      class="p-0 border-none bg-transparent overflow-visible"
-      id="m3trs-dialog"
-      :open="isOpen"
-    >
-      <div
-        class="relative flex min-h-70 w-[calc(100vw-40px)] max-w-[320px] flex-col items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-[#1c1c1e] p-10 md:min-h-85 md:max-w-110 lg:min-h-90 lg:max-w-130"
-      >
+  <AlertDialog :open="isOpen">
+    <AlertDialogContent class="border-white/10 p-10 pointer-events-auto">
+      <AlertDialogHeader class="hidden">
+        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+        <AlertDialogDescription>
+          This action cannot be undone. This will permanently delete your
+          account and remove your data from our servers.
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <div>
+        <AlertDialogCancel
+          v-if="modalState === 'minting'"
+          @click="emit('close')"
+          class="rounded-[100%] float-end border border-white/10 bg-white/5 w-10 h-10 text-sm font-medium text-white/70 transition-colors duration-150 hover:bg-white/10 hover:text-white"
+        >
+          <X :size="18" />
+        </AlertDialogCancel>
         <!-- MINTING -->
         <div
           v-if="modalState === 'minting'"
@@ -119,32 +145,16 @@ defineProps<DialogParams>();
             Your M3TRS revenue position has been successfully minted on-chain.
           </p>
 
-          <div
-            v-if="mintTxStatus.status === 'success'"
-            class="mb-8 rounded border border-white/5 bg-black/30 px-4 py-2 font-mono text-[11px] text-white/50"
-          >
-            TX {{ mintTxStatus.txHash }}
-          </div>
-
           <div class="flex w-full flex-col gap-3">
             <a
               v-if="mintTxStatus.status === 'success'"
-              :href="`https://explorer.zora.energy/tx/${mintTxStatus.txHash}`"
+              :href="`https://opensea.io/item/zora/${TRS.address}/${tokenId.toString()}`"
               target="_blank"
               rel="noopener noreferrer"
               class="w-full rounded-lg bg-[#279b37] px-6 py-3 text-center font-semibold text-white transition-colors duration-150 hover:bg-[#34b348]"
             >
-              View on Explorer →
+              List on OpenSea →
             </a>
-
-            <button
-              type="button"
-              commandfor="m3trs-dialog"
-              command="close"
-              class="w-full rounded-lg border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-white/70 transition-colors duration-150 hover:bg-white/10 hover:text-white"
-            >
-              Close
-            </button>
           </div>
         </div>
 
@@ -182,63 +192,19 @@ defineProps<DialogParams>();
           </p>
 
           <div class="flex w-full flex-col gap-3">
-            <!-- <button
-              class="w-full rounded-lg bg-[#279b37] px-6 py-3 font-semibold text-white transition-colors duration-150 hover:bg-[#34b348]"
-            >
-              Retry
-            </button> -->
-
-            <button
-              class="w-full rounded-lg border border-white/15 px-6 py-3 font-semibold text-white transition-colors duration-150 hover:bg-white/5"
-              commandfor="m3trs-dialog"
-              command="close"
+            <AlertDialogCancel
+              @click="emit('close')"
+              class="w-full rounded-lg border border-white/15 bg-red-200/5! px-6 py-3 font-semibold text-white transition-colors duration-150 hover:bg-white/5"
             >
               Dismiss
-            </button>
+            </AlertDialogCancel>
           </div>
         </div>
       </div>
-    </dialog>
-  </Teleport>
+      <AlertDialogFooter class="hidden">
+        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <AlertDialogAction>Continue</AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
 </template>
-
-<style scoped>
-.m3trs-dialog::backdrop {
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-}
-</style>
-
-<style>
-@keyframes radar-fade {
-  0%,
-  100% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes scale-up {
-  from {
-    opacity: 0;
-    transform: scale(0.6);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-</style>

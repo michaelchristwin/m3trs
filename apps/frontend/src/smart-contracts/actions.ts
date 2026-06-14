@@ -31,6 +31,11 @@ export async function approve(
       functionName: "approve",
       args: [TRS.address, id],
     });
+    console.log("Wallet chain:", await walletClient.getChainId());
+    console.log("Public client chain:", publicClient.chain?.id);
+    const [connectedAccount] = await walletClient.getAddresses();
+    console.log("Connected wallet:", connectedAccount);
+    console.log("Account passed in:", account);
 
     const approveTxHash = await walletClient.writeContract(approveReq);
 
@@ -38,6 +43,7 @@ export async function approve(
 
     return { status: "success" };
   } catch (err) {
+    console.error(err);
     if (err instanceof UserRejectedRequestError) {
       return { status: "error", error: "You rejected the transaction." };
     }

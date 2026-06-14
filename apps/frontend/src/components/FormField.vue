@@ -21,7 +21,7 @@ const { value, meta, errors, setValue } = useField(() => props.name);
       errors && meta.touched && 'border-red-500 ring-1 ring-red-500',
     ]"
     :value="value"
-    :placeholder="props.placeholder"
+    :placeholder="placeholder"
     @input="setValue(($event.target as HTMLInputElement).value)"
   />
 </template>
