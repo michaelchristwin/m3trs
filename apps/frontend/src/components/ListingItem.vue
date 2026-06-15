@@ -76,7 +76,10 @@ const isActive = computed(
 </script>
 
 <template>
-  <div
+  <RouterLink
+    :to="`/discover/${
+      listing.protocolData?.parameters.offer[0]?.identifierOrCriteria as string
+    }`"
     v-if="metadata && isActive"
     class="relative bg-surface-container-low rounded p-4"
   >
@@ -185,6 +188,7 @@ const isActive = computed(
       <div class="md:col-span-2 flex flex-col md:flex-row md:justify-end gap-2">
         <a
           target="_blank"
+          @click.stop
           rel="noopener noreferrer"
           :href="`https://opensea.io/item/zora/${TRS.address}/${listing.protocolData?.parameters.offer[0]?.identifierOrCriteria}`"
           class="block px-4 text-center py-1.5 rounded-[30px] bg-primary-container text-neutral-800 transition-colors text-xs font-headline tracking-wider hover:bg-primary-container/80"
@@ -193,5 +197,5 @@ const isActive = computed(
         </a>
       </div>
     </div>
-  </div>
+  </RouterLink>
 </template>

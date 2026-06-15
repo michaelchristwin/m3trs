@@ -221,33 +221,6 @@ function scrollToSection() {
         <p>There are no listings yet</p>
       </div>
     </div>
-    <!-- Terminal Output / Log Area (Decorative industrial element) -->
-    <!-- <div class="mt-8 pt-6">
-      <div class="flex items-center gap-2 mb-3">
-        <span
-          class="material-symbols-outlined text-on-surface-variant text-[14px]"
-          data-icon="terminal"
-          >terminal</span
-        >
-        <span
-          class="font-mono-data text-[0.6875rem] text-on-surface-variant uppercase tracking-widest"
-          >System Log</span
-        >
-      </div>
-      <div
-        class="bg-surface-container-lowest border border-surface-variant/50 rounded p-4 font-mono-data text-xs text-on-surface-variant opacity-70"
-      >
-        <div class="mb-1">
-          &gt;[SYSTEM] Connected to node: eu-west-data-relay
-        </div>
-        <div class="mb-1">
-          &gt;[SYNC] Contract state verified at block 18492044
-        </div>
-        <div class="mb-1 text-primary-container">
-          &gt;[OK] Balances retrieved successfully. 0ms latency.
-        </div>
-      </div>
-    </div> -->
   </div>
   <button
     v-if="!isVisible"

@@ -14,8 +14,20 @@ const router = createRouter({
       children: [
         {
           path: "/discover",
-          name: "discover",
-          component: () => import("@/views/DiscoverView.vue"),
+
+          component: () => import("@/views/DiscoverShellView.vue"),
+          children: [
+            {
+              path: "",
+              name: "discover",
+              component: () => import("@/views/DiscoverView.vue"),
+            },
+            {
+              path: ":tokenId",
+              name: "listing details",
+              component: () => import("@/views/ListingDetailsView.vue"),
+            },
+          ],
         },
         {
           path: "/create-token",
