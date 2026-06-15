@@ -7,7 +7,9 @@ import { useMutation, useQuery } from "@tanstack/vue-query";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import type { BaseError } from "viem";
-import { defineAsyncComponent } from "vue";
+import { computed, defineAsyncComponent } from "vue";
+import PreviewTRS from "./PreviewTRS.vue";
+import { format, fromUnixTime, parse } from "date-fns";
 
 const FormField = defineAsyncComponent(
   () => import("@/components/FormField.vue"),
@@ -88,30 +90,45 @@ const convertToLocaleDate = (dateStr: string) => {
   const date = new Date(dateStr);
   return date.toLocaleDateString("en-US");
 };
-// const svgUrl = computed(async () => {
-//   const imgUrl = await trpc.getNounsBase64URL.query({
-//     imageUrl: m3terImageUrl,
-//   });
-//   const tokenId = Number(values.tokenId ?? 0);
-//   const stopTime = Number(values.stopTime ?? Math.floor(Date.now() / 1000));
+const stopTimeSeconds = (input?: string) => {
+  if (!input) return;
+  const date = parse(input, "yyyy-MM-dd'T'HH:mm", new Date());
 
-//   const svgString = constructSvg({
-//     name:
-//       values.tokenId && values.stopTime
-//         ? `TRS-#${tokenId}-${format(stopTime * 1000, "yyyy-MM-dd")}`
-//         : "",
-//     meterId: tokenId,
-//     m3terContract: MyToken.address,
-//     stopTime,
-//     trsContract: TRS.address,
-//     imageUrl: imgUrl,
-//   });
-//   console.log(svgString);
-//   const blob = new Blob([svgString], { type: "image/svg+xml" });
+  // convert to UTC seconds
+  return Math.floor(date.getTime() / 1000);
+};
+const tokenName = computed(() => {
+  if (!values.stopTime) return `TRS-#${Number(values.tokenId || "")}`;
+  else {
+    const secs = stopTimeSeconds(values.stopTime);
+    if (!secs) return `TRS-#${Number(values.tokenId || "")}`;
+    else {
+      return `TRS-#${Number(values.tokenId || "")}-${format(secs * 1000, "yyyy-MM-dd")}`;
+    }
+  }
+});
+const readableStopTime = computed(() => {
+  const secs = stopTimeSeconds(values.stopTime);
+  if (!secs) return;
+  //console.log(values.stopTime);
+  const date = fromUnixTime(secs); // handles the * 1000 for you
+  return format(date, "yyyy-MM-dd HH:mm:ss");
+});
+const tokenId = computed(() => values.tokenId?.toString() ?? null);
 
-//   return URL.createObjectURL(blob);
-// });
-// effect(() => console.log(svgUrl.value));
+const { data: metadata } = useQuery({
+  queryKey: ["getTokenMetadata", tokenId],
+  queryFn: async () => {
+    const result = await trpc.opensea.getNftMetadata.query({
+      chain: "base",
+      contractAddress: collections.nouns,
+      tokenId: "0",
+    });
+    console.log("Result: ", result);
+    return result;
+  },
+  enabled: () => tokenId.value !== null, // ✅ getter function, not computed()
+});
 </script>
 
 <template>
@@ -267,6 +284,12 @@ const convertToLocaleDate = (dateStr: string) => {
             Review
           </h2>
           <div class="space-y-4 mb-8">
+            <PreviewTRS
+              :name="tokenName"
+              :meter-id="values.tokenId?.toString()"
+              :readable-stop-time="readableStopTime"
+              :image-url="metadata?.image"
+            />
             <div
               class="flex justify-between items-center pb-2 border-b border-surface-variant"
             >
@@ -297,7 +320,6 @@ const convertToLocaleDate = (dateStr: string) => {
                 values.stopTime ? convertToLocaleDate(values.stopTime) : ""
               }}</span>
             </div>
-            <!-- <img :src="svgUrl" alt="TRS Preview" class="w-full h-auto" /> -->
           </div>
           <!-- Warning Box -->
           <div

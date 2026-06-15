@@ -42,7 +42,13 @@ export const openSeaRouter = router({
       return await OpenseaQuery.getBestListingsCollection(input);
     }),
   getNftMetadata: publicProcedure
-    .input(z.object({ contractAddress: z.string(), tokenId: z.string() }))
+    .input(
+      z.object({
+        contractAddress: z.string(),
+        tokenId: z.string(),
+        chain: z.string().optional(),
+      }),
+    )
     .query(async ({ input }) => {
       return await OpenseaQuery.getNftMetadata(input);
     }),

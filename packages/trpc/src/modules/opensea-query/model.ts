@@ -19,5 +19,6 @@ export interface OpenseaQueryModel {
   NftMetadataParams: {
     contractAddress: string;
     tokenId: string;
+    chain?: string;
   };
 }
