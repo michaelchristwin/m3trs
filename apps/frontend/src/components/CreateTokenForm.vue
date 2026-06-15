@@ -151,7 +151,11 @@ const { data: metadata } = useQuery({
         <h2 class="font-headline text-xl text-on-surface mb-6 ml-4">
           Select M3TER NFT
         </h2>
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div
+          class="grid grid-cols-1 gap-4 md:grid-cols-2"
+          role="group"
+          aria-label="Select an NFT"
+        >
           <template v-if="isLoading">
             <M3terCardSkeleton v-for="i in 2" :key="i" />
           </template>

@@ -11,20 +11,34 @@ const emit = defineEmits<{
 }>();
 
 const alt = `M3terHead #${Number(props.tokenId)}`;
+
+function onKeyDown(e: KeyboardEvent) {
+  if (e.key === " " || e.key === "Enter") {
+    e.preventDefault();
+    emit("select", props.tokenId);
+  }
+}
 </script>
+
 <template>
   <div
+    role="checkbox"
+    :aria-checked="selected"
+    :aria-label="alt"
+    tabindex="0"
     :class="
       selected ? selectedCardClass.selected : selectedCardClass.unselected
     "
     @click="emit('select', tokenId)"
+    @keydown="onKeyDown"
   >
     <div v-if="selected" class="absolute top-2 right-2 text-primary-container">
-      <span class="material-symbols-outlined">check_circle</span>
+      <span class="material-symbols-outlined" aria-hidden="true"
+        >check_circle</span
+      >
     </div>
 
     <div class="w-full h-32 p-2 rounded flex justify-center items-center">
-      <!-- <span class="material-symbols-outlined text-4xl"> memory </span> -->
       <img :src="m3terImageUrl" :alt="alt" class="inset-0 object-cover" />
     </div>
 

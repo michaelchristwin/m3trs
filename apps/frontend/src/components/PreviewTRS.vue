@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { MyToken } from "@/config/smart-contracts/MyToken/MyToken";
 import { TRS } from "@/config/smart-contracts/TRS/TRS";
+import { MyToken } from "@/config/smart-contracts/MyToken/MyToken";
 
 interface PreviewParams {
   name: string;
