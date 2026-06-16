@@ -13,6 +13,7 @@ import {
 import { getWalletClient } from "@wagmi/core";
 import { wagmiAdapter } from "@/config/wagmi";
 import { publicClient } from "@/config/viem-clients";
+import { collections } from "@/config/opensea/collections";
 
 const props = defineProps<{
   bond: import("@/utils/types").Bond;
@@ -42,7 +43,16 @@ const {
     }),
   enabled: computed(() => !!tokenId.value),
 });
-
+const { data: m3terMetadata } = useQuery({
+  queryKey: ["getM3ter", props.bond.identifier],
+  queryFn: () =>
+    trpc.opensea.getNftMetadata.query({
+      contractAddress: collections.nouns,
+      tokenId: props.bond.identifier,
+      chain: "base",
+    }),
+  enabled: !!props.bond.identifier,
+});
 const stopTime = computed<number | null>(() => {
   const trait = token.value?.traits.find((t) => t.traitType === "stop_time");
 
@@ -124,11 +134,21 @@ const buttonText = computed(() => {
     v-else
     class="bg-surface-container-low rounded-lg p-6 flex flex-col relative overflow-hidden"
   >
+    <div
+      class="absolute inset-0 bg-contain bg-center bg-no-repeat opacity-15"
+      v-if="m3terMetadata"
+      :style="{ backgroundImage: `url(${m3terMetadata.image})` }"
+    />
+    <div
+      class="absolute inset-0 bg-linear-to-b from-transparent from-30% to-surface-container-low to-70%"
+      v-if="m3terMetadata"
+    />
+
     <!-- Status -->
     <div
       v-if="status"
       :class="[
-        'absolute top-6 right-6 rounded-full px-3 py-1 text-xs font-mono font-bold border',
+        'absolute top-6 right-6 rounded-full px-3 py-1 text-xs font-mono font-bold border z-10',
         status.isActive
           ? status.isMoreThanAWeekAway
             ? 'bg-secondary/15 text-secondary border-secondary/30'
@@ -142,7 +162,7 @@ const buttonText = computed(() => {
     <!-- Meter -->
     <div class="mb-6">
       <p
-        class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
+        class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1 z-10"
       >
         METER_ID
       </p>
@@ -153,7 +173,7 @@ const buttonText = computed(() => {
     </div>
 
     <!-- Stop Time -->
-    <div class="grid grid-cols-2 gap-4 mb-8">
+    <div class="grid grid-cols-2 gap-4 mb-8 z-10">
       <div>
         <p
           class="text-[0.6875rem] font-headline tracking-wider text-on-surface-variant uppercase mb-1"
@@ -193,7 +213,7 @@ const buttonText = computed(() => {
     <div
       v-if="status && stopTime"
       :class="[
-        'bg-surface-container-high rounded p-4 mb-6 border-l-2',
+        'bg-surface-container-high rounded p-4 mb-6 border-l-2 z-10',
         status.isMoreThanAWeekAway
           ? 'border-secondary-container'
           : 'border-primary-container',
@@ -222,7 +242,7 @@ const buttonText = computed(() => {
     </div>
 
     <!-- Action -->
-    <div class="mt-auto pt-4 border-t border-outline-variant/20">
+    <div class="mt-auto pt-4 border-t border-outline-variant/20 z-10">
       <HoverCard v-if="!status?.isActive">
         <HoverCardTrigger>
           <button
