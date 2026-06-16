@@ -83,7 +83,7 @@ onUnmounted(() => clearInterval(interval));
 
 <template>
   <section
-    class="relative flex h-[calc(100dvh-75px)] w-full flex-col items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8"
+    class="relative flex h-[calc(100dvh-80px)] w-full flex-col items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8"
   >
     <div class="absolute inset-0 flex items-center justify-center">
       <div
@@ -117,18 +117,18 @@ onUnmounted(() => clearInterval(interval));
     ></div>
 
     <div class="relative z-10 mx-auto max-w-5xl mt-80">
-      <div class="flex flex-col items-center gap-4 text-center sm:gap-5">
+      <div class="flex flex-col items-center gap-4 text-center">
         <FlipText
           pretext="Energy has a Return;"
           :words="['Tokenize', 'Swap', 'Hodl', 'Earn']"
         />
 
         <p
-          class="max-w-2xl md:text-lg font-semibold leading-relaxed text-lg lg:max-w-3xl text-white/70"
+          class="max-w-2xl md:text-lg font-semibold leading-normal text-lg lg:max-w-3xl text-white/70"
         >
           Derive real yield from energy infra on the m3tering protocol
         </p>
-        <div class="flex flex-col sm:flex-row gap-4 mt-8 w-full sm:w-auto">
+        <div class="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
           <RouterLink
             to="/discover"
             class="w-full sm:w-auto px-8 py-4 bg-primary-container text-on-primary-container font-headline font-bold text-lg rounded-lg tracking-wider uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"

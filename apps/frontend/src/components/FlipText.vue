@@ -1,6 +1,6 @@
 <template>
   <h1
-    class="flex items-center gap-2 font-headline font-black text-3xl md:text-5xl lg:text-6xl tracking-tighter text-on-surface uppercase leading-[0.9]"
+    class="flex items-center gap-2 font-headline font-black text-2xl md:text-start text-center md:text-5xl lg:text-6xl tracking-tighter text-on-surface uppercase leading-[0.9]"
   >
     {{ pretext }} <br class="hidden md:block" />
     <span class="flip-wrapper" :style="{ width: flipWidth + 'px' }">
@@ -23,7 +23,7 @@ interface FlipTextProps {
 }
 
 const props = withDefaults(defineProps<FlipTextProps>(), {
-  interval: 2000,
+  interval: 1800,
 });
 
 const currentIndex = ref(0);
