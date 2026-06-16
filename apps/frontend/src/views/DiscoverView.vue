@@ -77,8 +77,8 @@ function scrollToSection() {
   ></div>
 
   <!-- Three Panel Grid -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Panel 2: Your Holdings -->
+  <!-- <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  
     <div
       class="bg-surface-container-low rounded flex flex-col h-95 relative group border border-transparent hover:border-outline-variant/30 transition-colors"
     >
@@ -128,7 +128,7 @@ function scrollToSection() {
         </RouterLink>
       </div>
     </div>
-    <!-- Panel 3: Your Bonds -->
+  
     <div
       class="bg-surface-container-low rounded flex flex-col h-95 relative group border border-transparent hover:border-outline-variant/30 transition-colors"
     >
@@ -152,7 +152,7 @@ function scrollToSection() {
         </div>
       </div>
       <div class="flex-1 p-5 overflow-y-auto space-y-4">
-        <!-- Item 1 (Redeemable) -->
+     
         <div
           class="bg-surface p-4 rounded flex justify-between items-center group/item hover:bg-surface-container-high transition-colors border-l-2 border-primary-container"
         >
@@ -180,8 +180,8 @@ function scrollToSection() {
         </RouterLink>
       </div>
     </div>
-  </div>
-  <div class="mt-17" ref="targetSection">
+  </div> -->
+  <div class="" ref="targetSection">
     <div class="md:flex block justify-between items-end mb-8">
       <div>
         <h1
