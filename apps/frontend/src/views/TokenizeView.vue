@@ -11,7 +11,7 @@ const MintingModal = defineAsyncComponent(
 );
 
 useHead({
-  title: "Create Token",
+  title: "Tokenize",
   meta: [{ name: "description", content: "Create TRS token" }],
 });
 

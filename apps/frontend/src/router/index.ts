@@ -30,18 +30,18 @@ const router = createRouter({
           ],
         },
         {
-          path: "/create-token",
-          name: "create token",
-          component: () => import("@/views/CreateTokenView.vue"),
+          path: "/tokenize",
+          name: "tokenize",
+          component: () => import("@/views/TokenizeView.vue"),
         },
         {
-          path: "/holdings",
-          component: () => import("@/views/HoldingsShellView.vue"),
+          path: "/portfolio",
+          component: () => import("@/views/PortfolioShell.vue"),
           children: [
             {
               path: "",
               name: "holdings",
-              component: () => import("@/views/HoldingsView.vue"),
+              component: () => import("@/views/PortfolioView.vue"),
             },
             {
               path: ":tokenName",
@@ -51,11 +51,11 @@ const router = createRouter({
           ],
         },
 
-        {
-          path: "/bonds",
-          name: "bonds",
-          component: () => import("@/views/BondsView.vue"),
-        },
+        // {
+        //   path: "/bonds",
+        //   name: "bonds",
+        //   component: () => import("@/views/BondsView.vue"),
+        // },
       ],
     },
   ],

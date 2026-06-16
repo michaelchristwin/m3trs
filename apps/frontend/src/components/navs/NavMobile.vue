@@ -1,17 +1,11 @@
 <script setup lang="ts">
-import {
-  Telescope,
-  SquarePlus,
-  Archive,
-  Scroll,
-  type LucideIcon,
-} from "@lucide/vue";
+import { Telescope, Blocks, FolderOpenDot, type LucideIcon } from "@lucide/vue";
 
 const routes: { name: string; path: string; icon: LucideIcon }[] = [
   { name: "Discover", path: "/discover", icon: Telescope },
-  { name: "Create Token", path: "/create-token", icon: SquarePlus },
-  { name: "Holdings", path: "holdings", icon: Archive },
-  { name: "Bonds", path: "/bonds", icon: Scroll },
+  { name: "Portfolio", path: "/portfolio", icon: FolderOpenDot },
+
+  { name: "Tokenize", path: "/tokenize", icon: Blocks },
 ];
 </script>
 <template>

@@ -160,10 +160,10 @@ onMounted(() => {
       <h2
         class="font-headline text-3xl md:text-4xl font-semibold tracking-tight uppercase"
       >
-        TRS IN NUMBERS
+        yield IN <span class="text-primary-container text-glow">motion</span>
       </h2>
       <div
-        class="mt-16 grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-3xl border-t border-surface-container-high pt-8"
+        class="mt-5 grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-3xl border-t border-surface-container-high pt-8"
       >
         <div class="flex flex-col items-center gap-1">
           <span

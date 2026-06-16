@@ -173,9 +173,7 @@ function scrollToSection() {
       </div>
       <div class="p-5 mt-auto">
         <RouterLink
-          :to="{
-            name: 'bonds',
-          }"
+          to="/portfolio"
           class="w-full bg-transparent border-2 border-outline-variant text-on-surface font-headline font-bold py-2.5 rounded text-sm hover:border-primary-container hover:text-primary-container transition-colors flex items-center justify-center gap-2"
         >
           VIEW BONDS

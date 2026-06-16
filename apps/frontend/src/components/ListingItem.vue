@@ -14,35 +14,23 @@ const props = defineProps<{
 const { listing } = props;
 
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
-
+const tokenId = computed(() => {
+  return listing.protocolData?.parameters?.offer?.[0]?.identifierOrCriteria;
+});
 const { data: metadata, isLoading } = useQuery({
-  queryKey: [
-    "getNftByIdentifier",
-    listing.protocolData?.parameters.offer[0]?.identifierOrCriteria,
-  ],
+  queryKey: ["getNftByIdentifier", tokenId],
   queryFn: async () => {
     const result = await readContracts(wagmiAdapter.wagmiConfig, {
       contracts: [
         {
           ...TRS,
           functionName: "revenue",
-          args: [
-            address,
-            BigInt(
-              listing.protocolData?.parameters.offer[0]
-                ?.identifierOrCriteria as string,
-            ),
-          ],
+          args: [address, BigInt(tokenId.value!)],
         },
         {
           ...TRS,
           functionName: "token",
-          args: [
-            BigInt(
-              listing.protocolData?.parameters.offer[0]
-                ?.identifierOrCriteria as string,
-            ),
-          ],
+          args: [BigInt(tokenId.value!)],
         },
       ],
     });
@@ -58,8 +46,7 @@ const { data: metadata, isLoading } = useQuery({
     const stopTime = result[1].result[3];
     let nft_metadata = await trpc.opensea.getNftMetadata.query({
       contractAddress: TRS.address,
-      tokenId: listing.protocolData?.parameters.offer[0]
-        ?.identifierOrCriteria as string,
+      tokenId: tokenId.value!,
     });
     return {
       revenue,
@@ -68,7 +55,7 @@ const { data: metadata, isLoading } = useQuery({
       stopTime,
     };
   },
-  enabled: !!listing.protocolData?.parameters.offer[0]?.identifierOrCriteria,
+  enabled: !!tokenId.value,
 });
 const isActive = computed(
   () => Number(metadata.value?.stopTime) * 1000 > Date.now(),
@@ -77,9 +64,7 @@ const isActive = computed(
 
 <template>
   <RouterLink
-    :to="`/discover/${
-      listing.protocolData?.parameters.offer[0]?.identifierOrCriteria as string
-    }`"
+    :to="`/discover/${tokenId!}`"
     v-if="metadata && isActive"
     class="relative bg-surface-container-low rounded p-4"
   >
@@ -126,7 +111,7 @@ const isActive = computed(
         <a
           target="_blank"
           rel="noopener noreferrer"
-          :href="`https://opensea.io/item/zora/${TRS.address}/${listing.protocolData?.parameters.offer[0]?.identifierOrCriteria}`"
+          :href="`https://opensea.io/item/zora/${TRS.address}/${tokenId!}`"
           class="inline-block mt-2 px-4 py-1.5 w-full text-center rounded-[30px] bg-primary-container text-neutral-800 text-xs font-headline tracking-wider"
         >
           Buy
@@ -190,7 +175,7 @@ const isActive = computed(
           target="_blank"
           @click.stop
           rel="noopener noreferrer"
-          :href="`https://opensea.io/item/zora/${TRS.address}/${listing.protocolData?.parameters.offer[0]?.identifierOrCriteria}`"
+          :href="`https://opensea.io/item/zora/${TRS.address}/${tokenId!}`"
           class="block px-4 text-center py-1.5 rounded-[30px] bg-primary-container text-neutral-800 transition-colors text-xs font-headline tracking-wider hover:bg-primary-container/80"
         >
           Buy

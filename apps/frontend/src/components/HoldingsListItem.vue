@@ -15,10 +15,7 @@ const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
 const openTokenDetails = (tokenName: string) => {
   router.push({
-    name: "token details",
-    params: {
-      tokenName,
-    },
+    path: `/portfolio/${tokenName}`,
     query: {
       tokenId: props.tokenId,
     },

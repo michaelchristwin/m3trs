@@ -2,11 +2,10 @@
 import { ref } from "vue";
 import {
   Telescope,
-  SquarePlus,
-  Archive,
-  Scroll,
   FileText,
   CircleQuestionMark,
+  Blocks,
+  FolderOpenDot,
 } from "@lucide/vue";
 
 const collapsed = ref(false);
@@ -41,25 +40,13 @@ const sidebarActiveClass =
           'flex items-center px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200',
           collapsed ? 'justify-center gap-0' : 'gap-3',
         ]"
-        to="/create-token"
+        to="/portfolio"
       >
-        <SquarePlus :size="20" class="shrink-0" />
-        <span v-if="!collapsed">Create</span>
+        <FolderOpenDot :size="20" class="shrink-0" />
+        <span v-if="!collapsed">Portfolio</span>
       </RouterLink>
 
-      <RouterLink
-        :active-class="sidebarActiveClass"
-        :class="[
-          'flex items-center px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200',
-          collapsed ? 'justify-center gap-0' : 'gap-3',
-        ]"
-        to="/holdings"
-      >
-        <Archive :size="20" class="shrink-0" />
-        <span v-if="!collapsed">My Holdings</span>
-      </RouterLink>
-
-      <RouterLink
+      <!-- <RouterLink
         :active-class="sidebarActiveClass"
         :class="[
           'flex items-center px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200',
@@ -69,6 +56,17 @@ const sidebarActiveClass =
       >
         <Scroll :size="20" class="shrink-0" />
         <span v-if="!collapsed">My Bonds</span>
+      </RouterLink> -->
+      <RouterLink
+        :active-class="sidebarActiveClass"
+        :class="[
+          'flex items-center px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200',
+          collapsed ? 'justify-center gap-0' : 'gap-3',
+        ]"
+        to="/tokenize"
+      >
+        <Blocks :size="20" class="shrink-0" />
+        <span v-if="!collapsed">Tokenize</span>
       </RouterLink>
     </nav>
 
