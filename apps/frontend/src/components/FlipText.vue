@@ -5,7 +5,7 @@
     {{ pretext }} <br class="hidden md:block" />
     <span class="flip-wrapper" :style="{ width: flipWidth + 'px' }">
       <span
-        class="flip-inner text-primary-container"
+        class="flip-inner text-primary-container text-glow transition-all"
         :class="{ flipping: isFlipping }"
       >
         {{ currentWord }}

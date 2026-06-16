@@ -3,7 +3,7 @@ import { useRouter } from "vue-router";
 import TRS_SVG from "@/assets/trs.svg";
 import Hero from "@/components/Hero.vue";
 import { useConnection } from "@wagmi/vue";
-import M3terHead from "@/assets/image.webp";
+import M3terHead from "@/assets/m3ters/0.webp";
 import { useAppKit } from "@reown/appkit/vue";
 import { onMounted, ref, watch, onUnmounted, defineAsyncComponent } from "vue";
 const AnimatedNumbers = defineAsyncComponent(
@@ -154,9 +154,14 @@ onMounted(() => {
     <!-- Hero Section -->
     <Hero />
     <section
-      class="relative z-10 max-w-4xl mx-auto flex flex-col items-center gap-8 my-10"
+      class="relative z-10 max-w-4xl mx-auto flex flex-col items-center gap-8 my-40"
     >
       <!-- Technical Micro-Data -->
+      <h2
+        class="font-headline text-3xl md:text-4xl font-semibold tracking-tight uppercase"
+      >
+        TRS IN NUMBERS
+      </h2>
       <div
         class="mt-16 grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-3xl border-t border-surface-container-high pt-8"
       >

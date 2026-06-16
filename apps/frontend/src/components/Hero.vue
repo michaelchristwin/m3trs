@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted, ref } from "vue";
-import { Rocket } from "@lucide/vue";
+import { Rocket, ArrowRight } from "@lucide/vue";
 import FlipText from "./FlipText.vue";
+import PreviewTRS from "./PreviewTRS.vue";
+import { M3TERS } from "@/assets/m3ters";
 
 const TOTAL = 51;
 const CARD_W = 280;
@@ -81,7 +83,7 @@ onUnmounted(() => clearInterval(interval));
 
 <template>
   <section
-    class="relative flex min-h-175 w-full flex-col items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 bg-surface-container-lowest"
+    class="relative flex min-h-175 w-full flex-col items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8"
   >
     <div class="absolute inset-0 flex items-center justify-center">
       <div
@@ -89,23 +91,32 @@ onUnmounted(() => clearInterval(interval));
         :style="{ transform: stripTransform, transition: stripTransition }"
       >
         <div
-          v-for="style in cardStyles"
-          class="h-70 w-35 shrink-0 sm:h-90 sm:w-50 lg:h-110 lg:w-70"
+          v-for="(style, i) in cardStyles"
+          class="h-fit w-35 shrink-0 sm:w-50 lg:w-70"
           :style="{
             opacity: style.opacity,
             background: style.background,
             border: style.border,
             boxShadow: style.boxShadow,
             transform: style.transform,
-            borderRadius: '24px',
+            borderRadius: '38px',
             transition:
               'opacity 500ms, transform 500ms, border 500ms, box-shadow 500ms, background 500ms',
           }"
-        ></div>
+        >
+          <PreviewTRS
+            name=""
+            :image-url="M3TERS[i % M3TERS.length]"
+            meter-id="0"
+          />
+        </div>
       </div>
     </div>
+    <div
+      class="absolute inset-0 flex items-center justify-center bg-background/50"
+    ></div>
 
-    <div class="relative z-10 mx-auto max-w-5xl">
+    <div class="relative z-10 mx-auto max-w-5xl mt-80">
       <div class="flex flex-col items-center gap-4 text-center sm:gap-5">
         <FlipText
           pretext="Energy has a Return;"
@@ -113,17 +124,24 @@ onUnmounted(() => clearInterval(interval));
         />
 
         <p
-          class="max-w-2xl text-base leading-relaxed sm:text-lg lg:max-w-3xl text-white/70"
+          class="max-w-2xl md:text-lg font-semibold leading-relaxed text-lg lg:max-w-3xl text-white/70"
         >
           Derive real yield from energy infra on the m3tering protocol
         </p>
         <div class="flex flex-col sm:flex-row gap-4 mt-8 w-full sm:w-auto">
           <RouterLink
             to="/discover"
-            class="w-full sm:w-auto px-8 py-4 bg-primary-container text-on-primary-container font-headline font-bold text-lg rounded tracking-wider uppercase glow-primary glow-primary-hover transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+            class="w-full sm:w-auto px-8 py-4 bg-primary-container text-on-primary-container font-headline font-bold text-lg rounded-lg tracking-wider uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
           >
             <span>Launch App</span>
             <Rocket />
+          </RouterLink>
+          <RouterLink
+            to="#docs"
+            class="w-full sm:w-auto px-8 py-4 bg-transparent border border-outline-variant text-primary-container font-headline font-bold text-lg rounded tracking-wider uppercase hover:bg-surface-container-high transition-all duration-300 flex items-center justify-center gap-2"
+          >
+            <span>Docs</span>
+            <ArrowRight />
           </RouterLink>
         </div>
       </div>
