@@ -83,7 +83,7 @@ onUnmounted(() => clearInterval(interval));
 
 <template>
   <section
-    class="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8"
+    class="relative flex h-[calc(100dvh-40px)] w-full flex-col items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8"
   >
     <div class="absolute inset-0 flex items-center justify-center">
       <div

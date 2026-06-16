@@ -128,7 +128,7 @@ const { data: bonds, isLoading: isLoadingBonds } = useQuery({
       <h1
         class="font-headline text-3xl font-bold tracking-tight text-on-surface"
       >
-        Holdings
+        Yield Tokens
       </h1>
       <p class="text-on-surface-variant text-sm mt-1 font-body">
         ERC1155 Contract Balances &amp; Revenue Status
