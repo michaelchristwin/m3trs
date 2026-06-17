@@ -4,8 +4,8 @@
   >
     {{ pretext }} <br class="hidden md:block" />
     <span class="flip-wrapper" :style="{ width: flipWidth + 'px' }">
-      <RouterLink
-        to="/discover"
+      <button
+        @click="gotoDiscover"
         class="w-full sm:w-auto px-8 py-4 bg-primary-container text-on-primary-container font-headline font-bold text-lg rounded-lg tracking-wider uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] gap-2"
       >
         <span
@@ -14,7 +14,7 @@
         >
           {{ currentWord }} <ArrowRight />
         </span>
-      </RouterLink>
+      </button>
     </span>
   </h1>
 </template>
@@ -22,6 +22,7 @@
 <script setup lang="ts">
 import { ArrowRight } from "@lucide/vue";
 import { ref, onMounted, onBeforeUnmount } from "vue";
+import { useRouter } from "vue-router";
 interface FlipTextProps {
   words: string[];
   interval?: number;
@@ -37,7 +38,10 @@ const currentWord = ref(props.words[0]);
 const isFlipping = ref(false);
 const flipWidth = ref(120);
 let timer: NodeJS.Timeout;
-
+const router = useRouter();
+const gotoDiscover = () => {
+  router.push("/discover");
+};
 function measureWidth() {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");

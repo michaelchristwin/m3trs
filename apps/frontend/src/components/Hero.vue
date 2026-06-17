@@ -147,7 +147,7 @@ onBeforeUnmount(() => {
 
 <template>
   <section
-    class="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8"
+    class="relative flex h-175 w-full flex-col items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8"
   >
     <div
       ref="viewportRef"
