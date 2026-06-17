@@ -95,7 +95,7 @@ const visibleCards = computed(() =>
     // FIX: stable identity, not interpolated identity
     const isCenter = slotOffset === 0 && progress.value < 0.5;
 
-    const focus = isCenter ? 1 : 0;
+    // const focus = isCenter ? 1 : 0;
 
     return {
       imageUrl: M3TERS[imageIndex]!,

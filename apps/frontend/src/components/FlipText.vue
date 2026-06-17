@@ -4,7 +4,8 @@
   >
     {{ pretext }} <br class="hidden md:block" />
     <span class="flip-wrapper" :style="{ width: flipWidth + 'px' }">
-      <button
+      <RouterLink
+        to="/discover"
         class="w-full sm:w-auto px-8 py-4 bg-primary-container text-on-primary-container font-headline font-bold text-lg rounded-lg tracking-wider uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] gap-2"
       >
         <span
@@ -13,7 +14,7 @@
         >
           {{ currentWord }} <ArrowRight />
         </span>
-      </button>
+      </RouterLink>
     </span>
   </h1>
 </template>
