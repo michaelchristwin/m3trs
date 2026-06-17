@@ -83,7 +83,7 @@ onUnmounted(() => clearInterval(interval));
 
 <template>
   <section
-    class="relative flex h-[calc(100dvh-80px)] w-full flex-col items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8"
+    class="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8"
   >
     <div class="absolute inset-0 flex items-center justify-center">
       <div
@@ -116,7 +116,7 @@ onUnmounted(() => clearInterval(interval));
       class="absolute inset-0 flex items-center justify-center bg-background/50"
     ></div>
 
-    <div class="relative z-10 mx-auto max-w-5xl mt-80">
+    <div class="relative z-10 mx-auto max-w-5xl translate-y-38">
       <div class="flex flex-col items-center gap-4 text-center">
         <FlipText
           pretext="Energy has a Return;"
@@ -124,7 +124,7 @@ onUnmounted(() => clearInterval(interval));
         />
 
         <p
-          class="max-w-2xl md:text-lg font-semibold leading-normal text-lg lg:max-w-3xl text-white/70"
+          class="max-w-2xl md:text-lg font-semibold leading-normal text-[14px] lg:max-w-3xl text-white/70"
         >
           Derive real yield from energy infra on the m3tering protocol
         </p>
