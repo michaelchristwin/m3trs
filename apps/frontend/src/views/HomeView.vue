@@ -237,6 +237,22 @@ onMounted(() => {
             <span class="text-primary-container">M3ters</span>
           </h2>
         </div>
+        <div class="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
+          <RouterLink
+            to="/discover"
+            class="w-full sm:w-auto px-8 py-4 bg-primary-container text-on-primary-container font-headline font-bold text-lg rounded-lg tracking-wider uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+          >
+            <span>Launch App</span>
+            <Rocket />
+          </RouterLink>
+          <RouterLink
+            to="#docs"
+            class="w-full sm:w-auto px-8 py-4 bg-transparent border border-outline-variant text-primary-container font-headline font-bold text-lg rounded tracking-wider uppercase hover:bg-surface-container-high transition-all duration-300 flex items-center justify-center gap-2"
+          >
+            <span>Docs</span>
+            <ArrowRight />
+          </RouterLink>
+        </div>
       </div>
     </section>
   </main>

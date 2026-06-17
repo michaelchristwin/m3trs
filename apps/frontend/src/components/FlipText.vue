@@ -1,20 +1,25 @@
 <template>
   <h1
-    class="flex items-center gap-2 font-headline font-black text-2xl md:text-start text-center md:text-5xl lg:text-6xl tracking-tighter text-on-surface uppercase leading-[0.9]"
+    class="flex items-center gap-8 font-headline font-black text-2xl md:text-start text-center md:text-5xl lg:text-6xl tracking-tighter text-on-surface uppercase leading-[0.9]"
   >
     {{ pretext }} <br class="hidden md:block" />
     <span class="flip-wrapper" :style="{ width: flipWidth + 'px' }">
-      <span
-        class="flip-inner text-primary-container text-glow transition-all"
-        :class="{ flipping: isFlipping }"
+      <button
+        class="w-full sm:w-auto px-8 py-4 bg-primary-container text-on-primary-container font-headline font-bold text-lg rounded-lg tracking-wider uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] gap-2"
       >
-        {{ currentWord }}
-      </span>
+        <span
+          class="flip-inner text-glow transition-all"
+          :class="{ flipping: isFlipping }"
+        >
+          {{ currentWord }} <ArrowRight />
+        </span>
+      </button>
     </span>
   </h1>
 </template>
 
 <script setup lang="ts">
+import { ArrowRight } from "@lucide/vue";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 interface FlipTextProps {
   words: string[];
@@ -23,7 +28,7 @@ interface FlipTextProps {
 }
 
 const props = withDefaults(defineProps<FlipTextProps>(), {
-  interval: 1800,
+  interval: 2000,
 });
 
 const currentIndex = ref(0);
@@ -49,7 +54,7 @@ function flip() {
     currentIndex.value = (currentIndex.value + 1) % props.words.length;
     currentWord.value = props.words[currentIndex.value];
     isFlipping.value = false;
-  }, 250);
+  }, 500);
 }
 
 onMounted(() => {
@@ -70,7 +75,7 @@ onBeforeUnmount(() => clearInterval(timer));
   align-items: center;
   height: 100%;
   transform-style: preserve-3d;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
 }
 .flip-inner.flipping {

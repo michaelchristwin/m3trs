@@ -1,149 +1,197 @@
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, ref } from "vue";
-import { Rocket, ArrowRight } from "@lucide/vue";
+import { computed, onBeforeUnmount, onMounted, ref, nextTick } from "vue";
 import FlipText from "./FlipText.vue";
 import PreviewTRS from "./PreviewTRS.vue";
 import { M3TERS } from "@/assets/m3ters";
 
-const TOTAL = 51;
-const CARD_W = 280;
-const GAP = 24;
-const STEP = CARD_W + GAP;
-const TRANSITION_MS = 600;
-const HOLD_MS = 1200;
-const CENTER = Math.floor(TOTAL / 2);
+const VISIBLE = 9;
+const CENTER_SLOT = Math.floor(VISIBLE / 2);
+const SLOT_OFFSETS = Array.from({ length: VISIBLE }, (_, i) => i - CENTER_SLOT);
 
-const offsetX = ref(0);
+const HOLD_MS = 1400;
+const TRANSITION_MS = 500;
+
+const viewportRef = ref<HTMLElement | null>(null);
+const trackRef = ref<HTMLElement | null>(null);
+
+const progress = ref(0); // 0..1
+const step = ref(304); // fallback; measured on mount
+const centerImage = ref(0);
 const animating = ref(false);
 
-let interval: NodeJS.Timeout;
+let holdTimer: number | undefined;
+let rafId = 0;
+let ro: ResizeObserver | undefined;
 
-function opacityFor(dist: number) {
-  return [0.67, 0.45, 0.3, 0.18][Math.min(dist, 3)] ?? 0.12;
+function easeOutCubic(t: number) {
+  return 1 - Math.pow(1 - t, 3);
 }
 
-const tickCount = ref(0);
+function measureStep() {
+  const track = trackRef.value;
+  if (!track) return;
 
-// Track which index is currently in the center visually
-const visualCenterIndex = ref(CENTER);
+  const cards = track.querySelectorAll<HTMLElement>("[data-card]");
+  if (cards.length < 2) return;
 
-const cardStyles = computed(() =>
-  Array.from({ length: TOTAL }, (_, i) => {
-    const dist = Math.abs(i - visualCenterIndex.value);
-    const active = dist === 0;
+  const a = cards.item(0);
+  const b = cards.item(1);
+  if (!a || !b) return;
+
+  const aRect = a.getBoundingClientRect();
+  const bRect = b.getBoundingClientRect();
+  step.value = bRect.left - aRect.left;
+}
+
+function scheduleNext() {
+  if (holdTimer) window.clearTimeout(holdTimer);
+
+  holdTimer = window.setTimeout(startAnimation, HOLD_MS);
+}
+
+function startAnimation() {
+  if (animating.value) return;
+  animating.value = true;
+
+  const start = performance.now();
+
+  const frame = (now: number) => {
+    const t = Math.min((now - start) / TRANSITION_MS, 1);
+    progress.value = easeOutCubic(t);
+
+    if (t < 1) {
+      rafId = requestAnimationFrame(frame);
+      return;
+    }
+
+    // Commit the shift after the motion finishes.
+    animating.value = false;
+    progress.value = 0;
+    centerImage.value = (centerImage.value + 1) % M3TERS.length;
+
+    scheduleNext();
+  };
+
+  rafId = requestAnimationFrame(frame);
+}
+
+function opacityFor(dist: number) {
+  if (dist <= 0) return 0.67;
+  if (dist < 1) return 0.67 - dist * 0.49;
+  if (dist < 2) return 0.45 - (dist - 1) * 0.15;
+  if (dist < 3) return 0.3 - (dist - 2) * 0.12;
+  return 0.18;
+}
+
+const visibleCards = computed(() =>
+  SLOT_OFFSETS.map((slotOffset) => {
+    const imageIndex =
+      (centerImage.value + slotOffset + M3TERS.length) % M3TERS.length;
+
+    const x = slotOffset - progress.value;
+
+    const dist = Math.abs(x);
+
+    // FIX: stable identity, not interpolated identity
+    const isCenter = slotOffset === 0 && progress.value < 0.5;
+
+    const focus = isCenter ? 1 : 0;
+
     return {
-      opacity: opacityFor(dist),
-      background: active
+      imageUrl: M3TERS[imageIndex]!,
+
+      opacity: isCenter ? 0.67 : opacityFor(Math.round(dist)),
+
+      background: isCenter
         ? "linear-gradient(rgb(22,22,22) 0%, rgb(62,62,62) 100%)"
         : "linear-gradient(rgba(22,22,22,0.7) 0%, rgba(62,62,62,0.7) 100%)",
-      border: active
+
+      border: isCenter
         ? "2px solid rgba(255,255,255,0.3)"
         : "1px solid rgba(255,255,255,0.1)",
-      boxShadow: active
+
+      boxShadow: isCenter
         ? "rgb(0,0,0) 0px 0px 77.4px inset"
         : "rgb(0,0,0) 0px 0px 0px inset",
-      transform: active ? "scale(1.03)" : "scale(1)",
+
+      transform: `scale(${isCenter ? 1.03 : 1})`,
     };
   }),
 );
+const trackStyle = computed(() => ({
+  transform: `translateX(${-progress.value * step.value}px)`,
+  willChange: "transform",
+}));
 
-const stripTransform = computed(() => `translateX(${offsetX.value}px)`);
-const stripTransition = computed(() =>
-  animating.value
-    ? `transform ${TRANSITION_MS}ms cubic-bezier(0.22, 1, 0.36, 1)`
-    : "none",
-);
+onMounted(async () => {
+  await nextTick();
+  measureStep();
 
-function tick() {
-  animating.value = true;
-  offsetX.value -= STEP;
+  ro = new ResizeObserver(() => {
+    measureStep();
+  });
 
-  // Immediately update the visual center to the next card
-  // This removes styles from the card moving left out of center
-  visualCenterIndex.value = CENTER + tickCount.value + 1;
+  if (viewportRef.value) {
+    ro.observe(viewportRef.value);
+  }
 
-  setTimeout(() => {
-    animating.value = false;
-    tickCount.value += 1;
-
-    if (tickCount.value > TOTAL - 1 - CENTER) {
-      tickCount.value = 0;
-      offsetX.value = 0;
-      visualCenterIndex.value = CENTER;
-    }
-    // visualCenterIndex is already set correctly from above
-  }, TRANSITION_MS + 50);
-}
-
-onMounted(() => {
-  interval = setInterval(tick, TRANSITION_MS + HOLD_MS);
+  scheduleNext();
 });
-onUnmounted(() => clearInterval(interval));
+
+onBeforeUnmount(() => {
+  if (holdTimer) window.clearTimeout(holdTimer);
+  if (rafId) cancelAnimationFrame(rafId);
+  ro?.disconnect();
+});
 </script>
 
 <template>
   <section
     class="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8"
   >
-    <div class="absolute inset-0 flex items-center justify-center">
+    <div
+      ref="viewportRef"
+      class="absolute inset-0 flex items-center justify-center overflow-hidden"
+    >
       <div
+        ref="trackRef"
         class="flex items-center gap-4 sm:gap-5 lg:gap-6"
-        :style="{ transform: stripTransform, transition: stripTransition }"
+        :style="trackStyle"
       >
         <div
-          v-for="(style, i) in cardStyles"
+          v-for="(card, i) in visibleCards"
+          :key="i"
+          data-card
           class="h-fit w-35 shrink-0 sm:w-50 lg:w-70"
           :style="{
-            opacity: style.opacity,
-            background: style.background,
-            border: style.border,
-            boxShadow: style.boxShadow,
-            transform: style.transform,
+            opacity: card.opacity,
+            background: card.background,
+            border: card.border,
+            boxShadow: card.boxShadow,
+            transform: card.transform,
             borderRadius: '38px',
-            transition:
-              'opacity 500ms, transform 500ms, border 500ms, box-shadow 500ms, background 500ms',
           }"
         >
-          <PreviewTRS
-            name=""
-            :image-url="M3TERS[i % M3TERS.length]"
-            meter-id="0"
-          />
+          <PreviewTRS name="" :image-url="card.imageUrl" meter-id="0" />
         </div>
       </div>
     </div>
+
     <div
       class="absolute inset-0 flex items-center justify-center bg-background/50"
     ></div>
 
-    <div class="relative z-10 mx-auto max-w-5xl translate-y-38">
+    <div class="relative z-10 mx-auto max-w-5xl translate-y-35">
       <div class="flex flex-col items-center gap-4 text-center">
         <FlipText
           pretext="Energy has a Return;"
-          :words="['Tokenize', 'Swap', 'Hodl', 'Earn']"
+          :words="['Swap', 'Hodl', 'Earn']"
         />
-
         <p
-          class="max-w-2xl md:text-lg font-semibold leading-normal text-[14px] lg:max-w-3xl text-white/70"
+          class="max-w-2xl text-[14px] font-semibold leading-normal text-white/70 md:text-lg lg:max-w-3xl"
         >
           Derive real yield from energy infra on the m3tering protocol
         </p>
-        <div class="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
-          <RouterLink
-            to="/discover"
-            class="w-full sm:w-auto px-8 py-4 bg-primary-container text-on-primary-container font-headline font-bold text-lg rounded-lg tracking-wider uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
-          >
-            <span>Launch App</span>
-            <Rocket />
-          </RouterLink>
-          <RouterLink
-            to="#docs"
-            class="w-full sm:w-auto px-8 py-4 bg-transparent border border-outline-variant text-primary-container font-headline font-bold text-lg rounded tracking-wider uppercase hover:bg-surface-container-high transition-all duration-300 flex items-center justify-center gap-2"
-          >
-            <span>Docs</span>
-            <ArrowRight />
-          </RouterLink>
-        </div>
       </div>
     </div>
   </section>
