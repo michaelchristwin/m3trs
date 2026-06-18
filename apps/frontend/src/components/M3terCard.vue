@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { m3terImageUrl, selectedCardClass } from "@/utils/constants";
+import { CircleCheck } from "@lucide/vue";
 
 const props = defineProps<{
   tokenId: bigint;
@@ -33,9 +34,7 @@ function onKeyDown(e: KeyboardEvent) {
     @keydown="onKeyDown"
   >
     <div v-if="selected" class="absolute top-2 right-2 text-primary-container">
-      <span class="material-symbols-outlined" aria-hidden="true"
-        >check_circle</span
-      >
+      <CircleCheck />
     </div>
 
     <div class="w-full h-32 p-2 rounded flex justify-center items-center">

@@ -6,6 +6,7 @@ import { useConnection } from "@wagmi/vue";
 import M3terHead from "@/assets/m3ters/0.webp";
 import { useAppKit } from "@reown/appkit/vue";
 import { onMounted, ref, watch, onUnmounted, defineAsyncComponent } from "vue";
+import LogosMarquee from "@/components/LogosMarquee.vue";
 const AnimatedNumbers = defineAsyncComponent(
   () => import("@/components/AnimatedNumbers.vue"),
 );
@@ -255,6 +256,7 @@ onMounted(() => {
         </div>
       </div>
     </section>
+    <LogosMarquee />
   </main>
   <!-- Footer -->
   <footer

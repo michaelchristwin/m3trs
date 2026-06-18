@@ -6,7 +6,7 @@
     <span class="flip-wrapper" :style="{ width: flipWidth + 'px' }">
       <button
         @click="gotoDiscover"
-        class="w-full sm:w-auto px-8 py-4 bg-primary-container text-on-primary-container font-headline font-bold text-lg rounded-lg tracking-wider uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] gap-2"
+        class="w-full sm:w-auto px-8 py-4 bg-primary-container text-on-primary-container font-headline font-bold text-lg rounded-lg tracking-wider uppercase gap-2 cursor-pointer select-none shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02] hover:brightness-105 active:scale-[0.98] active:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
       >
         <span
           class="flip-inner text-glow transition-all"
