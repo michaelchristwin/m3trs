@@ -19,6 +19,5 @@ export {
   Arkreen,
   PowerLedger,
   SolarFoundation,
-  TAS,
   partnerLogos,
 };

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { partnerLogos } from "@/assets/logos";
+
+const marqueeLogos = [...partnerLogos, ...partnerLogos, ...partnerLogos];
 </script>
 
 <template>
@@ -7,13 +9,13 @@ import { partnerLogos } from "@/assets/logos";
     class="w-full overflow-hidden bg-surface-container-low py-14 select-none"
   >
     <p
-      class="mb-10 text-center text-xs font-semibold tracking-[0.2em] text-primary-container uppercase"
+      class="mb-8 text-center text-xs font-semibold tracking-[0.2em] text-primary-container uppercase"
     >
       Trusted by teams at
     </p>
 
     <div
-      class="relative overflow-hidden"
+      class="relative overflow-hidden h-100 flex justify-center items-center"
       style="
         mask-image: linear-gradient(
           to right,
@@ -32,46 +34,12 @@ import { partnerLogos } from "@/assets/logos";
       "
     >
       <div class="marquee-track">
-        <!-- first set -->
         <div class="marquee-group">
-          <div
-            v-for="(logo, index) in partnerLogos"
-            :key="`a-${index}`"
-            class="logo"
-          >
+          <div v-for="(logo, index) in marqueeLogos" :key="index" class="logo">
             <img
               :src="logo"
               alt=""
-              class="max-h-8 max-w-28 w-auto h-auto object-contain"
-            />
-          </div>
-        </div>
-
-        <!-- duplicate set -->
-        <div class="marquee-group" aria-hidden="true">
-          <div
-            v-for="(logo, index) in partnerLogos"
-            :key="`b-${index}`"
-            class="logo"
-          >
-            <img
-              :src="logo"
-              alt=""
-              class="max-h-8 max-w-28 w-auto h-auto object-contain"
-            />
-          </div>
-        </div>
-        <!-- duplicate set -->
-        <div class="marquee-group" aria-hidden="true">
-          <div
-            v-for="(logo, index) in partnerLogos"
-            :key="`b-${index}`"
-            class="logo"
-          >
-            <img
-              :src="logo"
-              alt=""
-              class="max-h-8 max-w-28 w-auto h-auto object-contain"
+              class="h-17 w-auto object-contain grayscale"
             />
           </div>
         </div>
@@ -94,8 +62,8 @@ import { partnerLogos } from "@/assets/logos";
 }
 
 .logo {
-  width: 8rem;
-  height: 2.5rem;
+  width: 16rem;
+  height: 7rem;
   flex-shrink: 0;
   display: flex;
   align-items: center;
