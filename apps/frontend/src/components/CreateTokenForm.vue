@@ -7,9 +7,11 @@ import { useMutation, useQuery } from "@tanstack/vue-query";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import type { BaseError } from "viem";
-import { computed, defineAsyncComponent } from "vue";
+import { computed, defineAsyncComponent, ref } from "vue";
 import PreviewTRS from "./PreviewTRS.vue";
 import { format, fromUnixTime, parse } from "date-fns";
+import { Loader } from "@lucide/vue";
+import { m3terImageUrl } from "@/utils/constants.ts";
 
 const FormField = defineAsyncComponent(
   () => import("@/components/FormField.vue"),
@@ -17,12 +19,7 @@ const FormField = defineAsyncComponent(
 const FormTextarea = defineAsyncComponent(
   () => import("@/components/FormTextarea.vue"),
 );
-const M3terCard = defineAsyncComponent(
-  () => import("@/components/M3terCard.vue"),
-);
-const M3terCardSkeleton = defineAsyncComponent(
-  () => import("@/components/M3terCardSkeleton.vue"),
-);
+
 const modalState = defineModel<ModalState>("modalState");
 const isModalOpen = defineModel<boolean>("isModalOpen");
 interface FormProps {
@@ -83,9 +80,21 @@ const { mutateAsync, isPending: mutationIsPending } = useMutation({
   mutationKey: ["approveAndMint"],
 });
 
+const selectedTokenId = ref<bigint | undefined>(undefined);
+
 const onSelectNFT = (tokenId: bigint) => {
+  if (selectedTokenId.value === tokenId) {
+    // Unselect
+    selectedTokenId.value = undefined;
+    setFieldValue("tokenId", undefined);
+    return;
+  }
+
+  // Select
+  selectedTokenId.value = tokenId;
   setFieldValue("tokenId", tokenId);
 };
+
 const convertToLocaleDate = (dateStr: string) => {
   const date = new Date(dateStr);
   return date.toLocaleDateString("en-US");
@@ -134,7 +143,7 @@ const { data: metadata } = useQuery({
 <template>
   <form
     novalidate
-    class="grid grid-cols-1 lg:grid-cols-12 gap-8"
+    class="grid grid-cols-1 md:grid-cols-12 gap-8"
     @submit.prevent="mutateAsync"
   >
     <!-- Left Column: Form Steps -->
@@ -152,12 +161,19 @@ const { data: metadata } = useQuery({
           Select M3TER NFT
         </h2>
         <div
-          class="grid grid-cols-1 gap-4 md:grid-cols-2"
+          class="grid grid-cols-6 gap-1 md:grid-cols-8"
           role="group"
           aria-label="Select an NFT"
         >
           <template v-if="isLoading">
-            <M3terCardSkeleton v-for="i in 2" :key="i" />
+            <div class="col-span-full flex justify-center items-center">
+              <p
+                class="text-primary-container text-xs italic inline-flex items-center gap-1"
+              >
+                <span>Loading NFTs...</span>
+                <Loader :size="14" class="animate-spin" />
+              </p>
+            </div>
           </template>
 
           <div
@@ -175,14 +191,39 @@ const { data: metadata } = useQuery({
             You have no M3ters.
           </div>
 
-          <M3terCard
+          <!-- <M3terCard
             v-else
-            v-for="nft in data.nfts"
+           
             :key="nft.identifier"
             :token-id="BigInt(nft.identifier)"
             :selected="values.tokenId === BigInt(nft.identifier)"
             @select="onSelectNFT"
-          />
+          /> -->
+          <template v-else>
+            <div
+              v-for="nft in data.nfts"
+              :key="nft.identifier"
+              @click="onSelectNFT(BigInt(nft.identifier))"
+              class="relative w-10 h-10 md:w-15 md:h-15 rounded-lg overflow-hidden cursor-pointer border-2 transition-all duration-300 hover:scale-110"
+              :class="
+                selectedTokenId === BigInt(nft.identifier)
+                  ? 'border-primary-container bg-primary-container/20'
+                  : 'border-transparent'
+              "
+            >
+              <!-- Colored overlay -->
+              <div
+                v-if="selectedTokenId === BigInt(nft.identifier)"
+                class="absolute inset-0 bg-primary-container/20 pointer-events-none"
+              />
+
+              <img
+                :src="m3terImageUrl"
+                :alt="nft.identifier"
+                class="w-full h-full object-cover"
+              />
+            </div>
+          </template>
         </div>
       </section>
       <!-- Step 2: Configure Token -->
