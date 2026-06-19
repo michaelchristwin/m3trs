@@ -9,13 +9,15 @@ const marqueeLogos = [...partnerLogos, ...partnerLogos, ...partnerLogos];
     class="w-full overflow-hidden bg-surface-container-low py-14 select-none"
   >
     <p
-      class="mb-8 text-center text-xs font-semibold tracking-[0.2em] text-primary-container uppercase"
+      class="font-headline text-3xl md:text-4xl font-semibold tracking-tight uppercase mb-8 text-center"
     >
-      Trusted by teams at
+      Powering
+      <span class="text-primary-container">InfraFi</span>
+      Ecosystem
     </p>
 
     <div
-      class="relative overflow-hidden h-100 flex justify-center items-center"
+      class="relative overflow-hidden md:h-55 h-50 flex justify-center items-center"
       style="
         mask-image: linear-gradient(
           to right,
@@ -39,7 +41,7 @@ const marqueeLogos = [...partnerLogos, ...partnerLogos, ...partnerLogos];
             <img
               :src="logo"
               alt=""
-              class="h-35 w-auto object-contain grayscale"
+              class="md:h-35 h-20 w-auto object-contain grayscale opacity-70"
             />
           </div>
         </div>
