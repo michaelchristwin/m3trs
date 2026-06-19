@@ -11,7 +11,6 @@ const partnerLogos = [
   Arkreen,
   PowerLedger,
   SolarFoundation,
-  TAS,
 ];
 export {
   Helios,
@@ -20,4 +19,5 @@ export {
   PowerLedger,
   SolarFoundation,
   partnerLogos,
+  TAS,
 };

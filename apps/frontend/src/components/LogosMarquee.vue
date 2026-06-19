@@ -39,7 +39,7 @@ const marqueeLogos = [...partnerLogos, ...partnerLogos, ...partnerLogos];
             <img
               :src="logo"
               alt=""
-              class="h-17 w-auto object-contain grayscale"
+              class="h-35 w-auto object-contain grayscale"
             />
           </div>
         </div>
@@ -62,8 +62,8 @@ const marqueeLogos = [...partnerLogos, ...partnerLogos, ...partnerLogos];
 }
 
 .logo {
-  width: 16rem;
-  height: 7rem;
+  width: 19rem;
+  height: 10rem;
   flex-shrink: 0;
   display: flex;
   align-items: center;
