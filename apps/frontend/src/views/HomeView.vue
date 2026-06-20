@@ -1,34 +1,13 @@
 <script setup lang="ts">
-import { useRouter } from "vue-router";
 import TRS_SVG from "@/assets/trs.svg";
 import Hero from "@/components/Hero.vue";
-import { useConnection } from "@wagmi/vue";
 import M3terHead from "@/assets/m3ters/0.webp";
-import { useAppKit } from "@reown/appkit/vue";
-import { ArrowRight, Rocket } from "@lucide/vue";
-import { onMounted, ref, watch, onUnmounted, defineAsyncComponent } from "vue";
+import { ArrowRight } from "@lucide/vue";
+import { onMounted, ref, onUnmounted, defineAsyncComponent } from "vue";
 import LogosMarquee from "@/components/LogosMarquee.vue";
 const AnimatedNumbers = defineAsyncComponent(
   () => import("@/components/AnimatedNumbers.vue"),
 );
-const { open } = useAppKit();
-const { isConnected } = useConnection();
-const router = useRouter();
-
-const launchApp = () => {
-  if (isConnected.value) {
-    return router.push({ name: "overview" });
-  }
-
-  open();
-
-  const stop = watch(isConnected, (connected) => {
-    if (connected) {
-      stop();
-      router.push({ name: "overview" });
-    }
-  });
-};
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 
@@ -62,7 +41,7 @@ function tick(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D): void {
   const W = canvas.width;
   const H = canvas.height;
 
-  ctx.fillStyle = "rgba(13, 13, 13, 0.28)";
+  ctx.fillStyle = "rgb(19, 19, 19)";
   ctx.fillRect(0, 0, W, H);
 
   ctx.save();
@@ -143,20 +122,67 @@ onMounted(() => {
         href="#"
         >Docs</a
       >
-      <button
-        @click="launchApp"
+      <RouterLink
+        to="/discover"
         class="bg-primary-container text-on-primary-container px-6 py-2 rounded font-label text-sm font-bold tracking-wider hover:bg-primary transition-colors glow-primary"
       >
         LAUNCH APP
-      </button>
+      </RouterLink>
     </div>
   </nav>
   <!-- Main Content -->
   <main class="grow pt-24">
     <!-- Hero Section -->
     <Hero />
+    <section class="py-24 px-6">
+      <div class="w-full mx-auto flex flex-col items-center text-center">
+        <div class="conversion-banner">
+          <canvas ref="canvasRef" class="conversion-canvas" />
+
+          <div class="conversion-content">
+            <img
+              :src="M3terHead"
+              alt="M3terHead #0"
+              class="md:h-70 h-40 w-auto object-cover mr-5 md:mr-15"
+            />
+
+            <div class="flow-dots">
+              <span
+                v-for="i in 5"
+                :key="i"
+                class="flow-dot"
+                :style="{ animationDelay: `${i * 0.2}s` }"
+              />
+            </div>
+
+            <img
+              :src="TRS_SVG"
+              alt="TRS"
+              class="md:h-64 h-34 w-auto object-cover ml-14 md:ml-24"
+            />
+          </div>
+        </div>
+        <div class="flex flex-col items-center gap-4 mb-16">
+          <h2
+            class="font-headline text-2xl md:text-3xl font-semibold tracking-tight uppercase"
+          >
+            Tokenize <span class="text-primary-container">yield</span> from
+            <span class="text-primary-container">M3ters</span>
+          </h2>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
+          <RouterLink
+            to="#docs"
+            class="w-full sm:w-auto px-8 py-4 bg-transparent border border-outline-variant text-primary-container font-headline font-bold text-lg rounded tracking-wider uppercase hover:bg-surface-container-high transition-all duration-300 flex items-center justify-center gap-2"
+          >
+            <span>Read the Docs</span>
+            <ArrowRight />
+          </RouterLink>
+        </div>
+      </div>
+    </section>
     <section
-      class="relative z-10 max-w-4xl mx-auto flex flex-col items-center gap-8 my-40"
+      class="relative z-10 max-w-4xl mx-auto flex flex-col items-center gap-8 my-55 min-h-80"
     >
       <!-- Technical Micro-Data -->
       <h2
@@ -204,60 +230,6 @@ onMounted(() => {
       </div>
     </section>
 
-    <section class="py-24 px-6 bg-surface-container-lowest">
-      <div class="w-full mx-auto flex flex-col items-center text-center">
-        <div class="conversion-banner">
-          <canvas ref="canvasRef" class="conversion-canvas" />
-
-          <div class="conversion-content">
-            <img
-              :src="M3terHead"
-              alt="M3terHead #0"
-              class="md:h-70 h-40 w-auto object-cover mr-5 md:mr-15"
-            />
-
-            <div class="flow-dots">
-              <span
-                v-for="i in 5"
-                :key="i"
-                class="flow-dot"
-                :style="{ animationDelay: `${i * 0.2}s` }"
-              />
-            </div>
-
-            <img
-              :src="TRS_SVG"
-              alt="TRS"
-              class="md:h-64 h-34 w-auto object-cover ml-14 md:ml-24"
-            />
-          </div>
-        </div>
-        <div class="flex flex-col items-center gap-4 mb-16">
-          <h2
-            class="font-headline text-2xl md:text-4xl font-semibold tracking-tight uppercase"
-          >
-            Tokenize <span class="text-primary-container">yield</span> from
-            <span class="text-primary-container">M3ters</span>
-          </h2>
-        </div>
-        <div class="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
-          <RouterLink
-            to="/discover"
-            class="w-full sm:w-auto px-8 py-4 bg-primary-container text-on-primary-container font-headline font-bold text-lg rounded-lg tracking-wider uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
-          >
-            <span>Launch App</span>
-            <Rocket />
-          </RouterLink>
-          <RouterLink
-            to="#docs"
-            class="w-full sm:w-auto px-8 py-4 bg-transparent border border-outline-variant text-primary-container font-headline font-bold text-lg rounded tracking-wider uppercase hover:bg-surface-container-high transition-all duration-300 flex items-center justify-center gap-2"
-          >
-            <span>Docs</span>
-            <ArrowRight />
-          </RouterLink>
-        </div>
-      </div>
-    </section>
     <LogosMarquee />
   </main>
   <!-- Footer -->

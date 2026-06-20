@@ -175,7 +175,11 @@ const { data, isLoading } = useQuery({
           <Image :size="18" class="text-on-surface/50" />
         </div>
         <div class="p-6">
-          <img :src="data.image" alt="TRS image" class="w-auto h-150 mx-auto" />
+          <img
+            :src="data.image"
+            alt="TRS image"
+            class="w-100 md:w-80 h-auto mx-auto"
+          />
         </div>
       </div>
     </div>

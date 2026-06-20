@@ -25,11 +25,11 @@ const route = useRoute();
 const router = useRouter();
 
 useHead({
-  title: `Holdings | Token ${route.params.tokenName}`,
+  title: `Holdings | Token ${route.query.tokenName}`,
   meta: [
     {
       name: "description",
-      content: `Details for token ${route.params.tokenName}`,
+      content: `Details for token ${route.query.tokenName}`,
     },
   ],
 });
@@ -44,33 +44,33 @@ const handleBack = () => {
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
 const { data, isLoading } = useQuery({
-  queryKey: ["getData", route.query.tokenId],
+  queryKey: ["getData", route.params.tokenId],
   queryFn: async () => {
     const result = await readContracts(wagmiAdapter.wagmiConfig, {
       contracts: [
         {
           ...TRS,
           functionName: "token",
-          args: [BigInt(route.query.tokenId as string)],
+          args: [BigInt(route.params.tokenId as string)],
         },
         {
           ...TRS,
           functionName: "accRevenuePerToken",
-          args: [BigInt(route.query.tokenId as string)],
+          args: [BigInt(route.params.tokenId as string)],
         },
         {
           ...TRS,
           functionName: "revenue",
           args: [
             checksumAddress(address),
-            BigInt(route.query.tokenId as string),
+            BigInt(route.params.tokenId as string),
           ],
         },
       ],
     });
     const metadata = await trpc.opensea.getNftMetadata.query({
       contractAddress: TRS.address,
-      tokenId: route.query.tokenId as string,
+      tokenId: route.params.tokenId as string,
     });
 
     if (result[0].error) {
@@ -168,9 +168,8 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
         <h1
           class="font-headline font-bold text-3xl md:text-5xl text-on-surface tracking-tight"
         >
-          Token
           <span class="font-mono text-primary">{{
-            $route.params.tokenName
+            $route.query.tokenName
           }}</span>
         </h1>
         <p
@@ -223,7 +222,11 @@ const { isLoading: isConfirming } = useWaitForTransactionReceipt({
           <Image :size="18" class="text-on-surface/50" />
         </div>
         <div class="p-6">
-          <img :src="data.image" alt="TRS image" class="w-auto h-150 mx-auto" />
+          <img
+            :src="data.image"
+            alt="TRS image"
+            class="w-100 md:w-80 h-auto mx-auto"
+          />
         </div>
       </div>
     </div>

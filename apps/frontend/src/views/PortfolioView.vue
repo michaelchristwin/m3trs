@@ -30,6 +30,7 @@ const holdings = computed(() => {
     }) ?? []
   );
 });
+
 const { data: bonds, isLoading: isLoadingBonds } = useQuery({
   queryKey: ["getBonds", address, collections.bonds],
   queryFn: async () =>
@@ -126,7 +127,7 @@ const { data: bonds, isLoading: isLoadingBonds } = useQuery({
   <div class="md:flex block justify-between items-end my-8">
     <div>
       <h1
-        class="font-headline text-3xl font-bold tracking-tight text-on-surface"
+        class="font-headline text-3xl md:text-4xl font-bold tracking-tight text-on-surface"
       >
         Yield Tokens
       </h1>

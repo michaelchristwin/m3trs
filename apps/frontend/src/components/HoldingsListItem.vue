@@ -14,10 +14,11 @@ const router = useRouter();
 const address = "0xb2403f83C23748b26B06173db7527383482E8c5a";
 
 const openTokenDetails = (tokenName: string) => {
+  console.log(tokenName);
   router.push({
-    path: `/portfolio/${tokenName}`,
+    path: `/portfolio/${props.tokenId}`,
     query: {
-      tokenId: props.tokenId,
+      tokenName: tokenName,
     },
   });
 };

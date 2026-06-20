@@ -44,7 +44,7 @@ const router = createRouter({
               component: () => import("@/views/PortfolioView.vue"),
             },
             {
-              path: ":tokenName",
+              path: ":tokenId",
               name: "token details",
               component: () => import("@/views/TokenDetailsView.vue"),
             },

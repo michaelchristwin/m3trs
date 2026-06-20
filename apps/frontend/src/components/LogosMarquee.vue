@@ -5,16 +5,14 @@ const marqueeLogos = [...partnerLogos, ...partnerLogos, ...partnerLogos];
 </script>
 
 <template>
-  <section
-    class="w-full overflow-hidden bg-surface-container-low py-14 select-none"
-  >
-    <p
-      class="font-headline text-2xl md:text-4xl font-semibold tracking-tight uppercase md:mb-8 mb-4 text-center"
+  <section class="w-full overflow-hidden py-14 select-none">
+    <h3
+      class="font-headline text-2xl md:text-3xl font-semibold tracking-tight uppercase md:mb-8 mb-4 text-center"
     >
       Powering
       <span class="text-primary-container">InfraFi</span>
       Ecosystem
-    </p>
+    </h3>
 
     <div
       class="relative overflow-hidden md:h-55 h-50 flex justify-center items-center"
