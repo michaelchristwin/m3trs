@@ -5,6 +5,7 @@ import Hero from "@/components/Hero.vue";
 import { useConnection } from "@wagmi/vue";
 import M3terHead from "@/assets/m3ters/0.webp";
 import { useAppKit } from "@reown/appkit/vue";
+import { ArrowRight, Rocket } from "@lucide/vue";
 import { onMounted, ref, watch, onUnmounted, defineAsyncComponent } from "vue";
 import LogosMarquee from "@/components/LogosMarquee.vue";
 const AnimatedNumbers = defineAsyncComponent(
@@ -165,7 +166,7 @@ onMounted(() => {
         <span class="text-primary-container text-glow">motion</span>
       </h2>
       <div
-        class="mt-5 grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-3xl border-t border-surface-container-high pt-8"
+        class="mt-5 grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-3xl border-t border-surface-container-high pt-8"
       >
         <div class="flex flex-col items-center gap-1">
           <span
@@ -175,7 +176,7 @@ onMounted(() => {
           <AnimatedNumbers
             prefix="$"
             :value="24000000"
-            class-name="font-mono text-xl md:text-[30px] text-on-surface font-bold"
+            class-name="font-mono text-[30px] text-on-surface font-bold"
           />
         </div>
         <div class="flex flex-col items-center gap-1">
@@ -186,7 +187,7 @@ onMounted(() => {
           <AnimatedNumbers
             prefix="$"
             :value="10500000"
-            class-name="font-mono text-xl md:text-[30px] text-on-surface font-bold"
+            class-name="font-mono text-[30px] text-on-surface font-bold"
           />
         </div>
 
@@ -197,7 +198,7 @@ onMounted(() => {
           >
           <AnimatedNumbers
             :value="200000"
-            class-name="font-mono text-xl md:text-[30px] text-on-surface font-bold"
+            class-name="font-mono text-[30px] text-on-surface font-bold"
           />
         </div>
       </div>
@@ -212,7 +213,7 @@ onMounted(() => {
             <img
               :src="M3terHead"
               alt="M3terHead #0"
-              class="h-70 w-auto object-cover mr-15"
+              class="md:h-70 h-40 w-auto object-cover mr-5 md:mr-15"
             />
 
             <div class="flow-dots">
@@ -227,13 +228,13 @@ onMounted(() => {
             <img
               :src="TRS_SVG"
               alt="TRS"
-              class="h-64 w-auto object-cover ml-24"
+              class="md:h-64 h-34 w-auto object-cover ml-14 md:ml-24"
             />
           </div>
         </div>
         <div class="flex flex-col items-center gap-4 mb-16">
           <h2
-            class="font-headline text-3xl md:text-4xl font-semibold tracking-tight uppercase"
+            class="font-headline text-2xl md:text-4xl font-semibold tracking-tight uppercase"
           >
             Tokenize <span class="text-primary-container">yield</span> from
             <span class="text-primary-container">M3ters</span>

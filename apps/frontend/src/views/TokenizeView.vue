@@ -22,7 +22,7 @@ const { mintTokens, currentStep, mintTxStatus, amount, externalTokenId } =
 </script>
 
 <template>
-  <div class="max-w-4xl mx-auto">
+  <div class="max-w-4xl mx-auto mb-15">
     <!-- Header -->
     <div class="mb-12">
       <h1

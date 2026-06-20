@@ -9,7 +9,7 @@ const marqueeLogos = [...partnerLogos, ...partnerLogos, ...partnerLogos];
     class="w-full overflow-hidden bg-surface-container-low py-14 select-none"
   >
     <p
-      class="font-headline text-3xl md:text-4xl font-semibold tracking-tight uppercase mb-8 text-center"
+      class="font-headline text-2xl md:text-4xl font-semibold tracking-tight uppercase md:mb-8 mb-4 text-center"
     >
       Powering
       <span class="text-primary-container">InfraFi</span>
@@ -35,13 +35,17 @@ const marqueeLogos = [...partnerLogos, ...partnerLogos, ...partnerLogos];
         );
       "
     >
-      <div class="marquee-track">
-        <div class="marquee-group">
-          <div v-for="(logo, index) in marqueeLogos" :key="index" class="logo">
+      <div class="marquee-track flex w-max">
+        <div class="flex shrink-0 md:gap-12 gap-6">
+          <div
+            v-for="(logo, index) in marqueeLogos"
+            :key="index"
+            class="md:w-76 md:h-40 w-50 h-20 shrink-0 flex items-center justify-center"
+          >
             <img
               :src="logo"
-              alt=""
-              class="md:h-35 h-20 w-auto object-contain grayscale opacity-70"
+              :alt="logo"
+              class="md:h-35 h-15 w-auto object-contain grayscale opacity-70"
             />
           </div>
         </div>
@@ -52,24 +56,7 @@ const marqueeLogos = [...partnerLogos, ...partnerLogos, ...partnerLogos];
 
 <style scoped>
 .marquee-track {
-  display: flex;
-  width: max-content;
   animation: marquee 28s linear infinite;
-}
-
-.marquee-group {
-  display: flex;
-  flex-shrink: 0;
-  gap: 3rem; /* gap-12 */
-}
-
-.logo {
-  width: 19rem;
-  height: 10rem;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 @keyframes marquee {

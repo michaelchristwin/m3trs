@@ -136,7 +136,7 @@ const { data: bonds, isLoading: isLoadingBonds } = useQuery({
     </div>
   </div>
   <!-- High Density Data Table (No Lines, Tonal Layering) -->
-  <div class="bg-surface-container-lowest rounded-lg p-1">
+  <div class="bg-surface-container-lowest rounded-lg p-1 mb-10">
     <!-- Table Header -->
     <div
       class="hidden md:grid grid-cols-11 gap-4 px-6 py-3 bg-surface-container-highest rounded-t font-headline text-xs uppercase tracking-widest text-on-surface-variant items-center"
@@ -211,29 +211,4 @@ const { data: bonds, isLoading: isLoadingBonds } = useQuery({
       <p>You have no holdings yet</p>
     </div>
   </div>
-  <!-- Terminal Output / Log Area (Decorative industrial element) -->
-  <!-- <div class="mt-8 pt-6">
-    <div class="flex items-center gap-2 mb-3">
-      <span
-        class="material-symbols-outlined text-on-surface-variant text-[14px]"
-        data-icon="terminal"
-        >terminal</span
-      >
-      <span
-        class="font-mono-data text-[0.6875rem] text-on-surface-variant uppercase tracking-widest"
-        >System Log</span
-      >
-    </div>
-    <div
-      class="bg-surface-container-lowest border border-surface-variant/50 rounded p-4 font-mono-data text-xs text-on-surface-variant opacity-70"
-    >
-      <div class="mb-1">&gt;[SYSTEM] Connected to node: eu-west-data-relay</div>
-      <div class="mb-1">
-        &gt;[SYNC] Contract state verified at block 18492044
-      </div>
-      <div class="mb-1 text-primary-container">
-        &gt;[OK] Balances retrieved successfully. 0ms latency.
-      </div>
-    </div>
-  </div> -->
 </template>

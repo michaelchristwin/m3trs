@@ -1,24 +1,3 @@
-<template>
-  <h1
-    class="flex items-center gap-8 font-headline font-black text-2xl md:text-start text-center md:text-5xl lg:text-6xl tracking-tighter text-on-surface uppercase leading-[0.9]"
-  >
-    {{ pretext }} <br class="hidden md:block" />
-    <span class="flip-wrapper" :style="{ width: flipWidth + 'px' }">
-      <button
-        @click="gotoDiscover"
-        class="w-full sm:w-auto px-8 py-4 bg-primary-container text-on-primary-container font-headline font-bold text-lg rounded-lg tracking-wider uppercase gap-2 cursor-pointer select-none shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02] hover:brightness-105 active:scale-[0.98] active:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-      >
-        <span
-          class="flip-inner text-glow transition-all"
-          :class="{ flipping: isFlipping }"
-        >
-          {{ currentWord }} <ArrowRight />
-        </span>
-      </button>
-    </span>
-  </h1>
-</template>
-
 <script setup lang="ts">
 import { ArrowRight } from "@lucide/vue";
 import { ref, onMounted, onBeforeUnmount } from "vue";
@@ -69,21 +48,29 @@ onMounted(() => {
 onBeforeUnmount(() => clearInterval(timer));
 </script>
 
-<style scoped>
-.flip-wrapper {
-  display: inline-block;
-  perspective: 600px;
-  height: 1.4em;
-}
-.flip-inner {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap;
-}
-.flip-inner.flipping {
-  transform: rotateX(90deg);
-}
-</style>
+<template>
+  <h1
+    class="flex flex-wrap items-center justify-center md:justify-start gap-3 md:gap-6 font-headline font-black text-2xl md:text-5xl lg:text-6xl text-center md:text-start tracking-tighter text-on-surface uppercase leading-[0.9]"
+  >
+    {{ pretext }}
+    <span
+      class="inline-block perspective-[600px] md:h-[1.4em] h-auto"
+      :style="{ width: flipWidth + 'px' }"
+    >
+      <button
+        @click="gotoDiscover"
+        class="w-fit p-3 bg-primary-container text-on-primary-container font-headline font-bold text-lg rounded-lg tracking-wider uppercase cursor-pointer select-none shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02] hover:brightness-105 active:scale-[0.98] active:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+      >
+        <div class="inline-flex justify-center items-center">
+          <span
+            class="flex items-center justify-center whitespace-nowrap transform-3d transition-transform duration-1000 ease-in-out text-glow"
+            :class="{ 'transform-[rotateX(90deg)]': isFlipping }"
+          >
+            {{ currentWord }}
+          </span>
+          <ArrowRight :size="18" />
+        </div>
+      </button>
+    </span>
+  </h1>
+</template>
