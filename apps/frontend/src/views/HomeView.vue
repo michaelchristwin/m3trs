@@ -5,6 +5,7 @@ import M3terHead from "@/assets/m3ters/0.webp";
 import { ArrowRight } from "@lucide/vue";
 import { onMounted, ref, onUnmounted, defineAsyncComponent } from "vue";
 import LogosMarquee from "@/components/LogosMarquee.vue";
+import Footer from "@/components/Footer.vue";
 const AnimatedNumbers = defineAsyncComponent(
   () => import("@/components/AnimatedNumbers.vue"),
 );
@@ -233,33 +234,7 @@ onMounted(() => {
     <LogosMarquee />
   </main>
   <!-- Footer -->
-  <footer
-    class="py-12 px-6 border-t border-surface-container-high bg-background flex flex-col items-center gap-8"
-  >
-    <!-- Trust Badge -->
-    <div
-      class="flex flex-col items-center gap-3 opacity-60 hover:opacity-100 transition-opacity"
-    >
-      <span class="material-symbols-outlined text-3xl">bolt</span>
-      <span
-        class="font-label text-xs uppercase tracking-[0.2em] text-on-surface"
-        >Powered by the M3tering Protocol</span
-      >
-    </div>
-    <div
-      class="w-full max-w-7xl flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-on-surface/40 pt-8 border-t border-surface-container-high/50"
-    >
-      <p>© 2026 M3TRS Interface. All rights reserved.</p>
-      <div class="flex gap-6">
-        <a class="hover:text-primary-container transition-colors" href="#"
-          >TERMS</a
-        >
-        <a class="hover:text-primary-container transition-colors" href="#"
-          >PRIVACY</a
-        >
-      </div>
-    </div>
-  </footer>
+  <Footer />
 </template>
 
 <style scoped>

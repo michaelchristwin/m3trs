@@ -46,17 +46,6 @@ const sidebarActiveClass =
         <span v-if="!collapsed">Portfolio</span>
       </RouterLink>
 
-      <!-- <RouterLink
-        :active-class="sidebarActiveClass"
-        :class="[
-          'flex items-center px-4 py-3 text-[#e5e2e1]/50 hover:text-[#e5e2e1] hover:bg-neutral-800 transition-all duration-200',
-          collapsed ? 'justify-center gap-0' : 'gap-3',
-        ]"
-        to="/bonds"
-      >
-        <Scroll :size="20" class="shrink-0" />
-        <span v-if="!collapsed">My Bonds</span>
-      </RouterLink> -->
       <RouterLink
         :active-class="sidebarActiveClass"
         :class="[

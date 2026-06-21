@@ -9,6 +9,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useQuery } from "@tanstack/vue-query";
 import { wagmiAdapter } from "@/config/wagmi";
 import { trpc } from "@/config/trpc-client";
+import AccrueButton from "@/components/buttons/AccrueButton.vue";
 const route = useRoute();
 const router = useRouter();
 
@@ -360,6 +361,11 @@ const { data, isLoading } = useQuery({
               >
                 Buy on OpenSea
               </a>
+              <AccrueButton
+                inner-text="Accrue Revenue"
+                :token-id="$route.params.tokenId"
+                class="flex-1 bg-transparent border-primary/30 border text-primary font-headline font-bold text-sm py-3 px-4 rounded hover:bg-primary/5 transition-all"
+              />
             </div>
           </div>
         </div>

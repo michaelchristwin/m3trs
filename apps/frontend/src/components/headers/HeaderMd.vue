@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useAppKit, useAppKitAccount } from "@reown/appkit/vue";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 const { open } = useAppKit();
 const eip155Account = useAppKitAccount({ namespace: "eip155" });
@@ -7,15 +8,10 @@ const eip155Account = useAppKitAccount({ namespace: "eip155" });
 
 <template>
   <header
-    class="fixed hidden top-0 w-full z-50 md:flex justify-between items-center px-6 h-16 bg-[#131313] backdrop-blur-md"
+    class="hidden w-full md:flex justify-between items-center h-16 bg-[#131313] backdrop-blur-md"
   >
     <div class="flex items-center gap-4">
-      <RouterLink
-        to="/discover"
-        class="text-2xl font-black text-[#00FF41] tracking-tighter font-headline uppercase"
-      >
-        M3TRS
-      </RouterLink>
+      <SidebarTrigger />
     </div>
     <div
       class="flex items-center gap-6 font-headline uppercase tracking-wider text-xs"

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import NotConnected from "@/components/NotConnected.vue";
+import Sidebar2 from "@/components/Sidebar2.vue";
 
 import { useConnection } from "@wagmi/vue";
 import { defineAsyncComponent } from "vue";
@@ -12,19 +13,19 @@ const HeaderMobile = defineAsyncComponent(
 const NavMobile = defineAsyncComponent(
   () => import("@/components/navs/NavMobile.vue"),
 );
-const Sidebar = defineAsyncComponent(() => import("@/components/Sidebar.vue"));
+
 const { isConnected } = useConnection();
 </script>
 
 <template>
-  <HeaderMd />
   <HeaderMobile />
   <div class="relative" v-if="isConnected">
-    <Sidebar />
     <NavMobile />
-    <main class="pt-24 pb-12 px-6 md:pl-72 flex-1 relative overflow-hidden">
+
+    <Sidebar2>
+      <HeaderMd />
       <RouterView />
-    </main>
+    </Sidebar2>
   </div>
   <NotConnected v-else />
 </template>
