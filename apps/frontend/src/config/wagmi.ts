@@ -7,7 +7,7 @@ export const VIEM_CHAIN = zora;
 const metadata = {
   name: "M3trs",
   description: "M3trs dev",
-  url: "https://m3trs.pages.dev",
+  url: "https://m3trs.m3ter.ing",
   icons: ["https://avatars.githubusercontent.com/u/179229932"],
 };
 
