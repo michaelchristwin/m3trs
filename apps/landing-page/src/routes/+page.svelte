@@ -1,0 +1,290 @@
+<script lang="ts">
+	import TRS_SVG from '../lib/assets/trs.svg';
+	import Hero from '../components/Hero.svelte';
+	import M3terHead from '../lib/assets/m3ters/0.webp';
+	import { ArrowRight } from '@lucide/svelte';
+	import LogosMarquee from '../components/LogosMarquee.svelte';
+	import Footer from '../components/Footer.svelte';
+	import RollingStats from '../components/RollingStats.svelte';
+	import { PUBLIC_APP_URL } from '$env/static/public';
+
+	let canvasRef = $state<HTMLCanvasElement | null>(null);
+
+	const STAR_COUNT = 120;
+	const SPEED = 10;
+
+	interface Star {
+		x: number;
+		y: number;
+		z: number;
+		pz: number;
+	}
+
+	let animFrameId: number | null = null;
+	let stars: Star[] = [];
+
+	function createStar(W: number, H: number): Star {
+		return {
+			x: (Math.random() - 0.5) * W,
+			y: (Math.random() - 0.5) * H,
+			z: Math.random() * W,
+			pz: 0
+		};
+	}
+
+	function initStars(W: number, H: number): void {
+		stars = Array.from({ length: STAR_COUNT }, () => createStar(W, H));
+	}
+
+	function tick(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D): void {
+		const W = canvas.width;
+		const H = canvas.height;
+
+		ctx.fillStyle = 'rgb(19, 19, 19)';
+		ctx.fillRect(0, 0, W, H);
+
+		ctx.save();
+		ctx.translate(W / 2, H / 2);
+
+		for (const s of stars) {
+			s.pz = s.z;
+			s.z -= SPEED;
+
+			if (s.z <= 0) {
+				Object.assign(s, createStar(W, H));
+				s.z = W;
+				s.pz = W;
+			}
+
+			const sx = (s.x / s.z) * W;
+			const sy = (s.y / s.z) * H;
+			const px = (s.x / s.pz) * W;
+			const py = (s.y / s.pz) * H;
+
+			const closeness = 1 - s.z / W;
+			const g = Math.floor(160 + closeness * 70);
+			const b = Math.floor(40 + closeness * 17);
+			const alpha = (0.3 + closeness * 0.7).toFixed(2);
+
+			ctx.beginPath();
+			ctx.moveTo(px, py);
+			ctx.lineTo(sx, sy);
+			ctx.strokeStyle = `rgba(0, ${g}, ${b}, ${alpha})`;
+			ctx.lineWidth = closeness * 2;
+			ctx.stroke();
+		}
+
+		ctx.restore();
+		animFrameId = requestAnimationFrame(() => tick(canvas, ctx));
+	}
+
+	function handleResize(canvas: HTMLCanvasElement): void {
+		canvas.width = canvas.offsetWidth;
+		canvas.height = canvas.offsetHeight;
+		initStars(canvas.width, canvas.height);
+	}
+
+	$effect(() => {
+		const canvas = canvasRef;
+		if (!canvas) return;
+		const ctx = canvas.getContext('2d');
+		if (!ctx) return;
+
+		canvas.width = canvas.offsetWidth;
+		canvas.height = canvas.offsetHeight;
+		initStars(canvas.width, canvas.height);
+
+		const ro = new ResizeObserver(() => handleResize(canvas));
+		ro.observe(canvas);
+
+		tick(canvas, ctx);
+
+		return () => {
+			if (animFrameId !== null) cancelAnimationFrame(animFrameId);
+			ro.disconnect();
+		};
+	});
+</script>
+
+<svelte:head>
+	<title>M3trs</title>
+
+	<meta name="description" content="" />
+
+	<meta name="keywords" content="hypercerts, web3, ethereum" />
+</svelte:head>
+
+<nav
+	class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-background/80 backdrop-blur-md border-b border-surface-container-high transition-colors"
+>
+	<div class="text-2xl font-black text-primary-container tracking-tighter font-headline uppercase">
+		M3TRS
+	</div>
+	<div class="flex items-center gap-6">
+		<a
+			href="https://google.com"
+			rel="noopener noreferrer external"
+			class="font-label text-sm text-on-surface/70 hover:text-primary-container transition-colors tracking-wide uppercase hidden md:block"
+		>
+			Docs
+		</a>
+		<a
+			href={PUBLIC_APP_URL}
+			target="_blank"
+			rel="noopener noreferrer external"
+			class="bg-primary-container text-on-primary-container px-6 py-2 rounded font-label text-sm font-bold tracking-wider hover:bg-primary transition-colors glow-primary"
+		>
+			LAUNCH APP
+		</a>
+	</div>
+</nav>
+
+<!-- Main Content -->
+<main class="grow pt-24">
+	<!-- Hero Section -->
+	<Hero />
+
+	<section class="py-24 px-6">
+		<div class="w-full mx-auto flex flex-col items-center text-center">
+			<div class="conversion-banner">
+				<canvas bind:this={canvasRef} class="conversion-canvas"></canvas>
+
+				<div class="conversion-content">
+					<img
+						src={M3terHead}
+						alt="M3terHead #0"
+						class="md:h-70 h-40 w-auto object-cover mr-5 md:mr-15"
+					/>
+
+					<div class="flow-dots">
+						{#each Array.from({ length: 5 }), i (i)}
+							<span class="flow-dot" style:animation-delay={`${(i + 1) * 0.2}s`}></span>
+						{/each}
+					</div>
+
+					<img src={TRS_SVG} alt="TRS" class="md:h-64 h-34 w-auto object-cover ml-14 md:ml-24" />
+				</div>
+			</div>
+
+			<div class="flex flex-col items-center gap-4 mb-16">
+				<h2 class="font-headline text-2xl md:text-3xl font-semibold tracking-tight uppercase">
+					Tokenize <span class="text-primary-container">yield</span> from
+					<span class="text-primary-container">M3ters</span>
+				</h2>
+			</div>
+
+			<div class="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
+				<a
+					href="#docs"
+					class="w-full sm:w-auto px-8 py-4 bg-transparent border border-outline-variant text-primary-container font-headline font-bold text-lg rounded tracking-wider uppercase hover:bg-surface-container-high transition-all duration-300 flex items-center justify-center gap-2"
+				>
+					<span>Read the Docs</span>
+					<ArrowRight />
+				</a>
+			</div>
+		</div>
+	</section>
+
+	<section class="relative z-10 max-w-4xl mx-auto flex flex-col items-center gap-8 my-55 min-h-80">
+		<h2 class="font-headline text-3xl md:text-4xl font-semibold tracking-tight uppercase">
+			Witness Yield in
+			<span class="text-primary-container text-glow">motion</span>
+		</h2>
+
+		<div
+			class="mt-5 grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-3xl border-t border-surface-container-high pt-8"
+		>
+			<div class="flex flex-col items-center gap-1">
+				<span class="font-label text-xs text-on-surface/50 tracking-widest uppercase">
+					Total Volume
+				</span>
+				<RollingStats
+					prefix="$"
+					value={24000000}
+					class="font-mono text-[30px] text-on-surface font-bold"
+				/>
+			</div>
+
+			<div class="flex flex-col items-center gap-1">
+				<span class="font-label text-xs text-on-surface/50 tracking-widest uppercase">
+					Total Accrued
+				</span>
+				<RollingStats
+					prefix="$"
+					value={10500000}
+					class="font-mono text-[30px] text-on-surface font-bold"
+				/>
+			</div>
+
+			<div class="flex flex-col items-center gap-1">
+				<span class="font-label text-xs text-on-surface/50 tracking-widest uppercase">
+					Total Mints
+				</span>
+				<RollingStats value={200000} class="font-mono text-[30px] text-on-surface font-bold" />
+			</div>
+		</div>
+	</section>
+
+	<LogosMarquee />
+</main>
+
+<!-- Footer -->
+<Footer />
+
+<style>
+	.conversion-banner {
+		position: relative;
+		width: 100%;
+		min-height: 250px;
+		overflow: hidden;
+		background: #0d0d0d;
+		border-radius: var(--radius-xl);
+	}
+
+	.conversion-canvas {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	.conversion-content {
+		position: relative;
+		z-index: 1;
+		width: 100%;
+		height: fit-content;
+		min-height: 220px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 2rem;
+	}
+
+	.flow-dots {
+		display: flex;
+		gap: 5px;
+		align-items: center;
+	}
+
+	.flow-dot {
+		display: block;
+		width: 5px;
+		height: 5px;
+		border-radius: 50%;
+		background: var(--color-primary-fixed-dim);
+		opacity: 0.3;
+		animation: pulse-dot 1.2s ease-in-out infinite;
+	}
+
+	@keyframes pulse-dot {
+		0%,
+		100% {
+			opacity: 0.2;
+			transform: scale(0.8);
+		}
+		50% {
+			opacity: 1;
+			transform: scale(1.2);
+		}
+	}
+</style>

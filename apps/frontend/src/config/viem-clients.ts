@@ -1,7 +1,7 @@
-import { createPublicClient, http, type Chain } from "viem";
-import { VIEM_CHAIN } from "./wagmi";
+import { createPublicClient, http } from 'viem'
+import { zora } from 'viem/chains'
 
 export const publicClient = createPublicClient({
-  chain: VIEM_CHAIN as Chain,
+  chain: zora,
   transport: http(),
-});
+})

@@ -1,0 +1,49 @@
+<script lang="ts">
+	import { partnerLogos } from '../lib/assets/logos';
+
+	const marqueeLogos = [...partnerLogos, ...partnerLogos, ...partnerLogos];
+</script>
+
+<section class="w-full overflow-hidden py-14 select-none">
+	<h3
+		class="font-headline text-2xl md:text-3xl font-semibold tracking-tight uppercase md:mb-8 mb-4 text-center"
+	>
+		Powering
+		<span class="text-primary-container">InfraFi</span>
+		Ecosystem
+	</h3>
+
+	<div
+		class="relative overflow-hidden md:h-55 h-50 flex justify-center items-center"
+		style="mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%); -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);"
+	>
+		<div class="marquee-track flex w-max">
+			<div class="flex shrink-0 md:gap-12 gap-6">
+				{#each marqueeLogos as logo, index (index)}
+					<div class="md:w-76 md:h-40 w-50 h-20 shrink-0 flex items-center justify-center">
+						<img
+							src={logo}
+							alt={logo}
+							class="md:h-35 h-15 w-auto object-contain grayscale opacity-70"
+						/>
+					</div>
+				{/each}
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.marquee-track {
+		animation: marquee 28s linear infinite;
+	}
+
+	@keyframes marquee {
+		from {
+			transform: translateX(0);
+		}
+		to {
+			transform: translateX(-33.333333%);
+		}
+	}
+</style>

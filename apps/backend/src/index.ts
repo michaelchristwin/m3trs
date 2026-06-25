@@ -8,6 +8,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
+      "http://localhost:3001",
       "https://m3trs.pages.dev",
       "https://m3trs.m3ter.ing",
       "https://trs.m3ter.ing",
