@@ -3,7 +3,7 @@ import { publicProcedure, router } from "..";
 import { ArweaveUpload } from "../modules/arweave-upload/service";
 
 export const arweaveRouter = router({
-  uplodMetadata: publicProcedure
+  uploadMetadata: publicProcedure
     .input(
       z.object({
         name: z.string(),
