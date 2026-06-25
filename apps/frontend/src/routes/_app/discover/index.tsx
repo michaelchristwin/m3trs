@@ -9,9 +9,6 @@ import { useEffect, useRef, useState } from 'react'
 
 export const Route = createFileRoute('/_app/discover/')({
   component: RouteComponent,
-  head: () => ({
-    meta: [{ title: 'Discover' }, { name: 'description', content: '' }],
-  }),
 })
 
 function RouteComponent() {
@@ -66,6 +63,7 @@ function RouteComponent() {
   }
   return (
     <>
+      <title>Discover | M3trs</title>
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.03] z-[-1]"
         style={{

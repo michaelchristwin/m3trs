@@ -24,9 +24,6 @@ const address = '0xb2403f83C23748b26B06173db7527383482E8c5a'
 export const Route = createFileRoute('/_app/portfolio/$tokenId')({
   component: RouteComponent,
   validateSearch: searchSchema,
-  head: () => ({
-    meta: [{ title: 'Portfolio' }, { name: 'description', content: '' }],
-  }),
 })
 
 function RouteComponent() {
@@ -113,6 +110,7 @@ function RouteComponent() {
 
   return (
     <>
+      <title>Portfolio | M3trs</title>
       <div className="mb-10">
         <div className="flex items-center gap-4 mb-2">
           <button

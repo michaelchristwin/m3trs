@@ -11,9 +11,6 @@ import { trpc } from '#/config/trpc-client'
 
 export const Route = createFileRoute('/_app/discover/$tokenId')({
   component: RouteComponent,
-  head: () => ({
-    meta: [{ title: 'Discover' }, { name: 'description', content: '' }],
-  }),
 })
 
 function RouteComponent() {
@@ -76,6 +73,7 @@ function RouteComponent() {
 
   return (
     <>
+      <title>Discover {tokenId}</title>
       <div className="mb-10">
         <div className="flex items-center gap-4 mb-2">
           <button
