@@ -90,7 +90,7 @@
   --color-ring: var(--color-outline);
   --color-input: var(--color-outline-variant);
   --color-border: var(--color-outline-variant);
-  --color-destructive: var(--color-error);
+  --color-destructive: var(--color-error-container);
 
   /* Accent */
   --color-accent-foreground: var(--color-on-surface);
