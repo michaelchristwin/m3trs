@@ -4,7 +4,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { TRS } from '#/config/smart-contracts/TRS/TRS'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { readContracts } from '@wagmi/core'
-import { wagmiNewConfig } from '#/integrations/wagmi/config'
+import { wagmiConfig } from '#/integrations/wagmi/config'
 import { useQuery } from '@tanstack/react-query'
 import { AccrueButton } from '#/components/buttons/AccrueButton'
 import { trpc } from '#/config/trpc-client'
@@ -21,7 +21,7 @@ function RouteComponent() {
   const { data, isLoading } = useQuery({
     queryKey: ['getMetadata', tokenId],
     queryFn: async () => {
-      const result = await readContracts(wagmiNewConfig, {
+      const result = await readContracts(wagmiConfig, {
         contracts: [
           {
             ...TRS,

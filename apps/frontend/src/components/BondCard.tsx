@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
 } from '#/components/ui/tooltip'
 import { getWalletClient } from '@wagmi/core'
-import { wagmiNewConfig } from '#/integrations/wagmi/config'
+import { wagmiConfig } from '#/integrations/wagmi/config'
 import { publicClient } from '#/config/viem-clients'
 import { collections } from '#/config/opensea/collections'
 import type { Bond } from './utils/types'
@@ -78,7 +78,7 @@ export function BondCard({ bond }: BondCardProps) {
 
   const redeem = async (id: number) => {
     try {
-      const walletClient = await getWalletClient(wagmiNewConfig)
+      const walletClient = await getWalletClient(wagmiConfig)
       const hash = await walletClient.writeContract({
         ...TRS,
         functionName: 'redeem',

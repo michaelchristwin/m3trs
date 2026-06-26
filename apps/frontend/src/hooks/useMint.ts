@@ -4,7 +4,7 @@ import { m3terImageUrl } from '#/utils/constants'
 import { approve, mint } from '#/smart-contracts/actions'
 import { encodePacked, hexToBigInt, keccak256 } from 'viem'
 import { createTokenMetadata } from '#/utils/token-metadata'
-import { wagmiNewConfig } from '#/integrations/wagmi/config'
+import { wagmiConfig } from '#/integrations/wagmi/config'
 import type { MintTokensParams, MintTxStatus } from '#/utils/types'
 import { trpc } from '#/config/trpc-client'
 
@@ -37,7 +37,7 @@ export function useMint() {
 
       setCurrentStep('Approving M3ter for transaction...')
 
-      const walletClient = await getWalletClient(wagmiNewConfig)
+      const walletClient = await getWalletClient(wagmiConfig)
 
       const approveResult = await approve(walletAddress, tokenId, walletClient)
 

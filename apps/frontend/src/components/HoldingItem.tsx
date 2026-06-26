@@ -2,7 +2,7 @@ import { readContracts } from '@wagmi/core'
 import { AccrueButton } from './buttons/AccrueButton'
 import { CollectButton } from './buttons/CollectButton'
 import { useQuery } from '@tanstack/react-query'
-import { wagmiNewConfig } from '#/integrations/wagmi/config'
+import { wagmiConfig } from '#/integrations/wagmi/config'
 import { formatDistanceToNow } from 'date-fns'
 import { TRS } from '#/config/smart-contracts/TRS/TRS'
 import { useNavigate } from '@tanstack/react-router'
@@ -39,7 +39,7 @@ export function HoldingItem({
   } = useQuery({
     queryKey: ['getNftByIdentifier', tokenId],
     queryFn: async () => {
-      const result = await readContracts(wagmiNewConfig, {
+      const result = await readContracts(wagmiConfig, {
         contracts: [
           {
             ...TRS,

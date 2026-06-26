@@ -4,7 +4,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { useForm } from '@tanstack/react-form'
 import { useQuery } from '@tanstack/react-query'
 import { TRS } from '#/config/smart-contracts/TRS/TRS'
-import { wagmiNewConfig } from '#/integrations/wagmi/config'
+import { wagmiConfig } from '#/integrations/wagmi/config'
 import { AccrueButton } from '#/components/buttons/AccrueButton'
 import { Image, Brackets, ArrowLeft, Wallet } from 'lucide-react'
 import { CollectButton } from '#/components/buttons/CollectButton'
@@ -41,7 +41,7 @@ function RouteComponent() {
   const { data, isLoading, isSuccess } = useQuery({
     queryKey: ['getData', tokenId],
     queryFn: async () => {
-      const result = await readContracts(wagmiNewConfig, {
+      const result = await readContracts(wagmiConfig, {
         contracts: [
           {
             ...TRS,
@@ -92,7 +92,7 @@ function RouteComponent() {
     validators: { onChange: transferFormSchema },
     onSubmit: async ({ value }) => {
       const parsed = transferFormSchema.parse(value)
-      const walletClient = await getWalletClient(wagmiNewConfig)
+      const walletClient = await getWalletClient(wagmiConfig)
       const hash = await walletClient.writeContract({
         ...TRS,
         functionName: 'safeTransferFrom',
