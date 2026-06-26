@@ -12,7 +12,7 @@ app.use(
       "https://m3trs.pages.dev",
       "https://m3trs.m3ter.ing",
       "https://trs.m3ter.ing",
-      "http://localhost:4174",
+      //"http://localhost:4174",
       //"https://app.m3trs.m3ter.ing",
     ],
   }),
