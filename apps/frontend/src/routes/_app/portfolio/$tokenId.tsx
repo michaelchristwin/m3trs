@@ -10,9 +10,12 @@ import { Image, Brackets, ArrowLeft, Wallet } from 'lucide-react'
 import { CollectButton } from '#/components/buttons/CollectButton'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { checksumAddress } from 'viem'
-import { getWalletClient, readContracts } from '@wagmi/core'
+import {
+  writeContract,
+  readContracts,
+  waitForTransactionReceipt,
+} from '@wagmi/core'
 import { transferFormSchema } from '#/utils/schemas'
-import { publicClient } from '#/config/viem-clients'
 import { trpc } from '#/config/trpc-client'
 
 const searchSchema = z.object({
@@ -92,8 +95,8 @@ function RouteComponent() {
     validators: { onChange: transferFormSchema },
     onSubmit: async ({ value }) => {
       const parsed = transferFormSchema.parse(value)
-      const walletClient = await getWalletClient(wagmiConfig)
-      const hash = await walletClient.writeContract({
+
+      const hash = await writeContract(wagmiConfig, {
         ...TRS,
         functionName: 'safeTransferFrom',
         args: [
@@ -104,7 +107,7 @@ function RouteComponent() {
           '0x',
         ],
       })
-      await publicClient.waitForTransactionReceipt({ hash })
+      await waitForTransactionReceipt(wagmiConfig, { hash })
     },
   })
 

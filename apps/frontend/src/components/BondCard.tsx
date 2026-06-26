@@ -7,9 +7,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '#/components/ui/tooltip'
-import { getWalletClient } from '@wagmi/core'
+import { writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { wagmiConfig } from '#/integrations/wagmi/config'
-import { publicClient } from '#/config/viem-clients'
+
 import { collections } from '#/config/opensea/collections'
 import type { Bond } from './utils/types'
 
@@ -78,13 +78,12 @@ export function BondCard({ bond }: BondCardProps) {
 
   const redeem = async (id: number) => {
     try {
-      const walletClient = await getWalletClient(wagmiConfig)
-      const hash = await walletClient.writeContract({
+      const hash = await writeContract(wagmiConfig, {
         ...TRS,
         functionName: 'redeem',
         args: [BigInt(id)],
       })
-      const reciept = await publicClient.waitForTransactionReceipt({ hash })
+      const reciept = await waitForTransactionReceipt(wagmiConfig, { hash })
       if (reciept.status === 'reverted') {
         throw Error('Transaction reverted')
       }
