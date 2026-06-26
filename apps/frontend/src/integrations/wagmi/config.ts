@@ -3,9 +3,10 @@ import { createConfig } from '@privy-io/wagmi'
 import { zora } from 'viem/chains'
 import { http } from 'viem'
 
+export const MAIN_CHAIN = zora
 export const wagmiConfig = createConfig({
-  chains: [zora], // Pass your required chains as an array
+  chains: [MAIN_CHAIN], // Pass your required chains as an array
   transports: {
-    [zora.id]: http(),
+    [MAIN_CHAIN.id]: http(),
   },
 })

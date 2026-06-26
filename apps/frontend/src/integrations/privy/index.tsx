@@ -1,5 +1,5 @@
-import { zora } from 'viem/chains'
 import { PrivyProvider } from '@privy-io/react-auth'
+import { MAIN_CHAIN } from '../wagmi/config'
 
 export default function Privy({ children }: { children: React.ReactNode }) {
   return (
@@ -7,7 +7,7 @@ export default function Privy({ children }: { children: React.ReactNode }) {
       appId={import.meta.env.VITE_PRIVY_APP_ID}
       clientId={import.meta.env.VITE_PRIVY_CLIENT_ID}
       config={{
-        defaultChain: zora,
+        defaultChain: MAIN_CHAIN,
         appearance: {
           accentColor: '#EF8977',
           theme: '#222224',
@@ -23,7 +23,7 @@ export default function Privy({ children }: { children: React.ReactNode }) {
             'wallet_connect',
           ],
         },
-        supportedChains: [zora],
+        supportedChains: [MAIN_CHAIN],
         loginMethods: ['wallet'],
         embeddedWallets: {
           showWalletUIs: true,

@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { getWalletClient } from '@wagmi/core'
+import { trpc } from '#/config/trpc-client'
 import { m3terImageUrl } from '#/utils/constants'
-import { approve, mint } from '#/smart-contracts/actions'
+import { approve, atomicApproveAndMint, mint } from '#/smart-contracts/actions'
 import { encodePacked, hexToBigInt, keccak256 } from 'viem'
 import { createTokenMetadata } from '#/utils/token-metadata'
-import { wagmiConfig } from '#/integrations/wagmi/config'
 import type { MintTokensParams, MintTxStatus } from '#/utils/types'
-import { trpc } from '#/config/trpc-client'
+import { getCapabilities } from '@wagmi/core'
+import { MAIN_CHAIN, wagmiConfig } from '#/integrations/wagmi/config'
 
 export function useMint() {
   const [currentStep, setCurrentStep] = useState('')
@@ -34,17 +34,6 @@ export function useMint() {
       )
 
       setExternalTokenId(hexToBigInt(hash))
-
-      setCurrentStep('Approving M3ter for transaction...')
-
-      const walletClient = await getWalletClient(wagmiConfig)
-
-      const approveResult = await approve(walletAddress, tokenId, walletClient)
-
-      if (approveResult.status === 'error') {
-        setMintTxStatus(approveResult)
-        return approveResult
-      }
 
       setCurrentStep('Preparing metadata...')
 
@@ -77,22 +66,44 @@ export function useMint() {
 
       const uri = await trpc.arweave.uploadMetadata.mutate(metadata)
 
-      setCurrentStep('Minting tokens and bond...')
-
-      const result = await mint(
-        {
+      const capabilities = await getCapabilities(wagmiConfig)
+      const supportsAtomicBatch = capabilities[MAIN_CHAIN.id].atomic?.status
+      if (
+        supportsAtomicBatch === 'ready' ||
+        supportsAtomicBatch === 'supported'
+      ) {
+        setCurrentStep('Approving and minting tokens...')
+        const result = await atomicApproveAndMint({
+          id: tokenId,
           supply: BigInt(supply),
           m3terId: tokenId,
           stopTime: BigInt(stopTime),
           uri,
-        },
-        walletAddress,
-        walletClient,
-      )
+        })
+        setMintTxStatus(result)
+        return result
+      } else {
+        setCurrentStep('Approving M3ter for transaction...')
+        const approveResult = await approve(tokenId)
 
-      setMintTxStatus(result)
+        if (approveResult.status === 'error') {
+          setMintTxStatus(approveResult)
+          return approveResult
+        }
 
-      return result
+        setCurrentStep('Minting tokens and bond...')
+
+        const result = await mint({
+          supply: BigInt(supply),
+          m3terId: tokenId,
+          stopTime: BigInt(stopTime),
+          uri,
+        })
+
+        setMintTxStatus(result)
+
+        return result
+      }
     } catch (err) {
       const result = {
         status: 'error' as const,
