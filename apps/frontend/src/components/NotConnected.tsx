@@ -1,5 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth'
-import { LogIn } from 'lucide-react'
+import { Wallet } from 'lucide-react'
 
 export function NotConnected() {
   const { login } = usePrivy()
@@ -24,9 +24,9 @@ export function NotConnected() {
               className="w-full sm:w-auto bg-primary-container text-on-primary-container font-headline font-bold uppercase tracking-widest px-10 py-4 rounded-lg flex items-center justify-center gap-3 hover:bg-primary-fixed transition-colors duration-300 relative group overflow-hidden"
             >
               <div className="absolute inset-0 bg-linear-to-b from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <LogIn size={20} />
+              <Wallet size={20} />
               <span className="relative z-10 text-sm md:text-base">
-                SIGN IN
+                Connect Wallet
               </span>
             </button>
           </div>
