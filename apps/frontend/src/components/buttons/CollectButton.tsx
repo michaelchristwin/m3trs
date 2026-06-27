@@ -2,7 +2,7 @@ import { TRS } from '@/config/smart-contracts/TRS/TRS'
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 
 interface CollectButtonProps {
-  tokenId: string
+  tokenId: bigint
   innerText: string
   className: string
 }
@@ -18,7 +18,7 @@ export function CollectButton({
     await mutateAsync({
       ...TRS,
       functionName: 'collectRevenue',
-      args: [BigInt(tokenId)],
+      args: [tokenId],
     })
   }
 

@@ -7,6 +7,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { TRS } from '#/config/smart-contracts/TRS/TRS'
 import { useNavigate } from '@tanstack/react-router'
 import { useMemo } from 'react'
+import { encodeBase62 } from '#/utils/base62-parser'
 
 interface HoldingItemProps {
   tokenId: string
@@ -23,14 +24,6 @@ export function HoldingItem({
   metadataUrl,
 }: HoldingItemProps) {
   const navigate = useNavigate()
-
-  const openTokenDetails = (tokenName: string) => {
-    navigate({
-      to: '/portfolio/$tokenId',
-      params: { tokenId: tokenId },
-      search: { tokenName: tokenName },
-    })
-  }
 
   const {
     data: metadata,
@@ -97,7 +90,12 @@ export function HoldingItem({
 
   return (
     <div
-      onClick={() => openTokenDetails(name)}
+      onClick={() =>
+        navigate({
+          to: '/token/$tokenId',
+          params: { tokenId: encodeBase62(tokenId) },
+        })
+      }
       aria-label="Open token details"
       className="relative grid grid-cols-1 md:grid-cols-11 gap-3 md:gap-4 px-4 md:px-6 py-4 cursor-pointer bg-surface-container-low rounded group hover:bg-surface-container transition-colors items-center"
     >
@@ -148,12 +146,12 @@ export function HoldingItem({
       <div className="md:col-span-2 flex flex-col md:flex-row md:justify-end gap-2">
         <AccrueButton
           innerText="Accrue"
-          tokenId={tokenId}
+          tokenId={BigInt(tokenId)}
           className="md:block hidden px-3 py-1.5 rounded-[30px] border border-primary/50 text-on-surface transition-colors text-xs font-headline uppercase tracking-wider hover:bg-sky-500/10 hover:border-sky-500 hover:text-sky-400"
         />
         <CollectButton
           innerText="Collect"
-          tokenId={tokenId}
+          tokenId={BigInt(tokenId)}
           className="md:block hidden px-3 py-1.5 rounded-[30px] border border-primary/50 text-on-surface transition-colors text-xs font-headline uppercase tracking-wider hover:bg-emerald-500/10 hover:border-emerald-500 hover:text-emerald-400"
         />
       </div>

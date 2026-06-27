@@ -2,7 +2,7 @@ import { TRS } from '#/config/smart-contracts/TRS/TRS'
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 
 interface AccrueButtonProps {
-  tokenId: string
+  tokenId: bigint
   className: string
   innerText: string
 }
@@ -17,7 +17,7 @@ export function AccrueButton({
     await mutateAsync({
       ...TRS,
       functionName: 'accrueRevenue',
-      args: [BigInt(tokenId)],
+      args: [tokenId],
     })
   }
 

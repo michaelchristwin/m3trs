@@ -12,10 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppTokenizeRouteImport } from './routes/_app/tokenize'
-import { Route as AppPortfolioIndexRouteImport } from './routes/_app/portfolio/index'
-import { Route as AppDiscoverIndexRouteImport } from './routes/_app/discover/index'
-import { Route as AppPortfolioTokenIdRouteImport } from './routes/_app/portfolio/$tokenId'
-import { Route as AppDiscoverTokenIdRouteImport } from './routes/_app/discover/$tokenId'
+import { Route as AppPortfolioRouteImport } from './routes/_app/portfolio'
+import { Route as AppDiscoverRouteImport } from './routes/_app/discover'
+import { Route as AppTokenTokenIdRouteImport } from './routes/_app/token/$tokenId'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -31,79 +30,58 @@ const AppTokenizeRoute = AppTokenizeRouteImport.update({
   path: '/tokenize',
   getParentRoute: () => AppRoute,
 } as any)
-const AppPortfolioIndexRoute = AppPortfolioIndexRouteImport.update({
-  id: '/portfolio/',
-  path: '/portfolio/',
+const AppPortfolioRoute = AppPortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
   getParentRoute: () => AppRoute,
 } as any)
-const AppDiscoverIndexRoute = AppDiscoverIndexRouteImport.update({
-  id: '/discover/',
-  path: '/discover/',
+const AppDiscoverRoute = AppDiscoverRouteImport.update({
+  id: '/discover',
+  path: '/discover',
   getParentRoute: () => AppRoute,
 } as any)
-const AppPortfolioTokenIdRoute = AppPortfolioTokenIdRouteImport.update({
-  id: '/portfolio/$tokenId',
-  path: '/portfolio/$tokenId',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppDiscoverTokenIdRoute = AppDiscoverTokenIdRouteImport.update({
-  id: '/discover/$tokenId',
-  path: '/discover/$tokenId',
+const AppTokenTokenIdRoute = AppTokenTokenIdRouteImport.update({
+  id: '/token/$tokenId',
+  path: '/token/$tokenId',
   getParentRoute: () => AppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/discover': typeof AppDiscoverRoute
+  '/portfolio': typeof AppPortfolioRoute
   '/tokenize': typeof AppTokenizeRoute
-  '/discover/$tokenId': typeof AppDiscoverTokenIdRoute
-  '/portfolio/$tokenId': typeof AppPortfolioTokenIdRoute
-  '/discover/': typeof AppDiscoverIndexRoute
-  '/portfolio/': typeof AppPortfolioIndexRoute
+  '/token/$tokenId': typeof AppTokenTokenIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/discover': typeof AppDiscoverRoute
+  '/portfolio': typeof AppPortfolioRoute
   '/tokenize': typeof AppTokenizeRoute
-  '/discover/$tokenId': typeof AppDiscoverTokenIdRoute
-  '/portfolio/$tokenId': typeof AppPortfolioTokenIdRoute
-  '/discover': typeof AppDiscoverIndexRoute
-  '/portfolio': typeof AppPortfolioIndexRoute
+  '/token/$tokenId': typeof AppTokenTokenIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+  '/_app/discover': typeof AppDiscoverRoute
+  '/_app/portfolio': typeof AppPortfolioRoute
   '/_app/tokenize': typeof AppTokenizeRoute
-  '/_app/discover/$tokenId': typeof AppDiscoverTokenIdRoute
-  '/_app/portfolio/$tokenId': typeof AppPortfolioTokenIdRoute
-  '/_app/discover/': typeof AppDiscoverIndexRoute
-  '/_app/portfolio/': typeof AppPortfolioIndexRoute
+  '/_app/token/$tokenId': typeof AppTokenTokenIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/tokenize'
-    | '/discover/$tokenId'
-    | '/portfolio/$tokenId'
-    | '/discover/'
-    | '/portfolio/'
+  fullPaths: '/' | '/discover' | '/portfolio' | '/tokenize' | '/token/$tokenId'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/tokenize'
-    | '/discover/$tokenId'
-    | '/portfolio/$tokenId'
-    | '/discover'
-    | '/portfolio'
+  to: '/' | '/discover' | '/portfolio' | '/tokenize' | '/token/$tokenId'
   id:
     | '__root__'
     | '/'
     | '/_app'
+    | '/_app/discover'
+    | '/_app/portfolio'
     | '/_app/tokenize'
-    | '/_app/discover/$tokenId'
-    | '/_app/portfolio/$tokenId'
-    | '/_app/discover/'
-    | '/_app/portfolio/'
+    | '/_app/token/$tokenId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -134,51 +112,42 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTokenizeRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/portfolio/': {
-      id: '/_app/portfolio/'
+    '/_app/portfolio': {
+      id: '/_app/portfolio'
       path: '/portfolio'
-      fullPath: '/portfolio/'
-      preLoaderRoute: typeof AppPortfolioIndexRouteImport
+      fullPath: '/portfolio'
+      preLoaderRoute: typeof AppPortfolioRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/discover/': {
-      id: '/_app/discover/'
+    '/_app/discover': {
+      id: '/_app/discover'
       path: '/discover'
-      fullPath: '/discover/'
-      preLoaderRoute: typeof AppDiscoverIndexRouteImport
+      fullPath: '/discover'
+      preLoaderRoute: typeof AppDiscoverRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/portfolio/$tokenId': {
-      id: '/_app/portfolio/$tokenId'
-      path: '/portfolio/$tokenId'
-      fullPath: '/portfolio/$tokenId'
-      preLoaderRoute: typeof AppPortfolioTokenIdRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/discover/$tokenId': {
-      id: '/_app/discover/$tokenId'
-      path: '/discover/$tokenId'
-      fullPath: '/discover/$tokenId'
-      preLoaderRoute: typeof AppDiscoverTokenIdRouteImport
+    '/_app/token/$tokenId': {
+      id: '/_app/token/$tokenId'
+      path: '/token/$tokenId'
+      fullPath: '/token/$tokenId'
+      preLoaderRoute: typeof AppTokenTokenIdRouteImport
       parentRoute: typeof AppRoute
     }
   }
 }
 
 interface AppRouteChildren {
+  AppDiscoverRoute: typeof AppDiscoverRoute
+  AppPortfolioRoute: typeof AppPortfolioRoute
   AppTokenizeRoute: typeof AppTokenizeRoute
-  AppDiscoverTokenIdRoute: typeof AppDiscoverTokenIdRoute
-  AppPortfolioTokenIdRoute: typeof AppPortfolioTokenIdRoute
-  AppDiscoverIndexRoute: typeof AppDiscoverIndexRoute
-  AppPortfolioIndexRoute: typeof AppPortfolioIndexRoute
+  AppTokenTokenIdRoute: typeof AppTokenTokenIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppDiscoverRoute: AppDiscoverRoute,
+  AppPortfolioRoute: AppPortfolioRoute,
   AppTokenizeRoute: AppTokenizeRoute,
-  AppDiscoverTokenIdRoute: AppDiscoverTokenIdRoute,
-  AppPortfolioTokenIdRoute: AppPortfolioTokenIdRoute,
-  AppDiscoverIndexRoute: AppDiscoverIndexRoute,
-  AppPortfolioIndexRoute: AppPortfolioIndexRoute,
+  AppTokenTokenIdRoute: AppTokenTokenIdRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

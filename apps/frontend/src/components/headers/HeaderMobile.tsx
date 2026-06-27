@@ -11,10 +11,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '../ui/button'
-import { Bell, Copy } from 'lucide-react'
+import { Bell, Copy, Wallet } from 'lucide-react'
 
 export function HeaderMobile() {
-  const { user, logout } = usePrivy()
+  const { user, logout, authenticated, login } = usePrivy()
   function copyToClipboard(text: string | undefined) {
     if (!text) return
     navigator.clipboard
@@ -40,48 +40,60 @@ export function HeaderMobile() {
         <button className="text-neutral-500 hover:bg-[#00FF41]/10 transition-all duration-300 active:scale-95 w-10 h-10 flex items-center justify-center rounded-full">
           <Bell size={20} />
         </button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex cursor-pointer items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded box-glow border border-primary/20">
-              <div className="w-2 h-2 rounded-[9999px] bg-primary-container shadow-[0_0_8px_rgba(0,255,65,0.8)]"></div>
-              <span className="font-mono-data text-[#00FF41] text-xs">
-                {user?.wallet?.address.slice(0, 5)}...
-                {user?.wallet?.address.slice(-5)}
-              </span>
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuGroup>
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuItem asChild>
-                <div
-                  className="flex justify-around items-center hover:bg-transparent focus:bg-transparent cursor-pointer"
-                  onClick={() => copyToClipboard(user?.wallet?.address)}
-                >
-                  <span className="font-mono-data text-[#00FF41] text-xs">
-                    {user?.wallet?.address.slice(0, 4)}...
-                    {user?.wallet?.address.slice(-4)}
-                  </span>
-                  <button type="button" className="text-primary-container">
-                    <Copy size={17} />
-                  </button>
-                </div>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup className="p-2">
-              <DropdownMenuItem asChild>
-                <Button
-                  variant={'destructive'}
-                  className="mx-auto w-[99%]"
-                  onClick={logout}
-                >
-                  Sign Out
-                </Button>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {authenticated && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex cursor-pointer items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded box-glow border border-primary/20">
+                <div className="w-2 h-2 rounded-[9999px] bg-primary-container shadow-[0_0_8px_rgba(0,255,65,0.8)]"></div>
+                <span className="font-mono-data text-[#00FF41] text-xs">
+                  {user?.wallet?.address.slice(0, 5)}...
+                  {user?.wallet?.address.slice(-5)}
+                </span>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuItem asChild>
+                  <div
+                    className="flex justify-around items-center hover:bg-transparent focus:bg-transparent cursor-pointer"
+                    onClick={() => copyToClipboard(user?.wallet?.address)}
+                  >
+                    <span className="font-mono-data text-[#00FF41] text-xs">
+                      {user?.wallet?.address.slice(0, 4)}...
+                      {user?.wallet?.address.slice(-4)}
+                    </span>
+                    <button type="button" className="text-primary-container">
+                      <Copy size={17} />
+                    </button>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup className="p-2">
+                <DropdownMenuItem asChild>
+                  <Button
+                    variant={'destructive'}
+                    className="mx-auto w-[99%]"
+                    onClick={logout}
+                  >
+                    Sign Out
+                  </Button>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+        {!authenticated && (
+          <button
+            type="button"
+            className="text-primary-container text-lg flex justify-around items-center space-x-1 border-[0.5px] border-primary-fixed/50 p-3 active:scale-95 hover:scale-105 hover:text-primary-container/80"
+            onClick={login}
+          >
+            <span>CONNECT WALLET</span>
+            <Wallet size={15} />
+          </button>
+        )}
       </div>
     </header>
   )

@@ -9,6 +9,7 @@ import { ListingSkeleton } from './ListingSkeleton'
 import type { Listing } from '@m3trs/opensea-sdk'
 import { trpc } from '#/config/trpc-client'
 import { useMemo } from 'react'
+import { encodeBase62 } from '#/utils/base62-parser'
 
 interface ListingItemProps {
   listing: Listing
@@ -72,9 +73,9 @@ export function ListingItem({ listing }: ListingItemProps) {
   if (isSuccess && isActive)
     return (
       <Link
-        to="/discover/$tokenId"
+        to="/token/$tokenId"
         params={{
-          tokenId: tokenId!,
+          tokenId: encodeBase62(tokenId!),
         }}
         className="relative bg-surface-container-low rounded p-4"
       >
