@@ -32,6 +32,13 @@ export function HeaderLarge() {
     <header className="hidden w-full md:flex justify-between items-center h-16 bg-[#131313] backdrop-blur-md">
       <div className="flex items-center gap-4">
         <SidebarTrigger />
+        <a
+          href={import.meta.env.VITE_LANDING_PAGE}
+          rel="external"
+          className="font-['Space_Grotesk'] font-bold tracking-tighter text-[#00FF41] md:text-xl text-[18px]"
+        >
+          M3TRS
+        </a>
       </div>
       <div className="flex items-center gap-6 font-headline uppercase tracking-wider text-xs">
         <div className="flex items-center gap-4 border-l border-surface-variant pl-4">

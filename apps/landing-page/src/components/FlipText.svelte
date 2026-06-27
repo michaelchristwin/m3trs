@@ -45,7 +45,7 @@
 	{pretext}
 	<span class="inline-block perspective-[600px] md:h-[1.4em] h-auto" style:width="{flipWidth}px">
 		<button
-			onclick={() => window.open(PUBLIC_APP_URL, '_blank')}
+			onclick={() => window.open(PUBLIC_APP_URL)}
 			class="w-fit p-3 bg-primary-container text-on-primary-container font-headline font-bold text-lg rounded-lg tracking-wider uppercase cursor-pointer select-none shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02] hover:brightness-105 active:scale-[0.98] active:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
 		>
 			<div class="inline-flex justify-center items-center">

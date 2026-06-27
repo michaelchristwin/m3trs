@@ -130,8 +130,7 @@
 		</a>
 		<a
 			href={PUBLIC_APP_URL}
-			target="_blank"
-			rel="noopener noreferrer external"
+			rel="external"
 			class="bg-primary-container text-on-primary-container px-6 py-2 rounded font-label text-sm font-bold tracking-wider hover:bg-primary transition-colors glow-primary"
 		>
 			LAUNCH APP

@@ -1,5 +1,4 @@
 import { toast } from 'sonner'
-import { Link } from '@tanstack/react-router'
 import { usePrivy } from '@privy-io/react-auth'
 import {
   DropdownMenu,
@@ -29,12 +28,13 @@ export function HeaderMobile() {
   }
   return (
     <header className="fixed top-0 left-0 w-full z-50 flex md:hidden items-center justify-between px-4 h-16 bg-[#131313] shadow-[0_0_15px_rgba(0,255,65,0.05)] rounded-none mb-1 transition-all duration-300">
-      <Link
-        to="/discover"
+      <a
+        href={import.meta.env.VITE_LANDING_PAGE}
+        rel="external"
         className="font-['Space_Grotesk'] font-bold tracking-tighter text-[#00FF41] md:text-xl text-[18px]"
       >
         M3TRS
-      </Link>
+      </a>
 
       <div className="space-x-2 flex items-center">
         <button className="text-neutral-500 hover:bg-[#00FF41]/10 transition-all duration-300 active:scale-95 w-10 h-10 flex items-center justify-center rounded-full">
