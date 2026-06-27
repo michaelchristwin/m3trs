@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Etherscan, Opensea } from '../lib/assets/brands';
+	import { Etherscan, Nouns, Opensea } from '../lib/assets/brands';
 	import { M3terBond } from '../config/smart-contracts/M3terBond/M3terBond';
 	import { MyToken } from '../config/smart-contracts/MyToken/MyToken';
 	import { TRS } from '../config/smart-contracts/TRS/TRS';
@@ -18,7 +18,12 @@
 			contractAddress: MyToken.address,
 			links: [
 				{ href: 'https://opensea.io/', src: Opensea, alt: 'Opensea' },
-				{ href: 'https://etherscan.io/', src: Etherscan, alt: 'Etherscan' }
+				{ href: 'https://etherscan.io/', src: Etherscan, alt: 'Etherscan' },
+				{
+					href: 'https://nouns.build/dao/base/0x09c1d4d80cc86981a67deb76227f13a4dcdd6022/2',
+					src: Nouns,
+					alt: 'Nounish DAO'
+				}
 			]
 		},
 		{
