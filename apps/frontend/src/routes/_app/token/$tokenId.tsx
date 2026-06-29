@@ -33,8 +33,6 @@ function RouteComponent() {
   const handleBack = () => {
     if (window.history.length > 1) {
       router.history.back()
-    } else {
-      return
     }
   }
   const { data, isLoading, isSuccess } = useQuery({
