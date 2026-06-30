@@ -118,7 +118,7 @@ function RouteComponent() {
 
   const { authenticated } = usePrivy()
   return (
-    <>
+    <div className="h-full mt-10 mb-30">
       <title>Portfolio | M3trs</title>
       <div className="mb-10">
         <div className="flex items-center gap-4 mb-2">
@@ -452,6 +452,6 @@ function RouteComponent() {
           </div>
         </div>
       )}
-    </>
+    </div>
   )
 }

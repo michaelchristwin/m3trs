@@ -19,7 +19,7 @@ function RouteComponent() {
     )
   else
     return (
-      <div className="relative">
+      <div className="relative md:min-h-screen min-h-[calc(100dvh+80px)]">
         <NavMobile />
         <Sidebar>
           <HeaderLarge />
