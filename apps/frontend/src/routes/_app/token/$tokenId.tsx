@@ -324,11 +324,21 @@ function RouteComponent() {
                 )}
                 <div className="flex flex-col sm:flex-row gap-3">
                   {isSuccess && data.isOwner && authenticated ? (
-                    <CollectButton
-                      innerText="Collect Revenue"
-                      tokenId={parsedTokenId}
-                      className="flex-1 bg-primary-container text-on-primary-container font-headline font-bold text-sm py-3 px-4 rounded hover:brightness-110 transition-all glow-primary glass-gradient-primary"
-                    />
+                    <>
+                      <CollectButton
+                        innerText="Collect Revenue"
+                        tokenId={parsedTokenId}
+                        className="flex-1 bg-primary-container text-on-primary-container font-headline font-bold text-sm py-3 px-4 rounded hover:brightness-110 transition-all glow-primary glass-gradient-primary"
+                      />
+                      <a
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href={`https://opensea.io/item/zora/${TRS.address}/${parsedTokenId}`}
+                        className="flex-1 text-center bg-transparent border-primary/30 border text-primary font-headline font-bold text-sm py-3 px-4 rounded hover:bg-primary/5 transition-all"
+                      >
+                        Buy on OpenSea
+                      </a>
+                    </>
                   ) : (
                     <a
                       target="_blank"
