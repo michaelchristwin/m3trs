@@ -158,9 +158,8 @@ function RouteComponent() {
           </div>
         )}
       </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 mb-4">
-        {isLoading && (
+      {isLoading && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 mb-4">
           <div className="lg:col-span-4 flex flex-col gap-6 animate-pulse">
             <div className="bg-surface-container-low rounded-lg ghost-border-outline overflow-hidden flex flex-col">
               <div className="bg-surface-container-highest px-6 py-4 flex items-center justify-between">
@@ -172,9 +171,58 @@ function RouteComponent() {
               </div>
             </div>
           </div>
-        )}
 
-        {isSuccess && (
+          <div className="lg:col-span-8 flex flex-col gap-6">
+            <div className="bg-surface-container-low rounded-xl ghost-border-outline overflow-hidden relative">
+              <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8 relative z-10">
+                <div className="font-mono text-[3.5rem] leading-none font-light tracking-tight mb-2 animate-pulse">
+                  <div className="h-12 w-48 rounded bg-surface-container-highest"></div>
+                </div>
+
+                <div className="flex-1 flex flex-col justify-center gap-6">
+                  <div className="font-mono text-3xl animate-pulse">
+                    <div className="h-8 w-40 rounded bg-surface-container-highest"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            //
+            <div className="bg-surface-container-low rounded-xl ghost-border-outline overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="bg-surface-container-highest px-6 py-4 flex items-center justify-between relative z-10">
+                <h3 className="font-headline font-bold text-on-surface text-sm uppercase tracking-wider flex items-center gap-2">
+                  <Wallet size={18} />
+                  Revenue Hub
+                </h3>
+              </div>
+              <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8 relative z-10">
+                <div className="flex-1 flex flex-col justify-center">
+                  <label className="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2">
+                    Total Accrued
+                  </label>
+                  <div className="font-mono text-[3.5rem] leading-none font-light tracking-tight mb-2 animate-pulse">
+                    <div className="h-12 w-48 rounded bg-surface-container-highest"></div>
+                  </div>
+                </div>
+
+                <div className="w-px bg-surface-container hidden md:block"></div>
+                <div className="w-full h-px bg-surface-container md:hidden"></div>
+
+                <div className="flex-1 flex flex-col justify-center">
+                  <label className="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2">
+                    Your Claimable
+                  </label>
+                  <div className="font-mono text-3xl mb-6 animate-pulse">
+                    <div className="h-8 w-40 rounded bg-surface-container-highest"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {isSuccess && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 mb-4">
           <div className="lg:col-span-4 flex flex-col gap-6">
             <div className="bg-surface-container-low rounded-xl ghost-border-outline overflow-hidden flex flex-col">
               <div className="bg-surface-container-highest px-6 py-4 flex items-center justify-between">
@@ -192,24 +240,17 @@ function RouteComponent() {
               </div>
             </div>
           </div>
-        )}
 
-        <div className="lg:col-span-8 flex flex-col gap-6">
-          <div className="bg-surface-container-low rounded-xl ghost-border-outline overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="bg-surface-container-highest px-6 py-4 flex items-center justify-between relative z-10">
-              <h3 className="font-headline font-bold text-on-surface text-sm uppercase tracking-wider flex items-center gap-2">
-                <Brackets className="text-primary" size={18} />
-                Metadata
-              </h3>
-            </div>
-            <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8 relative z-10">
-              {isLoading && (
-                <div className="font-mono text-[3.5rem] leading-none font-light tracking-tight mb-2 animate-pulse">
-                  <div className="h-12 w-48 rounded bg-surface-container-highest"></div>
-                </div>
-              )}
-              {isSuccess && (
+          <div className="lg:col-span-8 flex flex-col gap-6">
+            <div className="bg-surface-container-low rounded-xl ghost-border-outline overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="bg-surface-container-highest px-6 py-4 flex items-center justify-between relative z-10">
+                <h3 className="font-headline font-bold text-on-surface text-sm uppercase tracking-wider flex items-center gap-2">
+                  <Brackets className="text-primary" size={18} />
+                  Metadata
+                </h3>
+              </div>
+              <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8 relative z-10">
                 <div className="flex-1 flex flex-col justify-start gap-6">
                   <div>
                     <label className="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-1">
@@ -228,18 +269,11 @@ function RouteComponent() {
                     </div>
                   </div>
                 </div>
-              )}
 
-              <div className="w-px bg-surface-container hidden md:block"></div>
-              <div className="w-full h-px bg-surface-container md:hidden"></div>
+                <div className="w-px bg-surface-container hidden md:block"></div>
+                <div className="w-full h-px bg-surface-container md:hidden"></div>
 
-              <div className="flex-1 flex flex-col justify-center gap-6">
-                {isLoading && (
-                  <div className="font-mono text-3xl animate-pulse">
-                    <div className="h-8 w-40 rounded bg-surface-container-highest"></div>
-                  </div>
-                )}
-                {isSuccess && (
+                <div className="flex-1 flex flex-col justify-center gap-6">
                   <>
                     <div>
                       <label className="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-1">
@@ -268,93 +302,81 @@ function RouteComponent() {
                       </div>
                     </div>
                   </>
-                )}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-surface-container-low rounded-xl ghost-border-outline overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="bg-surface-container-highest px-6 py-4 flex items-center justify-between relative z-10">
-              <h3 className="font-headline font-bold text-on-surface text-sm uppercase tracking-wider flex items-center gap-2">
-                <Wallet size={18} />
-                Revenue Hub
-              </h3>
-            </div>
-            <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8 relative z-10">
-              <div className="flex-1 flex flex-col justify-center">
-                <label className="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2">
-                  Total Accrued
-                </label>
-                {isLoading && (
-                  <div className="font-mono text-[3.5rem] leading-none font-light tracking-tight mb-2 animate-pulse">
-                    <div className="h-12 w-48 rounded bg-surface-container-highest"></div>
-                  </div>
-                )}
-                {isSuccess && (
+            <div className="bg-surface-container-low rounded-xl ghost-border-outline overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="bg-surface-container-highest px-6 py-4 flex items-center justify-between relative z-10">
+                <h3 className="font-headline font-bold text-on-surface text-sm uppercase tracking-wider flex items-center gap-2">
+                  <Wallet size={18} />
+                  Revenue Hub
+                </h3>
+              </div>
+              <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8 relative z-10">
+                <div className="flex-1 flex flex-col justify-center">
+                  <label className="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2">
+                    Total Accrued
+                  </label>
+
                   <div className="font-mono text-[3.5rem] leading-none text-on-surface font-light tracking-tight mb-2">
                     ${data.accRevenuePerToken.toFixed(2)}
                   </div>
-                )}
-                <div className="flex items-center gap-2 text-primary mt-2">
-                  <AccrueButton
-                    innerText="Accrue Revenue"
-                    tokenId={parsedTokenId}
-                    className="flex-1 bg-transparent border-primary/30 border text-primary font-headline font-bold text-sm py-3 px-4 rounded hover:bg-primary/5 transition-all"
-                  />
-                </div>
-              </div>
-
-              <div className="w-px bg-surface-container hidden md:block"></div>
-              <div className="w-full h-px bg-surface-container md:hidden"></div>
-
-              <div className="flex-1 flex flex-col justify-center">
-                <label className="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2">
-                  Your Claimable
-                </label>
-                {isLoading && (
-                  <div className="font-mono text-3xl mb-6 animate-pulse">
-                    <div className="h-8 w-40 rounded bg-surface-container-highest"></div>
+                  <div className="flex items-center gap-2 text-primary mt-2">
+                    <AccrueButton
+                      innerText="Accrue Revenue"
+                      tokenId={parsedTokenId}
+                      className="flex-1 bg-transparent border-primary/30 border text-primary font-headline font-bold text-sm py-3 px-4 rounded hover:bg-primary/5 transition-all"
+                    />
                   </div>
-                )}
-                {isSuccess && (
+                </div>
+
+                <div className="w-px bg-surface-container hidden md:block"></div>
+                <div className="w-full h-px bg-surface-container md:hidden"></div>
+
+                <div className="flex-1 flex flex-col justify-center">
+                  <label className="font-headline text-on-surface/60 text-[0.6875rem] uppercase tracking-wider block mb-2">
+                    Your Claimable
+                  </label>
+
                   <div className="font-mono text-3xl text-primary mb-6">
                     ${data.revenue.toFixed(2)}
                   </div>
-                )}
-                <div className="flex flex-col sm:flex-row gap-3">
-                  {isSuccess && data.isOwner && authenticated ? (
-                    <>
-                      <CollectButton
-                        innerText="Collect Revenue"
-                        tokenId={parsedTokenId}
-                        className="flex-1 bg-primary-container text-on-primary-container font-headline font-bold text-sm py-3 px-4 rounded hover:brightness-110 transition-all glow-primary glass-gradient-primary"
-                      />
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    {data.isOwner && authenticated ? (
+                      <>
+                        <CollectButton
+                          innerText="Collect Revenue"
+                          tokenId={parsedTokenId}
+                          className="flex-1 bg-primary-container text-on-primary-container font-headline font-bold text-sm py-3 px-4 rounded hover:brightness-110 transition-all glow-primary glass-gradient-primary"
+                        />
+                        <a
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          href={`https://opensea.io/item/zora/${TRS.address}/${parsedTokenId}`}
+                          className="flex-1 text-center bg-transparent border-primary/30 border text-primary font-headline font-bold text-sm py-3 px-4 rounded hover:bg-primary/5 transition-all"
+                        >
+                          Buy on OpenSea
+                        </a>
+                      </>
+                    ) : (
                       <a
                         target="_blank"
                         rel="noopener noreferrer"
                         href={`https://opensea.io/item/zora/${TRS.address}/${parsedTokenId}`}
-                        className="flex-1 text-center bg-transparent border-primary/30 border text-primary font-headline font-bold text-sm py-3 px-4 rounded hover:bg-primary/5 transition-all"
+                        className="flex-1 text-center bg-primary-container text-on-primary-container font-headline font-bold text-sm py-3 px-4 rounded hover:brightness-110 transition-all glow-primary glass-gradient-primary"
                       >
                         Buy on OpenSea
                       </a>
-                    </>
-                  ) : (
-                    <a
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      href={`https://opensea.io/item/zora/${TRS.address}/${parsedTokenId}`}
-                      className="flex-1 text-center bg-primary-container text-on-primary-container font-headline font-bold text-sm py-3 px-4 rounded hover:brightness-110 transition-all glow-primary glass-gradient-primary"
-                    >
-                      Buy on OpenSea
-                    </a>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {isSuccess && authenticated && data.isOwner && (
         <div className="bg-surface-container-low rounded-lg ghost-border-outline overflow-hidden mt-30 opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
