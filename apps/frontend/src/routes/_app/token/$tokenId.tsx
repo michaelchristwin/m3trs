@@ -119,7 +119,7 @@ function RouteComponent() {
   const { authenticated } = usePrivy()
   return (
     <div className="h-full mt-10 mb-30">
-      <title>Portfolio | M3trs</title>
+      <title>Token Details | M3trs</title>
       <div className="mb-10">
         <div className="flex items-center gap-4 mb-2">
           <button
@@ -186,7 +186,7 @@ function RouteComponent() {
                 </div>
               </div>
             </div>
-            //
+
             <div className="bg-surface-container-low rounded-xl ghost-border-outline overflow-hidden relative">
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
               <div className="bg-surface-container-highest px-6 py-4 flex items-center justify-between relative z-10">

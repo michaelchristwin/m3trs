@@ -410,7 +410,7 @@ export function CreateTokenForm({
 
                 <button
                   type="submit"
-                  disabled={!canSubmit || isSubmitting}
+                  disabled={!canSubmit || isSubmitting || !form.state.isTouched}
                   className="flex w-full items-center justify-center gap-2 rounded bg-primary-container py-4 font-headline font-bold uppercase tracking-wider text-on-primary-container shadow-[0_0_15px_rgba(0,255,65,0.2)] transition-colors hover:bg-primary-fixed disabled:cursor-not-allowed disabled:bg-primary-container/50"
                 >
                   <Rocket size={18} />
