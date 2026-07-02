@@ -7,7 +7,7 @@ This Turborepo starter is maintained by the Turborepo core team.
 Run the following command:
 
 ```sh
-npx create-turbo@latest
+pnpm dlx create-turbo@latest
 ```
 
 ## What's inside?
@@ -16,11 +16,11 @@ This Turborepo includes the following packages/apps:
 
 ### Apps and Packages
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- `frontend`: a [Vite + React](http://vite.dev/) app
+- `landing-page`: a [SvelteKit](https://svelte.dev/) app
+- `backend`: a server built with Hono, Bun and TRPC.
+- `@packages/opensea-sdk`: SDK for OpenSea API generated using OpenAPI
+- `@packages/trpc`: TRPC modules and router
 
 Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
@@ -39,17 +39,17 @@ To build all apps and packages, run the following command:
 With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
 
 ```sh
-cd my-turborepo
+cd m3trs
 turbo build
 ```
 
 Without global `turbo`, use your package manager:
 
 ```sh
-cd my-turborepo
-npx turbo build
-bun dlx turbo build
-bun exec turbo build
+cd m3trs
+pnpm turbo build
+pnpm dlx turbo build
+pnpm exec turbo build
 ```
 
 You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
@@ -57,15 +57,15 @@ You can build a specific package by using a [filter](https://turborepo.dev/docs/
 With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
 
 ```sh
-turbo build --filter=docs
+turbo build --filter=frontend
 ```
 
 Without global `turbo`:
 
 ```sh
-npx turbo build --filter=docs
-bun exec turbo build --filter=docs
-bun exec turbo build --filter=docs
+pnpm turbo build --filter=frontend
+pnpm exec turbo build --filter=frontend
+pnpm exec turbo build --filter=frontend
 ```
 
 ### Develop
@@ -75,17 +75,17 @@ To develop all apps and packages, run the following command:
 With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
 
 ```sh
-cd my-turborepo
+cd m3trs
 turbo dev
 ```
 
 Without global `turbo`, use your package manager:
 
 ```sh
-cd my-turborepo
-npx turbo dev
-bun exec turbo dev
-bun exec turbo dev
+cd m3trs
+pnpm turbo dev
+pnpm exec turbo dev
+pnpm exec turbo dev
 ```
 
 You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
@@ -93,15 +93,15 @@ You can develop a specific package by using a [filter](https://turborepo.dev/doc
 With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
 
 ```sh
-turbo dev --filter=web
+turbo dev --filter=backend
 ```
 
 Without global `turbo`:
 
 ```sh
-npx turbo dev --filter=web
-bun exec turbo dev --filter=web
-bun exec turbo dev --filter=web
+pnpm turbo dev --filter=backend
+pnpm exec turbo dev --filter=backend
+pnpm exec turbo dev --filter=backend
 ```
 
 ### Remote Caching
@@ -116,17 +116,17 @@ By default, Turborepo will cache locally. To enable Remote Caching you will need
 With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
 
 ```sh
-cd my-turborepo
+cd m3trs
 turbo login
 ```
 
 Without global `turbo`, use your package manager:
 
 ```sh
-cd my-turborepo
-npx turbo login
-bun exec turbo login
-bun exec turbo login
+cd m3trs
+pnpm turbo login
+pnpm exec turbo login
+pnpm dlx turbo login
 ```
 
 This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
@@ -142,9 +142,9 @@ turbo link
 Without global `turbo`:
 
 ```sh
-npx turbo link
-bun exec turbo link
-bun exec turbo link
+pnpm turbo link
+pnpm exec turbo link
+pnpm dlx turbo link
 ```
 
 ## Useful Links
