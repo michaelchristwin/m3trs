@@ -63,7 +63,7 @@ function RouteComponent() {
           <>
             <header className="mb-8 md:mb-12">
               <h1 className="font-headline text-3xl md:text-4xl font-bold tracking-tight text-on-surface mb-2">
-                M3TER BONDS
+                M3ter Bonds
               </h1>
               <p className="text-on-surface-variant font-mono text-sm max-w-2xl">
                 ACTIVE_CONTRACTS:
