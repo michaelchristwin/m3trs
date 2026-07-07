@@ -2,6 +2,7 @@
 	import { M3TERS } from '../lib/assets/m3ters';
 	import FlipText from './FlipText.svelte';
 	import PreviewTRS from './PreviewTRS.svelte';
+	import { format } from 'date-fns';
 
 	const VISIBLE = 9;
 	const CENTER_SLOT = Math.floor(VISIBLE / 2);
@@ -127,7 +128,7 @@
 		class="absolute inset-0 flex items-center justify-center overflow-hidden"
 	>
 		<div bind:this={trackRef} class="flex items-center gap-4 sm:gap-5 lg:gap-6" style={trackStyle}>
-			{#each visibleCards as card, i (i)}
+			{#each visibleCards as card (card.imageUrl)}
 				<div
 					data-card
 					class="h-fit w-35 shrink-0 sm:w-50 lg:w-70"
@@ -138,7 +139,11 @@
 					style:transform={card.transform}
 					style:border-radius="38px"
 				>
-					<PreviewTRS name="" imageUrl={card.imageUrl} meterId="0" />
+					<PreviewTRS
+						name={`TRS-0-${format(Date.now(), 'yyyy-MM-dd')}`}
+						imageUrl={card.imageUrl}
+						meterId="0"
+					/>
 				</div>
 			{/each}
 		</div>
