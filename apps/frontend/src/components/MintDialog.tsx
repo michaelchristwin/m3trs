@@ -32,7 +32,7 @@ export function MintDialog({
 }: DialogParams) {
   return (
     <AlertDialog open={isOpen}>
-      <AlertDialogContent className="border-white/10 p-10 pointer-events-auto">
+      <AlertDialogContent className="border-white/10 p-6 sm:p-10 pointer-events-auto w-[calc(100%-2rem)] sm:w-full max-w-md sm:max-w-lg">
         <AlertDialogHeader className="hidden">
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
@@ -47,16 +47,15 @@ export function MintDialog({
             <div className="animate-[fade-in_.35s_ease-out_forwards]">
               <AlertDialogCancel
                 onClick={onClose}
-                className="rounded-[100%] float-end border border-white/10 bg-white/5 w-10 h-10 text-sm font-medium text-white/70 transition-colors duration-150 hover:bg-white/10 hover:text-white"
+                className="rounded-[100%] float-end border border-white/10 bg-white/5 w-8 h-8 sm:w-10 sm:h-10 text-sm font-medium text-white/70 transition-colors duration-150 hover:bg-white/10 hover:text-white"
               >
-                <X size={18} />
+                <X size={16} className="sm:hidden" />
+                <X size={18} className="hidden sm:block" />
               </AlertDialogCancel>
 
               <div className="flex w-full flex-col items-center">
                 <svg
-                  className="mb-12 -rotate-45"
-                  width="180"
-                  height="180"
+                  className="mb-8 sm:mb-12 -rotate-45 w-30 h-30 sm:w-45 sm:h-45"
                   viewBox="0 0 180 180"
                   fill="none"
                 >
@@ -83,9 +82,9 @@ export function MintDialog({
                   />
                 </svg>
 
-                <div className="flex items-center gap-3 text-sm italic text-[#279b37] transition-opacity duration-300 opacity-100">
+                <div className="flex items-center gap-3 text-xs sm:text-sm italic text-[#279b37] transition-opacity duration-300 opacity-100 text-center">
                   <svg
-                    className="h-4 w-4 animate-spin"
+                    className="h-4 w-4 shrink-0 animate-spin"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -113,10 +112,11 @@ export function MintDialog({
           {/* SUCCESS */}
           {modalState === 'success' && (
             <div className="flex w-full flex-col items-center animate-[fade-in_.35s_ease-out_forwards]">
-              <div className="mb-6 animate-[scale-up_.35s_ease-out_forwards]">
+              <div className="mb-4 sm:mb-6 animate-[scale-up_.35s_ease-out_forwards]">
                 <svg
-                  width="72"
-                  height="72"
+                  width="56"
+                  height="56"
+                  className="sm:w-18 sm:h-18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="#279b37"
@@ -129,10 +129,10 @@ export function MintDialog({
                 </svg>
               </div>
 
-              <h2 className="mb-2 text-lg font-semibold text-white">
+              <h2 className="mb-2 text-base sm:text-lg font-semibold text-white text-center">
                 Position Minted
               </h2>
-              <p className="mb-6 px-4 text-center text-[13px] text-white/50">
+              <p className="mb-6 px-2 sm:px-4 text-center text-xs sm:text-[13px] text-white/50">
                 Your M3TRS revenue position has been successfully minted
                 on-chain.
               </p>
@@ -143,7 +143,7 @@ export function MintDialog({
                     href={`https://opensea.io/item/zora/${TRS.address}/${tokenId.toString()}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full rounded-lg bg-[#279b37] px-6 py-3 text-center font-semibold text-white transition-colors duration-150 hover:bg-[#34b348]"
+                    className="w-full rounded-lg bg-[#279b37] px-4 sm:px-6 py-2.5 sm:py-3 text-center text-sm sm:text-base font-semibold text-white transition-colors duration-150 hover:bg-[#34b348]"
                   >
                     List on OpenSea →
                   </a>
@@ -155,10 +155,11 @@ export function MintDialog({
           {/* ERROR */}
           {modalState === 'error' && (
             <div className="flex w-full flex-col items-center animate-[fade-in_.35s_ease-out_forwards]">
-              <div className="mb-6 animate-[scale-up_.35s_ease-out_forwards]">
+              <div className="mb-4 sm:mb-6 animate-[scale-up_.35s_ease-out_forwards]">
                 <svg
-                  width="72"
-                  height="72"
+                  width="56"
+                  height="56"
+                  className="sm:w-18 sm:h-18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="#e53935"
@@ -172,11 +173,11 @@ export function MintDialog({
                 </svg>
               </div>
 
-              <h2 className="mb-2 text-lg font-semibold text-white">
+              <h2 className="mb-2 text-base sm:text-lg font-semibold text-white text-center">
                 Minting Failed
               </h2>
               {mintTxStatus.status === 'error' && (
-                <p className="mb-8 px-4 text-center text-[13px] text-white/50">
+                <p className="mb-6 sm:mb-8 px-2 sm:px-4 text-center text-xs sm:text-[13px] text-white/50">
                   {mintTxStatus.error}
                 </p>
               )}
@@ -184,7 +185,7 @@ export function MintDialog({
               <div className="flex w-full flex-col gap-3">
                 <AlertDialogCancel
                   onClick={onClose}
-                  className="w-full rounded-lg border border-white/15 bg-red-200/5! px-6 py-3 font-semibold text-white transition-colors duration-150 hover:bg-white/5"
+                  className="w-full rounded-lg border border-white/15 bg-red-200/5! px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-white transition-colors duration-150 hover:bg-white/5"
                 >
                   Dismiss
                 </AlertDialogCancel>
