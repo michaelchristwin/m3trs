@@ -13,13 +13,13 @@ function RouteComponent() {
   const { ready } = usePrivy()
   if (!ready)
     return (
-      <div className="w-full h-screen flex justify-center items-center">
+      <div className="w-full sm:h-screen h-[calc(100vh+80px)] flex justify-center items-center">
         <p className="text-primary-container italic">Loading...</p>
       </div>
     )
   else
     return (
-      <div className="relative md:min-h-screen min-h-[calc(100dvh+80px)]">
+      <div className="relative min-h-screen mt-5 mb-15">
         <NavMobile />
         <Sidebar>
           <HeaderLarge />
