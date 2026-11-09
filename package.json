@@ -4,12 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "bun run --parallel --filter '*' dev",
-    "start": "bun run --parallel --filter '*' start"
+    "start": "bun run --parallel --filter '*' start",
+    "build": "bun run --parallel --filter '*' build"
   },
   "workspaces": [
     "packages/*",
     "apps/*"
   ],
+  "packageManager": "bun@1.4.4",
   "devDependencies": {
     "@types/bun": "latest"
   },

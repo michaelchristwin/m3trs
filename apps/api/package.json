@@ -13,14 +13,10 @@
     "gen:opensea": "openapi-typescript https://api.opensea.io/api/v2/openapi.json -o src/opensea.d.ts"
   },
   "devDependencies": {
-    "@types/bun": "latest",
     "@types/node": "^26.6.6",
     "openapi-typescript": "^7.13.0",
     "typescript": "5",
     "wrangler": "^4.158.0"
-  },
-  "peerDependencies": {
-    "typescript": "^7"
   },
   "dependencies": {
     "@ardrive/turbo-sdk": "^2.2.0",
