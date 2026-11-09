@@ -5,4 +5,6 @@
   "alias": {
     "x402-fetch": "./src/stubs/x402-fetch.ts",
   },
+
+  "keep_vars": true,
 }
