@@ -6,8 +6,6 @@ import { createOpenSea } from "./opensea-client";
 import { env } from "cloudflare:workers";
 import { throwOpenSeaError } from "./utils/opensea-error";
 
-const opensea = createOpenSea(env.OPENSEA_API_KEY);
-
 export const uploadMetadata = os
   .input(
     z.object({
@@ -57,6 +55,8 @@ export const getNftsByAccount = os
     }),
   )
   .handler(async ({ input: { collection, chain, address } }) => {
+    const opensea = createOpenSea(env.OPENSEA_API_KEY);
+
     const { data, error, response } = await opensea.GET(
       "/api/v2/chain/{chain}/account/{address}/nfts",
       {
@@ -75,6 +75,7 @@ export const getNftOwners = os
     z.object({ chain: chainEnum, address: z.string(), identifier: z.string() }),
   )
   .handler(async ({ input: { chain, address, identifier } }) => {
+    const opensea = createOpenSea(env.OPENSEA_API_KEY);
     const { response, error, data } = await opensea.GET(
       "/api/v2/chain/{chain}/contract/{address}/nfts/{identifier}/owners",
       {
@@ -88,6 +89,7 @@ export const getNftOwners = os
 export const getNftsByContract = os
   .input(z.object({ chain: chainEnum, address: z.string() }))
   .handler(async ({ input: { chain, address } }) => {
+    const opensea = createOpenSea(env.OPENSEA_API_KEY);
     const { response, error, data } = await opensea.GET(
       "/api/v2/chain/{chain}/contract/{address}/nfts",
       {
@@ -101,6 +103,13 @@ export const getNftsByContract = os
 export const getBestListingsByCollection = os
   .input(z.object({ slug: z.string() }))
   .handler(async ({ input: { slug } }) => {
+    console.log(
+      "key len:",
+      env.OPENSEA_API_KEY?.length,
+      "tail:",
+      env.OPENSEA_API_KEY?.slice(-4),
+    );
+    const opensea = createOpenSea(env.OPENSEA_API_KEY);
     const { response, error, data } = await opensea.GET(
       "/api/v2/listings/collection/{slug}/best",
       {
@@ -120,6 +129,8 @@ export const getNftMetadata = os
     }),
   )
   .handler(async ({ input: { chain, contractAddress, tokenId } }) => {
+    const opensea = createOpenSea(env.OPENSEA_API_KEY);
+
     const { response, error, data } = await opensea.GET(
       "/api/v2/metadata/{chain}/{contractAddress}/{tokenId}",
       {

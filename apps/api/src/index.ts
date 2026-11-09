@@ -2,16 +2,10 @@ import { onError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
 import { CORSHandlerPlugin } from "@orpc/server/plugins";
 import { router } from "./router";
-import { env } from "cloudflare:workers";
 
 const exact = new Set(["https://m3trs.pages.dev", "https://m3trs-1.pages.dev"]);
 const patterns = [/^https:\/\/[a-z0-9-]+\.m3ter\.ing$/];
-console.log(
-  "key len:",
-  env.OPENSEA_API_KEY?.length,
-  "tail:",
-  env.OPENSEA_API_KEY?.slice(-4),
-);
+
 const handler = new RPCHandler(router, {
   plugins: [
     new CORSHandlerPlugin({
@@ -31,6 +25,12 @@ const handler = new RPCHandler(router, {
 
 export default {
   async fetch(request, env, ctx) {
+    console.log(
+      "key len:",
+      env.OPENSEA_API_KEY?.length,
+      "tail:",
+      env.OPENSEA_API_KEY?.slice(-4),
+    );
     const { matched, response } = await handler.handle(request, {
       prefix: "/rpc",
       context: { env, ctx }, // Provide initial context if needed, can be an async function
