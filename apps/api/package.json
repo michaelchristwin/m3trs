@@ -24,5 +24,6 @@
     "arweave": "^2.1.0",
     "openapi-fetch": "^0.17.0",
     "zod": "^4.6.7"
-  }
+  },
+  "packageManager": "bun@1.4.4"
 }

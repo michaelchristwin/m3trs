@@ -15,6 +15,7 @@
     "format": "prettier --write . && eslint --fix",
     "check": "prettier --check ."
   },
+  "packageManager": "bun@1.4.4",
   "dependencies": {
     "@m3trs/api": "workspace:*",
     "@privy-io/react-auth": "^3.32.2",
