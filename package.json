@@ -1,27 +1,19 @@
 {
   "name": "m3trs",
-  "devDependencies": {
-    "oxfmt": "^0.50.0",
-    "oxlint": "^1.65.0",
-    "turbo": "^2.9.18",
-    "typescript": "5.9.2"
-  },
-  "engines": {
-    "node": ">=18"
-  },
-  "packageManager": "pnpm@11.5.2",
+  "type": "module",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "oxlint .",
-    "lint:fix": "oxlint --fix .",
-    "format": "oxfmt --check",
-    "format:fix": "oxfmt .",
-    "check-types": "turbo run check-types"
+    "dev": "bun run --parallel --filter '*' dev",
+    "start": "bun run --parallel --filter '*' start"
   },
   "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+    "packages/*",
+    "apps/*"
+  ],
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^7"
+  }
 }

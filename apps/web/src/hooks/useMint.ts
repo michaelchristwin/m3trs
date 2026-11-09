@@ -1,0 +1,127 @@
+import { useState } from 'react'
+import { orpc } from '#/config/rpc-client'
+import { m3terImageUrl } from '#/utils/constants'
+import { approve, atomicApproveAndMint, mint } from '#/smart-contracts/actions'
+import { encodePacked, hexToBigInt, keccak256 } from 'viem'
+import { createTokenMetadata } from '#/utils/token-metadata'
+import type { MintTokensParams, MintTxStatus } from '#/utils/types'
+import { getCapabilities } from '@wagmi/core'
+import { MAIN_CHAIN, wagmiConfig } from '#/integrations/wagmi/config'
+
+export function useMint() {
+  const [currentStep, setCurrentStep] = useState('')
+  const [mintTxStatus, setMintTxStatus] = useState<MintTxStatus>({
+    status: 'idle',
+  })
+  const [amount, setAmount] = useState(0)
+  const [externalTokenId, setExternalTokenId] = useState<bigint>(0n)
+
+  const mintTokens = async ({
+    supply,
+    tokenId,
+    stopTime,
+    description,
+    walletAddress,
+  }: MintTokensParams) => {
+    try {
+      setAmount(Number(supply))
+
+      const hash = keccak256(
+        encodePacked(
+          ['uint256', 'uint256', 'uint256'],
+          [tokenId, supply, BigInt(stopTime)],
+        ),
+      )
+
+      setExternalTokenId(hexToBigInt(hash))
+
+      setCurrentStep('Preparing metadata...')
+
+      const imageBase64Url = await orpc.upload.base64url({
+        imageUrl: m3terImageUrl,
+      })
+
+      const { svgString, metadataPart } = createTokenMetadata({
+        creator: walletAddress,
+        description,
+        stopTime,
+        supply,
+        tokenId,
+        imageUrl: imageBase64Url,
+      })
+
+      setCurrentStep('Uploading NFT image to Arweave...')
+
+      const imageUrl = await orpc.upload.svg({
+        name: metadataPart.name,
+        image: svgString,
+      })
+
+      const metadata = {
+        ...metadataPart,
+        image: imageUrl,
+      }
+
+      setCurrentStep('Uploading metadata to Arweave...')
+
+      const uri = await orpc.upload.metadata(metadata)
+
+      const capabilities = await getCapabilities(wagmiConfig)
+      const supportsAtomicBatch = capabilities[MAIN_CHAIN.id].atomic?.status
+      if (
+        supportsAtomicBatch === 'ready' ||
+        supportsAtomicBatch === 'supported'
+      ) {
+        setCurrentStep('Approving and minting tokens...')
+        const result = await atomicApproveAndMint({
+          id: tokenId,
+          supply: BigInt(supply),
+          m3terId: tokenId,
+          stopTime: BigInt(stopTime),
+          uri,
+        })
+        setMintTxStatus(result)
+        return result
+      } else {
+        setCurrentStep('Approving M3ter for transaction...')
+        const approveResult = await approve(tokenId)
+
+        if (approveResult.status === 'error') {
+          setMintTxStatus(approveResult)
+          return approveResult
+        }
+
+        setCurrentStep('Minting tokens and bond...')
+
+        const result = await mint({
+          supply: BigInt(supply),
+          m3terId: tokenId,
+          stopTime: BigInt(stopTime),
+          uri,
+        })
+
+        setMintTxStatus(result)
+
+        return result
+      }
+    } catch (err) {
+      const result = {
+        status: 'error' as const,
+        error:
+          err instanceof Error ? err.message : 'An unexpected error occurred.',
+      }
+
+      setMintTxStatus(result)
+
+      return result
+    }
+  }
+
+  return {
+    mintTokens,
+    currentStep,
+    mintTxStatus,
+    amount,
+    externalTokenId,
+  }
+}
